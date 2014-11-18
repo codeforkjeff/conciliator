@@ -46,6 +46,7 @@ your new or existing project.
 1. Add this app to your Django project's settings.py file, and add
    some configuration options:
 
+```
     INSTALLED_APPS = (
         ...
         'refine_viaf',
@@ -60,10 +61,13 @@ your new or existing project.
     # number of threads to use: keep in mind VIAF enforces a limit of
     # 6 simultaneous requests
     REFINE_VIAF_THREADPOOL_SIZE = 3
-
+```
+    
 2. Add an entry to your urls.py file:
 
-   url(r'^reconcile/viaf', 'refine_viaf.views.reconcile'),
+    ```
+    url(r'^reconcile/viaf', 'refine_viaf.views.reconcile'),
+    ```
 
 3. Your reconciliation service is now ready to use.
 
@@ -88,6 +92,7 @@ your purposes.
 There is a lot of debugging output you can direct to a file or stdout
 by editing your logging confirguation settings.py file:
 
+```
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -113,7 +118,7 @@ by editing your logging confirguation settings.py file:
             }
         }
     }
-
+```
 
 Resources
 ---------
