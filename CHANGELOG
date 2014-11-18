@@ -1,0 +1,14 @@
+
+Changelog
+=========
+
+0.2
+---
+
+- Fix bug where urllib.quote_plus() would barf on a unicode str not
+  explicitly encoded as utf-8
+
+0.1
+---
+
+- First release
