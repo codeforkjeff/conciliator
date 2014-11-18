@@ -13,7 +13,7 @@ setup(
     license='BSD License',
     description='VIAF Reconciliation Service for OpenRefine',
     long_description='refine_viaf implements an OpenRefine Reconciliation Service that queries the VIAF public API. Works with Django and other web frameworks. See the project page on GitHub for more details.',
-    url='http://www.example.com/',
+    url='https://github.com/codeforkjeff/refine_viaf',
     author='Jeff Chiu',
     author_email='jeff@codefork.com',
     classifiers=[
