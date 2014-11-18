@@ -7,7 +7,8 @@ refine_viaf implements an OpenRefine reconciliation service that
 queries the Virtual International Authority File (VIAF) public
 API.
 
-The purpose of this module is to enable anyone to host their service.
+The purpose of this module is to enable anyone to host their own
+service.
 
 Features
 --------
@@ -25,17 +26,26 @@ Features
 Installation
 ------------
 
-Installation via pip is coming soon. In the meantime:
+First, activate the virtualenv you're using, if applicable. Then do
+ONE of the following:
 
-1. Clone this repository
+1. Install manually via pip:
 
-    git clone TODO
+    ```
+    pip install refine_viaf
+    ```
 
-2. Activate the virtualenv you're using, if applicable.
+2. OR add it your project's requirements.txt file and run
 
-2. Run this command
+    ```
+    pip install -r requirements.txt
+    ```
 
+3. OR clone this git repository and install it by running:
+
+    ```
     python setup.py install
+    ```
 
 Django Setup
 ------------
