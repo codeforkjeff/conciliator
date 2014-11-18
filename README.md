@@ -129,6 +129,12 @@ LOGGING = {
 }
 ```
 
+Public Server
+-------------
+
+If your needs are low, and you don't want to host your own service, you can use the one hosted at 
+<http://refine.codefork.com/>. Visit that address for more instructions.
+
 Resources
 ---------
 
