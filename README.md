@@ -1,5 +1,4 @@
 
-===========
 refine_viaf
 ===========
 
@@ -7,8 +6,8 @@ refine_viaf implements an OpenRefine reconciliation service that
 queries the Virtual International Authority File (VIAF) public
 API.
 
-The purpose of this module is to enable anyone to host their own
-service.
+The purpose of this module is to enable anyone to host a service for
+their own use.
 
 Features
 --------
@@ -35,7 +34,7 @@ ONE of the following:
     pip install refine_viaf
     ```
 
-2. OR add it your project's requirements.txt file and run
+2. OR add 'refine_viaf' to your project's requirements.txt file and run:
 
     ```
     pip install -r requirements.txt
@@ -102,33 +101,33 @@ your purposes.
 There is a lot of debugging output you can direct to a file or stdout
 by editing your logging confirguation settings.py file:
 
-    ```
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': True,
-        'formatters': {
-            'verbose': {
-                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-            },
-            'simple': {
-                'format': '%(levelname)s %(message)s'
-            },
+```
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
         },
-        'handlers': {
-            'console': {
-                'level': 'DEBUG',
-                'class': 'logging.StreamHandler',
-                'formatter': 'verbose'
-            },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
         },
-        'loggers': {
-            'refine_viaf': {
-                'handlers': ['console'],
-                'level': 'DEBUG',
-            }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'refine_viaf': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
         }
     }
-    ```
+}
+```
 
 Resources
 ---------
