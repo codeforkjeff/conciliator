@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.3
+---
+
+- Add support for reconciling against names from a specific preferred
+  source, specified as part of the URL path.
+	
 0.2
 ---
 
