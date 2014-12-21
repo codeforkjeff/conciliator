@@ -4,7 +4,7 @@ refine_viaf
 
 refine_viaf implements an OpenRefine reconciliation service that
 queries the Virtual International Authority File (VIAF) public
-API.
+API. It is written in Python.
 
 The purpose of this module is to enable anyone to host a service for
 their own use.
@@ -18,7 +18,7 @@ Features
 * Support for making requests to the VIAF API using a thread pool for
   faster performance.
 
-* Works with Django out of the box, but can be used with any web
+* Works with Django out of the box, but can be used with any Python web
   framework with a bit of glue code.
 
   
@@ -79,7 +79,8 @@ your new or existing project.
     url(r'^reconcile/viaf', 'refine_viaf.views.reconcile'),
     ```
 
-3. Your reconciliation service is now ready to use.
+3. Start your development server by running "./manage.py runserver".
+   Your reconciliation service is now ready to use.
 
 Configuring OpenRefine
 ----------------------
@@ -143,6 +144,12 @@ LOGGING = {
     }
 }
 ```
+
+Public Server
+-------------
+
+If your needs are low, and you don't want to host your own service, you can use the one hosted at 
+<http://refine.codefork.com/>. Visit that address for more instructions.
 
 Resources
 ---------

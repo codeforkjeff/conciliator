@@ -175,6 +175,9 @@ def search(query, preferred_sources):
     else:
         query_param = get_name_type("id", query_type).cql_string % (query_text,)
 
+    # call to encode() is crucial, or quote_plus will barf
+    query_param_quoted = urllib.quote_plus(query_param.encode('utf-8'))
+
     # note that both XML and JSON data from VIAF often don't validate
     # because of unescaped chars, esp ampersands in XML and quotation
     # marks in strings in JSON. though XML is more heavyweight to
@@ -185,7 +188,7 @@ def search(query, preferred_sources):
     # default maximumRecords to 3, since that's the max that
     # openrefine will show
     url = u"http://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml" % \
-          (urllib.quote_plus(query_param.encode('utf8')), query.get('limit', 3))
+          (query_param_quoted, query.get('limit', 3))
 
     logger.debug(u"making request for %s" % (url,))
     response = requests.get(url)
@@ -207,7 +210,8 @@ def search_worker(task):
     try:
         result = search(query, preferred_sources)
     except Exception, e:
-        logger.error(u"Error occurred in search_worker: %s" % (traceback.format_exc(e),))
+        tb = traceback.format_exc()
+        logger.error(u"Error occurred in search_worker: %s" % (tb,))
 
     return { key: {"result": result }}
 
