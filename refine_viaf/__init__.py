@@ -12,6 +12,7 @@ import collections
 import json
 import logging
 import time
+import traceback
 import urllib
 
 from bs4 import BeautifulSoup
@@ -184,8 +185,9 @@ def search(query, preferred_sources):
     # default maximumRecords to 3, since that's the max that
     # openrefine will show
     url = u"http://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml" % \
-          (urllib.quote_plus(query_param), query.get('limit', 3))
+          (urllib.quote_plus(query_param.encode('utf8')), query.get('limit', 3))
 
+    logger.debug(u"making request for %s" % (url,))
     response = requests.get(url)
     if response.status_code == 200:
         return parse_response_xml(response.text, query_type, query_text, preferred_sources)
@@ -205,7 +207,7 @@ def search_worker(task):
     try:
         result = search(query, preferred_sources)
     except Exception, e:
-        logger.error(u"Error occurred in search_worker: %s" % (e,))
+        logger.error(u"Error occurred in search_worker: %s" % (traceback.format_exc(e),))
 
     return { key: {"result": result }}
 

@@ -1,4 +1,3 @@
-
 """
 Django view for reconciliation service.
 """
@@ -18,9 +17,14 @@ for setting in config.keys():
 
 
 @csrf_exempt
-def reconcile(request):
+def reconcile(request, preferred_sources=None):
     """ Django view """
 
-    r = refine_viaf.Reconcile(request.REQUEST, config)
+    local_config = config
+    if preferred_sources:
+        local_config = dict(local_config)
+        local_config['REFINE_VIAF_PREFERRED_SOURCES'] = map(lambda item: item.upper(), preferred_sources.split(","))
+
+    r = refine_viaf.Reconcile(request.REQUEST, local_config)
     json_data = r.reconcile()
     return HttpResponse(json_data, content_type="application/json")

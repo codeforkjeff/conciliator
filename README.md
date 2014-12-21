@@ -72,9 +72,10 @@ your new or existing project.
     REFINE_VIAF_THREADPOOL_SIZE = 3
     ```
     
-2. Add an entry to your urls.py file:
+2. Add these entries to your urls.py file:
 
     ```
+    url(r'^reconcile/viaf/(?P<preferred_sources>[\w,]+)', 'refine_viaf.views.reconcile'),
     url(r'^reconcile/viaf', 'refine_viaf.views.reconcile'),
     ```
 
@@ -88,7 +89,21 @@ Configuring OpenRefine
 
 2. Click "Add Standard Service..."
 
-3. Type in http://localhost:8000/reconcile/viaf
+3. To reconcile against names from the preferred source you specified
+   in your config (see above), type in:
+
+    ```
+    http://localhost:8000/reconcile/viaf
+    ```
+
+    To reconcile against a specific source, append it VIAF code to the
+    end of the URL path. For example, to use names from the
+    Bibliotheque Nationale de France, type in:
+    
+    ```
+    http://localhost:8000/reconcile/viaf/BNF
+    ```
+
 
 Other Web Frameworks
 --------------------
