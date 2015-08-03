@@ -130,11 +130,14 @@ def parse_response_xml(xmlstr, query_type, search_term, preferred_sources):
             'match': search_term == name,
         }
 
-        logger.debug(u"parsed match=%s" % (result,))
+        logger.debug(u"parsed match=%r" % (result,))
 
         matches.append(result)
 
         ns_num += 1
+
+    # helps reclaim memory
+    soup.decompose()
 
     return matches
 
@@ -165,7 +168,7 @@ def search(query, preferred_sources):
     This is the typical case for reconciliing a name in a particular
     row.
     """
-    logger.debug(u"doing search on query=%s" % (query,))
+    logger.debug(u"doing search on query=%r" % (query,))
 
     query_text = query['query']
     query_type = query.get('type')
@@ -190,12 +193,12 @@ def search(query, preferred_sources):
     url = u"http://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml" % \
           (query_param_quoted, query.get('limit', 3))
 
-    logger.debug(u"making request for %s" % (url,))
+    logger.debug(u"making request for %r" % (url,))
     response = requests.get(url)
     if response.status_code == 200:
         return parse_response_xml(response.text, query_type, query_text, preferred_sources)
     else:
-        logger.error(u"VIAF API Error: query=%s, HTTP code=%s, response=%s" % (query, response.status_code, response.text))
+        logger.error(u"VIAF API Error: query=%r, HTTP code=%r, response=%r" % (query, response.status_code, response.text))
 
     return []
 
@@ -211,7 +214,7 @@ def search_worker(task):
         result = search(query, preferred_sources)
     except Exception, e:
         tb = traceback.format_exc()
-        logger.error(u"Error occurred in search_worker: %s" % (tb,))
+        logger.error(u"Error occurred in search_worker: %r" % (tb,))
 
     return { key: {"result": result }}
 
@@ -236,7 +239,7 @@ class Reconcile:
         Performs the reconciliation; returns a JSON string response.
         """
 
-        logger.debug("config=%s" % (self.config,))
+        logger.debug("config=%r" % (self.config,))
 
         start_time = time.time()
         num_queries = 0
@@ -250,7 +253,7 @@ class Reconcile:
 
         if query:
 
-            logger.debug(u"query=%s" % (query,))
+            logger.debug(u"query=%r" % (query,))
 
             num_queries = 1
 
@@ -261,7 +264,7 @@ class Reconcile:
 
         elif queries:
 
-            logger.debug(u"queries=%s" % (queries,))
+            logger.debug(u"queries=%r" % (queries,))
             queries = json.loads(queries)
             results = {}
 
