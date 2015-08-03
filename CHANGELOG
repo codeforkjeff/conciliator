@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.4
+---
+
+- Memory cleanup for BeautifulSoup
+- Improve logging of unicode strings
+
 0.3
 ---
 

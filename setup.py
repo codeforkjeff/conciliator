@@ -6,7 +6,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='refine_viaf',
-    version='0.3',
+    version='0.4',
     packages=['refine_viaf'],
     install_requires=['beautifulsoup4', 'requests'],
     include_package_data=True,
