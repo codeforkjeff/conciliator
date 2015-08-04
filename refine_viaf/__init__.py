@@ -84,9 +84,16 @@ def get_name(record, ns, preferred_sources):
             name = sources_to_names[preferred_source]
             break
 
+    # grab a name arbitrarily: TODO: we should probably specify in our
+    # VIAF query to only search names from our preferred sources, but
+    # I ran into trouble with that approach a while ago. I can't
+    # remember the details. That's why this is here: we try to show
+    # something meaningful.
     if not name and len(sources_to_names) > 0:
-        # grab one arbitrarily, I guess
         name = sources_to_names[sources_to_names.keys()[0]]
+
+    if not name:
+        name = "(Unknown)"
 
     return name
 
@@ -299,7 +306,7 @@ class Reconcile:
             json_response = self.jsonpify(self.request_params, results)
 
         else:
-            metadata = { 'name' : self.config['REFINE_VIAF_SERVICE_NAME']}
+            metadata = { 'name' : self.config['REFINE_VIAF_SERVICE_NAME'] + " - Using names from " + ", ".join(preferred_sources) }
             metadata.update(METADATA)
             json_response = self.jsonpify(self.request_params, metadata)
 
