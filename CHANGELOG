@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.5
+---
+
+- Improve memory cleanup for BeautifulSoup
+- More descriptive service name
+
 0.4
 ---
 
