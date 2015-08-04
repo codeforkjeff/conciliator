@@ -11,6 +11,7 @@ can operate as an actual web service.
 import collections
 import json
 import logging
+import threading
 import time
 import traceback
 import urllib
@@ -90,6 +91,14 @@ def get_name(record, ns, preferred_sources):
     return name
 
 
+def cleanup_soup(soup):
+    """
+    Function that calls decompose() on BeautifulSoup object. This is
+    meant to be passed into a Thread constructor.
+    """
+    soup.decompose()
+
+
 def parse_response_xml(xmlstr, query_type, search_term, preferred_sources):
     """
     parses the XML response from VIAF, and returns a list of match
@@ -136,8 +145,9 @@ def parse_response_xml(xmlstr, query_type, search_term, preferred_sources):
 
         ns_num += 1
 
-    # helps reclaim memory
-    soup.decompose()
+    # reclaim memory in separate thread
+    t = threading.Thread(target=cleanup_soup, args=(soup,))
+    t.start()
 
     return matches
 
