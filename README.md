@@ -8,9 +8,11 @@ International Authority File) Reconciliation Service for
 types of names (ie. persons, organizations, geographic regions) to
 standard IDs representing those entities.
 
-This project was rewritten in Java in Dec 2015. The old version
-written in Python is no longer being maintained, but can be found in
-the [python-deprecated branch](https://github.com/codeforkjeff/refine_viaf/tree/python-deprecated).
+This project was rewritten in Java in Dec 2015. For more info, see
+[this page](http://codefork.com/blog/index.php/2015/12/10/a-major-update-to-refine-viaf/). The
+old version written in Python is no longer being maintained, but can
+be found in the
+[python-deprecated branch](https://github.com/codeforkjeff/refine_viaf/tree/python-deprecated).
 
 Features
 --------
@@ -100,6 +102,13 @@ This code drew inspiration from these other projects:
 
 * https://github.com/rdmpage/phyloinformatics
 * https://github.com/mikejs/reconcile-demo/
+
+Do you use this thing??
+-----------------------
+
+If so, please take a few seconds to leave a comment on
+[this page](http://codefork.com/blog/index.php/2015/12/10/a-major-update-to-refine-viaf/). Hearing
+from users really motivates me to continue improving this project.
 
 License
 -------
