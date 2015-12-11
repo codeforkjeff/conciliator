@@ -17,8 +17,8 @@ be found in the
 Features
 --------
 
-* Support for the types of names provided by VIAF: Corporate Names,
-  Geographic Names, Personal Names, Works, Expressions
+* Support for the following types of names provided by VIAF: Corporate
+  Names, Geographic Names, Personal Names, Works, Expressions
 
 * Good performance (uses threads; stable memory usage)
 
@@ -37,12 +37,15 @@ Running the Service on Your Computer
 
 Install Java 1.7 or greater if you don't already have it.
 
-Download the latest release and unzip it. (TODO)
+Download the .jar file for the
+[latest release](https://github.com/codeforkjeff/refine_viaf/releases). Alternatively,
+you can download the source code tarball or clone this repository, and
+build the .jar file using maven.
 
 Run this command:
 
 ```
-java -jar refine_viaf.jar
+java -jar refine_viaf-1.0.jar
 ```
 
 That's it! You should see some messages as the application starts
