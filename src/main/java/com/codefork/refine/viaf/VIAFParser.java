@@ -17,6 +17,8 @@ public class VIAFParser extends DefaultHandler {
     private boolean captureChars = false;
     private boolean insideHeadings = false;
     private boolean insideSources = false;
+    private int depth = 0;
+    private int headingsDepth = -1;
 
     // viaf's weird indexed namespacing
     private int nsIndex = 2;
@@ -52,6 +54,7 @@ public class VIAFParser extends DefaultHandler {
             captureChars = true;
         } else if (getElementNameWithNS("mainHeadings").equals(qName)) {
             insideHeadings = true;
+            headingsDepth = depth;
         } else if (insideHeadings && getElementNameWithNS("data").equals(qName)) {
             getLastResult().addNameEntry();
         } else if (insideHeadings && getElementNameWithNS("text").equals(qName)) {
@@ -60,13 +63,14 @@ public class VIAFParser extends DefaultHandler {
             insideSources = true;
         } else if (insideSources && getElementNameWithNS("s").equals(qName)) {
             captureChars = true;
-        } else if (insideHeadings) {
+        } else if (headingsDepth != -1 && depth == headingsDepth + 1) {
             // if we got here, we encountered some other child of mainHeadings
             // so we want to effectively end the section, otherwise we'll end up
             // erroneously picking up other "text" and "sources" elements nested
             // under other elements in mainHeadings
             insideHeadings = false;
         }
+        depth ++;
     }
 
     @Override
@@ -83,6 +87,7 @@ public class VIAFParser extends DefaultHandler {
             captureChars = false;
         } else if (getElementNameWithNS("mainHeadings").equals(qName)) {
             insideHeadings = false;
+            headingsDepth = -1;
         } else if (insideHeadings && getElementNameWithNS("text").equals(qName)) {
             getLastResult().getLastNameEntry().setName(buf.toString());
             buf = new StringBuilder();
@@ -94,6 +99,7 @@ public class VIAFParser extends DefaultHandler {
             buf = new StringBuilder();
             captureChars = false;
         }
+        depth --;
     }
 
     @Override

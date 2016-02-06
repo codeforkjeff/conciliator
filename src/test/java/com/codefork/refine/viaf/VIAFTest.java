@@ -70,15 +70,15 @@ public class VIAFTest {
         assertFalse(result1.isMatch());
 
         Result result2 = results.get(1);
-        assertEquals("Steinbeck, John, 1902-1968. | Of mice and men.", result2.getName());
-        assertEquals(NameType.Book.asVIAFNameType(), result2.getType().get(0));
-        assertEquals("180993990", result2.getId());
+        assertEquals("Steinbeck, John 1946-1991", result2.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result2.getType().get(0));
+        assertEquals("19893647", result2.getId());
         assertFalse(result2.isMatch());
 
         Result result3 = results.get(2);
-        assertEquals("Steinbeck, John 1946-1991", result3.getName());
-        assertEquals(NameType.Person.asVIAFNameType(), result3.getType().get(0));
-        assertEquals("19893647", result3.getId());
+        assertEquals("Steinbeck, John, 1902-1968. | Of mice and men.", result3.getName());
+        assertEquals(NameType.Book.asVIAFNameType(), result3.getType().get(0));
+        assertEquals("180993990", result3.getId());
         assertFalse(result3.isMatch());
     }
 
@@ -105,15 +105,15 @@ public class VIAFTest {
         assertFalse(result1.isMatch());
 
         Result result2 = results.get(1);
-        assertEquals("Nabokov, Vladimir Vladimirovič | Volšebnik", result2.getName());
+        assertEquals("Nabokov, Vladimir Vladimirovič | Lolita", result2.getName());
         assertEquals(NameType.Book.asVIAFNameType(), result2.getType().get(0));
-        assertEquals("316638111", result2.getId());
+        assertEquals("176671347", result2.getId());
         assertFalse(result2.isMatch());
 
         Result result3 = results.get(2);
         assertEquals("Nabokov, Vladimir Vladimirovič | Govori, sjećanje!", result3.getName());
         assertEquals(NameType.Book.asVIAFNameType(), result3.getType().get(0));
-        assertEquals("140144814502844904157", result3.getId());
+        assertEquals("183561595", result3.getId());
         assertFalse(result3.isMatch());
     }
 
