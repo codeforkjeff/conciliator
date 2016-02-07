@@ -1,6 +1,7 @@
 package com.codefork.refine.viaf;
 
 import org.junit.Test;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -21,6 +22,45 @@ public class VIAFParserTest {
         }
         return b.toString();
     }
+
+    /**
+     * calculate arithmetic mean (average)
+     * @param ary
+     * @return
+     */
+    private static long mean(long[] ary) {
+        long avg = 0;
+        int t = 1;
+        for (long x : ary) {
+            avg += (x - avg) / t;
+            ++t;
+        }
+        return avg;
+    }
+
+    private void benchmarkParser(Class parserClass, int n) throws Exception {
+        long times[] = new long[n];
+        for(int i = 0; i < n; i++) {
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            SAXParser parser = spf.newSAXParser();
+            DefaultHandler viafParser = (DefaultHandler) parserClass.newInstance();
+
+            InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
+            long start = System.currentTimeMillis();
+            parser.parse(is, viafParser);
+            long end = System.currentTimeMillis();
+
+            times[i] = end - start;
+        }
+        System.out.println(String.format("parse using %s, mean time over %s runs=%s", parserClass.toString(), n, mean(times)));
+    }
+
+    /*
+    @Test
+    public void testAverages() throws Exception {
+        benchmarkParser(VIAFParser.class, 100);
+    }
+    */
 
     @Test
     public void testParseNames() throws Exception {
