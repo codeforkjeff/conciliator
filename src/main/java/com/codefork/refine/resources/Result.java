@@ -32,10 +32,10 @@ public class Result {
      * services return multiple types for a name?
      */
     private List<VIAFNameType> type;
-    private int score;
+    private double score;
     private boolean match;
 
-    public Result(String id, String name, NameType nameType, int score, boolean match) {
+    public Result(String id, String name, NameType nameType, double score, boolean match) {
         this.id = id;
         this.name = name;
         this.type = new ArrayList<VIAFNameType>();
@@ -68,11 +68,11 @@ public class Result {
         this.type = resultType;
     }
 
-    public int getScore() {
+    public double getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(double score) {
         this.score = score;
     }
 

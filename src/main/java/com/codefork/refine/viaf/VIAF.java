@@ -1,6 +1,7 @@
 package com.codefork.refine.viaf;
 
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.StringUtil;
 import com.codefork.refine.resources.Result;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,8 +77,7 @@ public class VIAF {
                             viafResult.getViafId(),
                             name,
                             viafResult.getNameType(),
-                            // TODO: how would we calculate a score?
-                            1,
+                            StringUtil.levenshteinDistanceRatio(name, query.getQuery()),
                             exactMatch));
                 }
                 log.debug(String.format("Query: %s - parsing took %dms, got %d results",
