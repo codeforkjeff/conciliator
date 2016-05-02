@@ -180,7 +180,7 @@ public class ReconcileController {
         }
 
         SearchQuery searchQuery = new SearchQuery(
-                queryStruct.path("query").asText(),
+                queryStruct.path("query").asText().trim(),
                 limit,
                 nameType,
                 typeStrict
