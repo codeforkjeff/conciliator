@@ -18,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -37,29 +35,16 @@ public class ReconcileController {
      */
     private static final int REQUEST_TIMEOUT_SECONDS = 10;
 
-    private static final String CONFIG_FILENAME = "refine_viaf.properties";
     private final ObjectMapper mapper = new ObjectMapper();
 
     Log log = LogFactory.getLog(ReconcileController.class);
     private final VIAF viaf;
-    private final Config config = new Config("VIAF Reconciliation Service");
-   
+    private final Config config;
+
     @Autowired
-    public ReconcileController(VIAF viaf) {
+    public ReconcileController(VIAF viaf, Config config) {
         this.viaf = viaf;
-        
-        if(new File(CONFIG_FILENAME).exists()) {
-            Properties props = new Properties();
-            try {
-                props.load(new FileInputStream(CONFIG_FILENAME));
-                String serviceName = props.getProperty("service_name");
-                if(serviceName != null) {
-                    config.setServiceName(serviceName);
-                }
-            } catch (IOException ex) {
-                log.error("Error reading config file, skipping it: " + ex);
-            }
-        }
+        this.config = config;
     }
 
     /**

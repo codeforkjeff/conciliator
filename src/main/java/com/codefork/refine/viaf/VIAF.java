@@ -1,5 +1,8 @@
 package com.codefork.refine.viaf;
 
+import com.codefork.refine.Cache;
+import com.codefork.refine.CacheExpire;
+import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.StringUtil;
 import com.codefork.refine.resources.Result;
@@ -23,12 +26,84 @@ import java.util.List;
 @Service
 public class VIAF {
 
+    public static final boolean DEFAULT_CACHE_ENABLED = true;
+
     Log log = LogFactory.getLog(VIAF.class);
     private final VIAFService viafService;
+    private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
+    private Cache<String, List<Result>> cache = new Cache<String, List<Result>>();
+    private final Object cacheLock = new Object();
+    private CacheExpire cacheExpire;
 
     @Autowired
-    public VIAF(VIAFService viafService) {
+    public VIAF(VIAFService viafService, Config config) {
         this.viafService = viafService;
+
+        boolean cacheEnabled = Boolean.valueOf(config.getProperties().getProperty("cache.enabled",
+                String.valueOf(DEFAULT_CACHE_ENABLED)));
+        int cacheLifetime = Integer.valueOf(config.getProperties().getProperty("cache.lifetime",
+                String.valueOf(Cache.DEFAULT_LIFETIME)));
+        int cacheMaxSize = Integer.valueOf(config.getProperties().getProperty("cache.max_size",
+                String.valueOf(Cache.DEFAULT_MAXSIZE)));
+
+        setCacheLifetime(cacheLifetime);
+        setCacheMaxSize(cacheMaxSize);
+        setCacheEnabled(cacheEnabled);
+    }
+
+    public boolean isCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    /**
+     * this triggers starting/stopping of thread of expire cache
+     * @param cacheEnabled
+     */
+    public void setCacheEnabled(boolean cacheEnabled) {
+        this.cacheEnabled = cacheEnabled;
+        if(isCacheEnabled()) {
+            if(cacheExpire == null) {
+                cacheExpire = new CacheExpire(this);
+
+                Thread thread = new Thread(cacheExpire);
+                thread.setDaemon(true);
+                thread.start();
+            }
+        } else {
+            if(cacheExpire != null) {
+                cacheExpire.stopGracefully();
+                // null out reference to break circular reference
+                // so it can be gc'd
+                cacheExpire = null;
+            }
+        }
+    }
+
+    public void setCacheMaxSize(int maxSize) {
+        this.cache.setMaxSize(maxSize);
+    }
+
+    public int getCacheMaxSize() {
+        return this.cache.getMaxSize();
+    }
+    public void setCacheLifetime(int lifetime) {
+        this.cache.setLifetime(lifetime);
+    }
+
+    public int getCacheLifetime() {
+        return this.cache.getLifetime();
+    }
+
+    public void expireCache() {
+        if (cacheEnabled && cache.getCount() > 0) {
+            // make a copy of the cache, expire entries, then replace
+            // original cache with new one
+            Cache<String, List<Result>> newCache = new Cache<String, List<Result>>(cache);
+            newCache.expireCache();
+            synchronized (cacheLock) {
+                cache = newCache;
+            }
+        }
     }
 
     /**
@@ -37,6 +112,33 @@ public class VIAF {
      * @return list of search results (a 0-size list if none, or if errors occurred)
      */
     public List<Result> search(SearchQuery query) {
+        // TODO: doSearch should differentiate between an error occurring
+        // when running a query, and a query returning 0 results.
+        // We should only cache successful queries.
+
+        if (cacheEnabled) {
+            Cache<String, List<Result>> cacheRef = null;
+
+            // synchronize when getting a reference to the cache;
+            // this way, if cache is expired during this block,
+            // (i.e. a new Cache instance replaces it), we're still using
+            // the "old" cache until this method finishes.
+            synchronized (cacheLock) {
+                cacheRef = cache;
+            }
+
+            String key = query.getHashKey();
+            if (!cacheRef.containsKey(key)) {
+                cacheRef.put(key, doSearch(query));
+            } else {
+                log.debug("Cache hit for: " + key);
+            }
+            return cacheRef.get(key);
+        }
+        return doSearch(query);
+    }
+
+    private List<Result> doSearch(SearchQuery query) {
         List<Result> results = new ArrayList<Result>();
         InputStream response = viafService.doSearch(query.createCqlQueryString(), query.getLimit());
 

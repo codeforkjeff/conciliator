@@ -1,11 +1,13 @@
 package com.codefork.refine.viaf;
 
+import com.codefork.refine.Config;
 import org.junit.Test;
 import com.codefork.refine.NameType;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.resources.Result;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,6 +17,7 @@ import static org.mockito.Mockito.*;
 public class VIAFTest {
 
     VIAFService viafService;
+    Config config;
 
     @Test
     public void testSearchPersonalName() throws Exception {
@@ -22,7 +25,10 @@ public class VIAFTest {
         InputStream is = getClass().getResourceAsStream("/wittgenstein.xml");
         when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
 
-        VIAF viaf = new VIAF(viafService);
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("wittgenstein", 3, NameType.Person, "should");
         List<Result> results = viaf.search(query);
@@ -57,7 +63,10 @@ public class VIAFTest {
         InputStream is = getClass().getResourceAsStream("/steinbeck_no_type.xml");
         when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
 
-        VIAF viaf = new VIAF(viafService);
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("steinbeck", 3, null, "should");
         List<Result> results = viaf.search(query);
@@ -91,7 +100,10 @@ public class VIAFTest {
         InputStream is = getClass().getResourceAsStream("/nabokov_nsk.xml");
         when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
 
-        VIAF viaf = new VIAF(viafService);
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("nabokov", 3, null, "should");
         query.setSource("NSK"); // NSK=Croatia
@@ -124,7 +136,10 @@ public class VIAFTest {
         InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
         when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
 
-        VIAF viaf = new VIAF(viafService);
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should");
         List<Result> results = viaf.search(query);
@@ -157,7 +172,10 @@ public class VIAFTest {
         InputStream is = getClass().getResourceAsStream("/nonsense.xml");
         when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
 
-        VIAF viaf = new VIAF(viafService);
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("ncjecerence", 3, null, "should");
         List<Result> results = viaf.search(query);

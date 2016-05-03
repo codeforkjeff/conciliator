@@ -88,4 +88,12 @@ public class SearchQuery {
         return cql;
     }
 
+    public String getHashKey() {
+        return (query != null ? query : "") + "|" +
+                limit + "|" +
+                (nameType != null ? nameType.getId() : "") + "|" +
+                (typeStrict != null ? typeStrict : "") + "|" +
+                (source != null ? source : "");
+    }
+
 }

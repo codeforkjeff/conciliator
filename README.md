@@ -20,7 +20,7 @@ Features
 * Support for the following types of names provided by VIAF: Corporate
   Names, Geographic Names, Personal Names, Works, Expressions
 
-* Good performance (uses threads; stable memory usage)
+* Good performance (uses threads; stable memory usage; caches results)
 
 * Super easy to run
 
@@ -91,8 +91,9 @@ If you want to host this software on a server for long-term usage or
 if you want to enable logging for debugging purposes, take a look at
 `run.sh` for some helpful options.
 
-You can change the service name that appears in OpenRefine by editing
-the `refine_viaf.properties` file.
+You can change several run-time options (including the service name
+that appears in OpenRefine and turning caching on/off) by editing the
+`refine_viaf.properties` file.
 
 Resources
 ---------
