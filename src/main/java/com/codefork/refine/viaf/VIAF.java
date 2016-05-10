@@ -96,10 +96,8 @@ public class VIAF {
 
     public void expireCache() {
         if (cacheEnabled && cache.getCount() > 0) {
-            // make a copy of the cache, expire entries, then replace
-            // original cache with new one
-            Cache<String, List<Result>> newCache = new Cache<String, List<Result>>(cache);
-            newCache.expireCache();
+            // expire entries and replace original cache with new one
+            Cache<String, List<Result>> newCache = cache.expireCache();
             synchronized (cacheLock) {
                 cache = newCache;
             }

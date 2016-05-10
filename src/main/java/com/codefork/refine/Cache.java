@@ -3,8 +3,9 @@ package com.codefork.refine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Simple cache implementation. This does NOT do any locking. Clients should
@@ -23,18 +24,6 @@ public class Cache<K, V> {
     private int lifetime = DEFAULT_LIFETIME; // in seconds
     private int maxSize = DEFAULT_MAXSIZE;
     private HashMap<K, CachedValue> cacheMap = new HashMap<K, CachedValue>();
-
-    public Cache() {
-    }
-
-    /**
-     * Copy constructor
-     */
-    public Cache(Cache original) {
-        this.cacheMap = (HashMap<K, CachedValue>) original.getMap().clone();
-        setLifetime(original.getLifetime());
-        setMaxSize(original.getMaxSize());
-    }
 
     public int getLifetime() {
         return lifetime;
@@ -61,7 +50,14 @@ public class Cache<K, V> {
     }
 
     public void put(K key, V value) {
-        cacheMap.put(key, new CachedValue(value, System.currentTimeMillis()));
+        put(key, value, System.currentTimeMillis());
+    }
+
+    public void put(K key, CachedValue value) {
+        cacheMap.put(key, value);
+    }
+    private void put(K key, V value, long timestamp) {
+        cacheMap.put(key, new CachedValue(value, timestamp));
     }
 
     public V get(K key) {
@@ -72,31 +68,44 @@ public class Cache<K, V> {
     }
 
     /**
-     * Removes entries older than this cache's lifetime,
-     * and discard entries if we're over the maxSize limit.
+     * Returns a copy of this instance, removing entries older than this cache's lifetime,
+     * and discarding entries if we're over the maxSize limit.
      */
-    public void expireCache() {
+    public Cache<K, V> expireCache() {
+        Cache<K, V> newCache = new Cache<K, V>();
+        newCache.setLifetime(getLifetime());
+        newCache.setMaxSize(getMaxSize());
+
         long now = System.currentTimeMillis();
         int count = 0;
         int expiredCount = 0;
-        int overageCount = 0;
-        int total = cacheMap.size();
-        Iterator<K> iter = cacheMap.keySet().iterator();
-        while(iter.hasNext()) {
-            K key = iter.next();
-            if(now - cacheMap.get(key).getTimestamp() >= getLifetime() * 1000) {
-                iter.remove();
+
+        // processing keys in descending timestamp order makes
+        // it easier to break out of the copy loop when we hit maxSize
+        final HashMap<K, CachedValue> oldMap = getMap();
+        K[] sorted = (K[]) oldMap.keySet().toArray();
+        Arrays.sort(sorted, new ReverseTimestampComparator());
+        int total = oldMap.size();
+
+        // loop through keys, newest first
+        for(K key : sorted) {
+            if(now - oldMap.get(key).getTimestamp() >= getLifetime() * 1000) {
                 expiredCount++;
             } else if(count >= maxSize) {
-                iter.remove();
-                overageCount++;
+                // stop iterating; this will ignore the oldest entries
+                break;
+            } else {
+                newCache.put(key, oldMap.get(key));
             }
             count++;
         }
+
+        int overageCount = count >= maxSize ? total - maxSize : 0;
         int remaining = total - expiredCount - overageCount;
         if(expiredCount> 0 || overageCount > 0) {
             log.debug("expireCache() took " + (System.currentTimeMillis() - now) + "ms: removed " + expiredCount + " expired entries, " + overageCount + " entries over maxsize limit; " + remaining + " remaining");
         }
+        return newCache;
     }
 
     private HashMap<K, CachedValue> getMap() {
@@ -120,4 +129,23 @@ public class Cache<K, V> {
             return timestamp;
         }
     }
+
+    /**
+     * Reverse sorts a collection of keys by their cache entry timestamp.
+     */
+    public class ReverseTimestampComparator implements Comparator<K> {
+        @Override
+        public int compare(K o1, K o2) {
+            long ts1 = getMap().get(o1).getTimestamp();
+            long ts2 = getMap().get(o2).getTimestamp();
+            // reverse order sort
+            if(ts1 < ts2) {
+                return 1;
+            } else if(ts1 == ts2) {
+                return 0;
+            }
+            return -1;
+        }
+    }
+
 }
