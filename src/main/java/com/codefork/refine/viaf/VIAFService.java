@@ -25,20 +25,12 @@ public class VIAFService {
      * @param limit max number of results to return
      * @return InputStream if successful, null otherwise
      */
-    public InputStream doSearch(String cql, int limit) {
-        InputStream response = null;
-        try {
-            String url = String.format("http://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml",
-                    UriUtils.encodeQueryParam(cql, "UTF-8"), limit);
-            log.debug("Making request to " + url);
-            URLConnection connection = new URL(url).openConnection();
-            response = connection.getInputStream();
-        } catch(UnsupportedEncodingException ex) {
-            log.error("error constructing VIAF url: " + ex);
-        } catch (IOException ioe) {
-            log.error("error opening connection to VIAF: " + ioe);
-        }
-        return response;
+    public InputStream doSearch(String cql, int limit) throws IOException {
+        String url = String.format("http://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml",
+                UriUtils.encodeQueryParam(cql, "UTF-8"), limit);
+        log.debug("Making request to " + url);
+        URLConnection connection = new URL(url).openConnection();
+        return connection.getInputStream();
     }
 
 }

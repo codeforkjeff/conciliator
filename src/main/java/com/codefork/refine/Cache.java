@@ -10,9 +10,8 @@ import java.util.HashMap;
 /**
  * Simple cache implementation. This does NOT do any locking. Clients should
  * lock when getting a reference to a Cache instance, in order to guarantee
- * consistency. To expire the cache, use the copy constructor to first clone
- * the instance, call expireCache() on the new instance, then replace the
- * original instance.
+ * consistency. To expire the cache, call expireCache() to get a new instance,
+ * then replace the original instance.
  */
 public class Cache<K, V> {
 
@@ -79,6 +78,7 @@ public class Cache<K, V> {
         long now = System.currentTimeMillis();
         int count = 0;
         int expiredCount = 0;
+        int overageCount = 0;
 
         // processing keys in descending timestamp order makes
         // it easier to break out of the copy loop when we hit maxSize
@@ -89,10 +89,13 @@ public class Cache<K, V> {
 
         // loop through keys, newest first
         for(K key : sorted) {
+            // we don't need to continue if we encounter an expired entry
+            // or if we exceed maxSize
             if(now - oldMap.get(key).getTimestamp() >= getLifetime() * 1000) {
-                expiredCount++;
+                expiredCount = total - count;
+                break;
             } else if(count >= maxSize) {
-                // stop iterating; this will ignore the oldest entries
+                overageCount = total - maxSize;
                 break;
             } else {
                 newCache.put(key, oldMap.get(key));
@@ -100,7 +103,6 @@ public class Cache<K, V> {
             count++;
         }
 
-        int overageCount = count >= maxSize ? total - maxSize : 0;
         int remaining = total - expiredCount - overageCount;
         if(expiredCount> 0 || overageCount > 0) {
             log.debug("expireCache() took " + (System.currentTimeMillis() - now) + "ms: removed " + expiredCount + " expired entries, " + overageCount + " entries over maxsize limit; " + remaining + " remaining");

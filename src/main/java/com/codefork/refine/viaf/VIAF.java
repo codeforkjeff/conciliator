@@ -97,8 +97,13 @@ public class VIAF {
     public void expireCache() {
         if (cacheEnabled && cache.getCount() > 0) {
             // expire entries and replace original cache with new one
+            int size = cache.getCount();
             Cache<String, List<Result>> newCache = cache.expireCache();
             synchronized (cacheLock) {
+                int size2 = cache.getCount();
+                if(size2 != size) {
+                    log.warn("Cache grew during expiration. This happens sometimes, but shouldn't happen frequently. size diff=" + (size2 - size));
+                }
                 cache = newCache;
             }
         }
@@ -110,10 +115,6 @@ public class VIAF {
      * @return list of search results (a 0-size list if none, or if errors occurred)
      */
     public List<Result> search(SearchQuery query) {
-        // TODO: doSearch should differentiate between an error occurring
-        // when running a query, and a query returning 0 results.
-        // We should only cache successful queries.
-
         if (cacheEnabled) {
             Cache<String, List<Result>> cacheRef = null;
 
@@ -127,69 +128,85 @@ public class VIAF {
 
             String key = query.getHashKey();
             if (!cacheRef.containsKey(key)) {
-                cacheRef.put(key, doSearch(query));
+                List<Result> results = null;
+                // only cache if search was successful
+                try {
+                    results = doSearch(query);
+                    cacheRef.put(key, results);
+                } catch(ParserConfigurationException e) {
+                    log.error("parser error: " + e);
+                } catch (SAXException e) {
+                    log.error("sax error: " + e);
+                } catch (IOException e) {
+                    log.error("ioerror: " + e);
+                }
+                if(results != null) {
+                    return results;
+                } else {
+                    return new ArrayList<Result>();
+                }
             } else {
                 log.debug("Cache hit for: " + key);
+                return cacheRef.get(key);
             }
-            return cacheRef.get(key);
         }
-        return doSearch(query);
+
+        try {
+            return doSearch(query);
+        } catch(ParserConfigurationException e) {
+            log.error("parser error: " + e);
+        } catch (SAXException e) {
+            log.error("sax error: " + e);
+        } catch (IOException e) {
+            log.error("ioerror: " + e);
+        }
+        return new ArrayList<Result>();
     }
 
-    private List<Result> doSearch(SearchQuery query) {
-        List<Result> results = new ArrayList<Result>();
+    private List<Result> doSearch(SearchQuery query) throws ParserConfigurationException, SAXException, IOException {
         InputStream response = viafService.doSearch(query.createCqlQueryString(), query.getLimit());
 
-        if(response != null) {
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            try {
-                SAXParser parser = spf.newSAXParser();
-                VIAFParser viafParser = new VIAFParser();
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        SAXParser parser = spf.newSAXParser();
+        VIAFParser viafParser = new VIAFParser();
 
-                long start = System.currentTimeMillis();
-                parser.parse(response, viafParser);
-                long parseTime = System.currentTimeMillis() - start;
+        long start = System.currentTimeMillis();
+        parser.parse(response, viafParser);
+        long parseTime = System.currentTimeMillis() - start;
 
-                try {
-                    response.close();
-                } catch(IOException ioe) {
-                    log.error("Ignoring error from trying to close connection input stream: " + ioe);
-                }
-
-                for (VIAFResult viafResult : viafParser.getResults()) {
-                    /*
-                    log.debug("Result=" + viafResult.getViafId());
-                    log.debug("NameType=" + viafResult.getNameType().getViafCode());
-                    for(NameEntry nameEntry : viafResult.getNameEntries()) {
-                        log.debug("Name=" + nameEntry.getName());
-                        log.debug("Sources=" + StringUtils.collectionToDelimitedString(nameEntry.getSources(), ","));
-                    }
-                    */
-
-                    // if no explicit source was specified, we should use any exact
-                    // match if present, otherwise the most common one
-                    String name = query.getSource() != null ?
-                            viafResult.getNameBySource(query.getSource()) :
-                            viafResult.getExactNameOrMostCommonName(query.getQuery());
-                    boolean exactMatch = name != null ? name.equals(query.getQuery()) : false;
-
-                    results.add(new Result(
-                            viafResult.getViafId(),
-                            name,
-                            viafResult.getNameType(),
-                            StringUtil.levenshteinDistanceRatio(name, query.getQuery()),
-                            exactMatch));
-                }
-                log.debug(String.format("Query: %s - parsing took %dms, got %d results",
-                        query.getQuery(), parseTime, viafParser.getResults().size()));
-            } catch (ParserConfigurationException ex) {
-                log.error("error creating parser: " + ex);
-            } catch (SAXException ex) {
-                log.error("sax error: " + ex);
-            } catch (IOException ex) {
-                log.error("ioerror parsing: " + ex);
-            }
+        try {
+            response.close();
+        } catch(IOException ioe) {
+            log.error("Ignoring error from trying to close connection input stream: " + ioe);
         }
+
+        List<Result> results = new ArrayList<Result>();
+        for (VIAFResult viafResult : viafParser.getResults()) {
+            /*
+            log.debug("Result=" + viafResult.getViafId());
+            log.debug("NameType=" + viafResult.getNameType().getViafCode());
+            for(NameEntry nameEntry : viafResult.getNameEntries()) {
+                log.debug("Name=" + nameEntry.getName());
+                log.debug("Sources=" + StringUtils.collectionToDelimitedString(nameEntry.getSources(), ","));
+            }
+            */
+
+            // if no explicit source was specified, we should use any exact
+            // match if present, otherwise the most common one
+            String name = query.getSource() != null ?
+                    viafResult.getNameBySource(query.getSource()) :
+                    viafResult.getExactNameOrMostCommonName(query.getQuery());
+            boolean exactMatch = name != null ? name.equals(query.getQuery()) : false;
+
+            results.add(new Result(
+                    viafResult.getViafId(),
+                    name,
+                    viafResult.getNameType(),
+                    StringUtil.levenshteinDistanceRatio(name, query.getQuery()),
+                    exactMatch));
+        }
+        log.debug(String.format("Query: %s - parsing took %dms, got %d results",
+                query.getQuery(), parseTime, viafParser.getResults().size()));
 
         return results;
     }
