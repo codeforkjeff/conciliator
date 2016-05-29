@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class NameEntry {
     private String name;
-    private List<String> sources = new ArrayList<String>();
+    private List<NameSource> nameSources = new ArrayList<NameSource>();
 
     public String getName() {
         return name;
@@ -18,15 +18,12 @@ public class NameEntry {
         this.name = name;
     }
 
-    public List<String> getSources() {
-        return sources;
+    public List<NameSource> getNameSources() {
+        return nameSources;
     }
 
-    public void setSources(List<String> sources) {
-        this.sources = sources;
+    public void setNameSources(List<NameSource> nameSources) {
+        this.nameSources = nameSources;
     }
 
-    public void addSource(String source) {
-        getSources().add(source);
-    }
 }

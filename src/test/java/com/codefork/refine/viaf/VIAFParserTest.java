@@ -23,6 +23,17 @@ public class VIAFParserTest {
         return b.toString();
     }
 
+    private static String joinSources(List<NameSource> nameSources, String delimiter) {
+        StringBuilder b = new StringBuilder();
+        for(NameSource s : nameSources) {
+            if(b.length() > 0) {
+                b.append(delimiter);
+            }
+            b.append(s.getCode());
+        }
+        return b.toString();
+    }
+
     /**
      * calculate arithmetic mean (average)
      * @param ary
@@ -81,36 +92,40 @@ public class VIAFParserTest {
         assertEquals("Steinbeck, John, 1902-1968",
                 firstResult.getNameEntries().get(0).getName());
         assertEquals("LC,BIBSYS,BNF,KRNLK,N6I,LAC,BNE,SUDOC,BAV,BNC,NLI,B2Q,PTBNP,NLP,LNB,SELIBR,NLA,ICCU,NDL,DNB,NUKAT,NKC",
-                joinStrings(firstResult.getNameEntries().get(0).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(0).getNameSources(), ","));
+
+        assertEquals("n  79081460", firstResult.getSourceId("LC"));
+        assertEquals("x90081598", firstResult.getSourceId("BIBSYS"));
+        assertEquals("11925483", firstResult.getSourceId("BNF"));
 
         assertEquals("Steinbeck, John (John Ernst), 1902-1968",
                 firstResult.getNameEntries().get(1).getName());
         assertEquals("NTA",
-                joinStrings(firstResult.getNameEntries().get(1).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(1).getNameSources(), ","));
 
         assertEquals("NSK,SWNL",
-                joinStrings(firstResult.getNameEntries().get(2).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(2).getNameSources(), ","));
         assertEquals("WKP",
-                joinStrings(firstResult.getNameEntries().get(3).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(3).getNameSources(), ","));
         assertEquals("LNL,EGAXA",
-                joinStrings(firstResult.getNameEntries().get(4).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(4).getNameSources(), ","));
         assertEquals("NLI",
-                joinStrings(firstResult.getNameEntries().get(5).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(5).getNameSources(), ","));
         assertEquals("NLI",
-                joinStrings(firstResult.getNameEntries().get(6).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(6).getNameSources(), ","));
         assertEquals("NLI",
-                joinStrings(firstResult.getNameEntries().get(7).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(7).getNameSources(), ","));
         assertEquals("NLR",
-                joinStrings(firstResult.getNameEntries().get(8).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(8).getNameSources(), ","));
         assertEquals("JPG",
-                joinStrings(firstResult.getNameEntries().get(9).getSources(), ","));
+                joinSources(firstResult.getNameEntries().get(9).getNameSources(), ","));
 
         assertEquals(5, secondResult.getNameEntries().size());
 
         assertEquals("Steinbeck, John 1946-1991",
                 secondResult.getNameEntries().get(0).getName());
         assertEquals("NLP,ICCU,DNB,BNF",
-                joinStrings(secondResult.getNameEntries().get(0).getSources(), ","));
+                joinSources(secondResult.getNameEntries().get(0).getNameSources(), ","));
 
     }
 

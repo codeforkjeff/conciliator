@@ -19,7 +19,7 @@ public class VIAFParser extends DefaultHandler {
     private VIAFResult result = null;
     private List<NameEntry> nameEntries = null;
     private NameEntry nameEntry = null;
-    private List<String> sources = null;
+    private List<NameSource> nameSources = null;
 
     // viaf's weird indexed namespacing
     private int nsIndex = 2;
@@ -46,12 +46,16 @@ public class VIAFParser extends DefaultHandler {
         if (result != null) {
             if (nameEntries != null) {
                 if (nameEntry != null) {
-                    if (sources != null) {
+                    if (nameSources != null) {
+                        // account for fact that XML sometimes contains only "s" element,
+                        // sometimes both "s" and "sid" elements.
                         if (getElementNameWithNS("s").equals(qName)) {
+                            captureChars = true;
+                        } else if (getElementNameWithNS("sid").equals(qName)) {
                             captureChars = true;
                         }
                     } else if (getElementNameWithNS("sources").equals(qName)) {
-                        sources = new ArrayList<String>();
+                        nameSources = new ArrayList<NameSource>();
                     } else if (getElementNameWithNS("text").equals(qName)) {
                         captureChars = true;
                     }
@@ -89,12 +93,37 @@ public class VIAFParser extends DefaultHandler {
                         nameEntry.setName(buf.toString());
                         buf = new StringBuilder();
                         captureChars = false;
-                    } else if (sources != null) {
+                    } else if (nameSources != null) {
                         if (getElementNameWithNS("sources").equals(qName)) {
-                            nameEntry.setSources(sources);
-                            sources = null;
+                            nameEntry.setNameSources(nameSources);
+                            nameSources = null;
                         } else if (getElementNameWithNS("s").equals(qName)) {
-                            sources.add(buf.toString());
+                            String source = buf.toString();
+                            nameSources.add(new NameSource(source, null));
+                            buf = new StringBuilder();
+                            captureChars = false;
+                        } else if (getElementNameWithNS("sid").equals(qName)) {
+                            String sid = buf.toString();
+                            String[] parts = sid.split("\\|");
+                            if (parts.length == 2) {
+                                String code = parts[0];
+                                String id = parts[1];
+
+                                // check if Source object was already created from 's' element
+                                boolean sourceAlreadyExists = false;
+                                for(NameSource s : nameSources) {
+                                    if(s.getCode().equals(code)) {
+                                        s.setId(id);
+                                        sourceAlreadyExists = true;
+                                        break;
+                                    }
+                                }
+                                if(!sourceAlreadyExists) {
+                                    nameSources.add(new NameSource(code, id));
+                                }
+                            } else {
+                                System.out.println("ARGH, len of parts=" + parts.length);
+                            }
                             buf = new StringBuilder();
                             captureChars = false;
                         }

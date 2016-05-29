@@ -50,9 +50,25 @@ public class VIAFResult {
 
     public String getNameBySource(String sourceArg) {
         for(NameEntry nameEntry : getNameEntries()) {
-            for(String source : nameEntry.getSources()) {
-                if(source.equals(sourceArg)) {
+            for(NameSource nameSource : nameEntry.getNameSources()) {
+                if(nameSource.getCode().equals(sourceArg)) {
                     return nameEntry.getName();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the name's ID according to specified source
+     * @param sourceArg
+     * @return
+     */
+    public String getSourceId(String sourceArg) {
+        for(NameEntry nameEntry : getNameEntries()) {
+            for(NameSource nameSource : nameEntry.getNameSources()) {
+                if(nameSource.getCode().equals(sourceArg)) {
+                    return nameSource.getId();
                 }
             }
         }
@@ -66,9 +82,9 @@ public class VIAFResult {
             if(nameEntry.getName().equals(nameArg)) {
                 return nameEntry.getName();
             }
-            if (nameEntry.getSources().size() > count) {
+            if (nameEntry.getNameSources().size() > count) {
                 name = nameEntry.getName();
-                count = nameEntry.getSources().size();
+                count = nameEntry.getNameSources().size();
             }
         }
         return name;

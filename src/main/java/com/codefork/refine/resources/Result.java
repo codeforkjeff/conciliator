@@ -26,6 +26,7 @@ public class Result {
     
     private String id;
     private String name;
+
     /**
      * It's weird that this is a list but that's what OpenRefine expects.
      * A VIAF result only ever has one type, but maybe other reconciliation

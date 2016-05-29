@@ -20,6 +20,10 @@ Features
 * Support for the following types of names provided by VIAF: Corporate
   Names, Geographic Names, Personal Names, Works, Expressions
 
+* "Through mode" to reconcile names directly to source IDs instead of
+  VIAF IDs (currently only supported for BNE, BNF, DNB, JPG, LC, NDL,
+  SELIBR, SUDOC, and WKP)
+
 * Good performance (uses threads; stable memory usage; caches results)
 
 * Super easy to run
@@ -73,6 +77,15 @@ Configuring OpenRefine
     
     ```
     http://localhost:8080/reconcile/viaf/BNF
+    ```
+
+    To use "through mode" and retrieve specific source IDs rather than
+    VIAF IDs. For example, to get Library of Congress IDs for names,
+    type in (note that, in this mode, the source ID at the end is
+    required):
+    
+    ```
+    http://localhost:8080/reconcile/throughviaf/LC
     ```
 
 4. Follow the instructions on the dialog box to start reconciling

@@ -4,8 +4,10 @@ import com.codefork.refine.Cache;
 import com.codefork.refine.CacheExpire;
 import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
-import com.codefork.refine.StringUtil;
 import com.codefork.refine.resources.Result;
+import com.codefork.refine.viaf.sources.NonVIAFSource;
+import com.codefork.refine.viaf.sources.Source;
+import com.codefork.refine.viaf.sources.VIAFSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,9 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is the main API for doing VIAF searches.
@@ -34,6 +38,9 @@ public class VIAF {
     private Cache<String, List<Result>> cache = new Cache<String, List<Result>>();
     private final Object cacheLock = new Object();
     private CacheExpire cacheExpire;
+
+    private VIAFSource viafSource = null;
+    private Map<String, NonVIAFSource> nonViafSources = new HashMap<String, NonVIAFSource>();
 
     @Autowired
     public VIAF(VIAFService viafService, Config config) {
@@ -107,6 +114,31 @@ public class VIAF {
                 cache = newCache;
             }
         }
+    }
+
+    /**
+     * Factory method for getting a NonVIAFSource object
+     */
+    public NonVIAFSource findNonViafSource(String code) {
+        if(!nonViafSources.containsKey(code)) {
+            nonViafSources.put(code, new NonVIAFSource(code));
+        }
+        return nonViafSources.get(code);
+    }
+
+    /**
+     * Factory method for getting a Source object
+     * @param code
+     * @return
+     */
+    public Source findSource(SearchQuery query) {
+        if(!query.isThroughMode()) {
+            if(viafSource == null) {
+                viafSource = new VIAFSource();
+            }
+            return viafSource;
+        }
+        return findNonViafSource(query.getSource());
     }
 
     /**
@@ -191,19 +223,8 @@ public class VIAF {
             }
             */
 
-            // if no explicit source was specified, we should use any exact
-            // match if present, otherwise the most common one
-            String name = query.getSource() != null ?
-                    viafResult.getNameBySource(query.getSource()) :
-                    viafResult.getExactNameOrMostCommonName(query.getQuery());
-            boolean exactMatch = name != null ? name.equals(query.getQuery()) : false;
-
-            results.add(new Result(
-                    viafResult.getViafId(),
-                    name,
-                    viafResult.getNameType(),
-                    StringUtil.levenshteinDistanceRatio(name, query.getQuery()),
-                    exactMatch));
+            Source source = findSource(query);
+            results.add(source.formatResult(query, viafResult));
         }
         log.debug(String.format("Query: %s - parsing took %dms, got %d results",
                 query.getQuery(), parseTime, viafParser.getResults().size()));

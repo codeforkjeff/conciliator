@@ -8,6 +8,7 @@ import com.codefork.refine.SearchThread;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.codefork.refine.resources.SourceMetaDataResponse;
 import com.codefork.refine.viaf.VIAF;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -50,43 +51,71 @@ public class ReconcileController {
     /**
      * Endpoint that does non-source-specific reconciliation.
      */
-    @RequestMapping(value="/viaf")
+    @RequestMapping(value = "/viaf")
     @ResponseBody
-    public Object reconcileWithSources(
-        @RequestParam(value="query", required=false) String query,
-        @RequestParam(value="queries", required=false) String queries) {
-        return reconcile(query, queries, null);
+    public Object reconcileNoSource(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "queries", required = false) String queries) {
+        return reconcile(query, queries, null, false);
     }
-    
+
     /**
      * Endpoint that does source-specific reconciliation.
      */
-    @RequestMapping(value="/viaf/{source}")
+    @RequestMapping(value = "/viaf/{source}")
     @ResponseBody
-    public Object reconcile(
-        @RequestParam(value="query", required=false) String query,
-        @RequestParam(value="queries", required=false) String queries,
-        @PathVariable("source") String sourceFromPath) {
+    public Object reconcileWithSource(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "queries", required = false) String queries,
+            @PathVariable("source") String sourceFromPath) {
+        return reconcile(query, queries, sourceFromPath, false);
+    }
+
+    /**
+     * "Through viaf" endpoint
+     */
+    @RequestMapping(value = "/throughviaf/{source}")
+    @ResponseBody
+    public Object reconcileThrough(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "queries", required = false) String queries,
+            @PathVariable("source") String sourceFromPath) {
+        return reconcile(query, queries, sourceFromPath, true);
+    }
+
+    /**
+     * Entry point for all reconciliation code
+     * @param query
+     * @param queries
+     * @param sourceFromPath
+     * @param throughMode
+     * @return
+     */
+    private Object reconcile(
+            String query,
+            String queries,
+            String sourceFromPath,
+            boolean throughMode) {
 
         String source = (sourceFromPath != null) ? sourceFromPath : null;
 
-        if(query != null) {
+        if (query != null) {
             log.debug("query=" + query);
             try {
                 SearchQuery searchQuery;
-                if(query.startsWith("{")) {
+                if (query.startsWith("{")) {
                     JsonNode root = mapper.readTree(query);
-                    searchQuery = createSearchQuery(root, source);
+                    searchQuery = createSearchQuery(root, source, throughMode);
                 } else {
-                    searchQuery = new SearchQuery(query, 3, null, "should");
+                    searchQuery = new SearchQuery(query, 3, null, "should", throughMode);
                 }
                 List<Result> results = viaf.search(searchQuery);
                 return new SearchResponse(results);
-            } catch(JsonProcessingException jse) {
+            } catch (JsonProcessingException jse) {
                 log.error("Got an error processing JSON: " + jse.toString());
-            } catch(IOException ioe) {
+            } catch (IOException ioe) {
                 log.error("Got IO error processing JSON: " + ioe.toString());
-            }            
+            }
 
         } else if (queries != null) {
             log.debug("queries=" + queries);
@@ -103,26 +132,26 @@ public class ReconcileController {
                 long start = System.currentTimeMillis();
 
                 Iterator<Map.Entry<String, JsonNode>> iter = root.fields();
-                while(iter.hasNext()) {
-                    Map.Entry<String, JsonNode> fieldEntry = iter.next();                    
+                while (iter.hasNext()) {
+                    Map.Entry<String, JsonNode> fieldEntry = iter.next();
 
                     String indexKey = fieldEntry.getKey();
                     JsonNode queryStruct = fieldEntry.getValue();
 
-                    SearchQuery searchQuery = createSearchQuery(queryStruct, source);
+                    SearchQuery searchQuery = createSearchQuery(queryStruct, source, throughMode);
 
                     SearchThread worker = new SearchThread(viaf, searchQuery);
                     executor.execute(worker);
                     threads.put(indexKey, worker);
                 }
-                
+
                 executor.shutdown();
                 executor.awaitTermination(REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-                
+
                 log.debug(String.format("%s threads finished in %s", threads.size(), System.currentTimeMillis() - start));
 
                 // collect results from the finished threads
-                for(Map.Entry<String, SearchThread> threadStruct : threads.entrySet()) {
+                for (Map.Entry<String, SearchThread> threadStruct : threads.entrySet()) {
                     String indexKey = threadStruct.getKey();
                     SearchThread searchThread = threadStruct.getValue();
                     List<Result> results = searchThread.getResults();
@@ -130,17 +159,20 @@ public class ReconcileController {
                 }
 
                 log.debug(String.format("response=%s", new DeferredJSON(allResults)));
-                
+
                 return allResults;
-            } catch(JsonProcessingException jse) {
+            } catch (JsonProcessingException jse) {
                 log.error("Got an error processing JSON: " + jse.toString());
-            } catch(IOException ioe) {
+            } catch (IOException ioe) {
                 log.error("Got IO error processing JSON: " + ioe.toString());
             } catch (InterruptedException ex) {
                 log.error("Interrupted while waiting for threads: " + ex.toString());
             }
         }
 
+        if(throughMode) {
+            return new SourceMetaDataResponse(config, viaf.findNonViafSource(source));
+        }
         return new ServiceMetaDataResponse(config, source);
     }
 
@@ -151,7 +183,7 @@ public class ReconcileController {
      * @param source two-letter source code
      * @return SearchQuery
      */
-    private SearchQuery createSearchQuery(JsonNode queryStruct, String source) {
+    private SearchQuery createSearchQuery(JsonNode queryStruct, String source, boolean throughMode) {
         int limit = queryStruct.path("limit").asInt();
         if(limit == 0) {
             limit = 3;
@@ -168,7 +200,8 @@ public class ReconcileController {
                 queryStruct.path("query").asText().trim(),
                 limit,
                 nameType,
-                typeStrict
+                typeStrict,
+                throughMode
                 );
 
         if(source != null) {

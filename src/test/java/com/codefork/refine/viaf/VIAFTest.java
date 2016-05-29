@@ -42,15 +42,15 @@ public class VIAFTest {
         assertFalse(result1.isMatch());
 
         Result result2 = results.get(1);
-        assertEquals("Sayn-Wittgenstein, Carolyne de, 1819-1887", result2.getName());
+        assertEquals("Anscombe, G. E. M. (Gertrude Elizabeth Margaret)", result2.getName());
         assertEquals(NameType.Person.asVIAFNameType(), result2.getType().get(0));
-        assertEquals("19786777", result2.getId());
+        assertEquals("59078032", result2.getId());
         assertFalse(result2.isMatch());
 
         Result result3 = results.get(2);
-        assertEquals("Sajn-Vitgenštejn, Ekaterina Nikolaevna (1895-1983).", result3.getName());
+        assertEquals("Klossowski, Pierre, 1905-2001", result3.getName());
         assertEquals(NameType.Person.asVIAFNameType(), result3.getType().get(0));
-        assertEquals("17232968", result3.getId());
+        assertEquals("27066848", result3.getId());
         assertFalse(result3.isMatch());
     }
 

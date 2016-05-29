@@ -20,14 +20,23 @@ public class SearchQuery {
     private NameType nameType;
     private String typeStrict;
     private String source;
-    
-    public SearchQuery(String query, int limit, NameType nameType, String typeStrict) {
+    private boolean throughMode;
+
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict, boolean throughMode) {
         this.query = query;
         this.limit = limit;
         this.nameType = nameType;
         this.typeStrict = typeStrict;
+        this.throughMode = throughMode;
     }
-    
+
+    /**
+     * Constructor setting throughMode = false
+     */
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict) {
+        this(query, limit, nameType, typeStrict, false);
+    }
+
     public String getQuery() {
         return query;
     }
@@ -67,7 +76,15 @@ public class SearchQuery {
     public void setSource(String source) {
         this.source = source;
     }
-    
+
+    public boolean isThroughMode() {
+        return throughMode;
+    }
+
+    public void setThroughMode(boolean throughMode) {
+        this.throughMode = throughMode;
+    }
+
     /**
      * @return String used for the cql 'query' URL param passed to VIAF 
      */
@@ -93,7 +110,8 @@ public class SearchQuery {
                 limit + "|" +
                 (nameType != null ? nameType.getId() : "") + "|" +
                 (typeStrict != null ? typeStrict : "") + "|" +
-                (source != null ? source : "");
+                (source != null ? source : "") + "|" +
+                throughMode;
     }
 
 }
