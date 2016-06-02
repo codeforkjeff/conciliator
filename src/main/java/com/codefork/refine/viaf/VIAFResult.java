@@ -68,7 +68,7 @@ public class VIAFResult {
         for(NameEntry nameEntry : getNameEntries()) {
             for(NameSource nameSource : nameEntry.getNameSources()) {
                 if(nameSource.getCode().equals(sourceArg)) {
-                    return nameSource.getId();
+                    return nameSource.getSourceId();
                 }
             }
         }

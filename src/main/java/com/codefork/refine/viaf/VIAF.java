@@ -32,6 +32,8 @@ public class VIAF {
 
     public static final boolean DEFAULT_CACHE_ENABLED = true;
 
+    private SAXParserFactory spf;
+
     Log log = LogFactory.getLog(VIAF.class);
     private final VIAFService viafService;
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
@@ -45,6 +47,8 @@ public class VIAF {
     @Autowired
     public VIAF(VIAFService viafService, Config config) {
         this.viafService = viafService;
+
+        spf = SAXParserFactory.newInstance();
 
         boolean cacheEnabled = Boolean.valueOf(config.getProperties().getProperty("cache.enabled",
                 String.valueOf(DEFAULT_CACHE_ENABLED)));
@@ -128,7 +132,7 @@ public class VIAF {
 
     /**
      * Factory method for getting a Source object
-     * @param code
+     * @param query
      * @return
      */
     public Source findSource(SearchQuery query) {
@@ -198,7 +202,6 @@ public class VIAF {
     private List<Result> doSearch(SearchQuery query) throws ParserConfigurationException, SAXException, IOException {
         InputStream response = viafService.doSearch(query.createCqlQueryString(), query.getLimit());
 
-        SAXParserFactory spf = SAXParserFactory.newInstance();
         SAXParser parser = spf.newSAXParser();
         VIAFParser viafParser = new VIAFParser();
 

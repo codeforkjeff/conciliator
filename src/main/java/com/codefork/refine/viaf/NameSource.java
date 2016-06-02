@@ -6,11 +6,14 @@ package com.codefork.refine.viaf;
 public class NameSource {
 
     private String code;
-    private String id;
+    // VIAF's source ID, of the form "ORG|CODE"
+    private String viafSourceId;
+    // "actual" source ID according to the source institution itself
+    private String sourceId;
 
-    public NameSource(String source, String id) {
+    public NameSource(String source, String viafSourceId) {
         this.code = source;
-        this.id = id;
+        this.viafSourceId = viafSourceId;
     }
 
     public String getCode() {
@@ -21,11 +24,19 @@ public class NameSource {
         this.code = code;
     }
 
-    public String getId() {
-        return id;
+    public String getViafSourceId() {
+        return viafSourceId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setViafSourceId(String viafSourceId) {
+        this.viafSourceId = viafSourceId;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 }

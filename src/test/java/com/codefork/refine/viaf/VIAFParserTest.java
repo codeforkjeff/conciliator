@@ -94,9 +94,11 @@ public class VIAFParserTest {
         assertEquals("LC,BIBSYS,BNF,KRNLK,N6I,LAC,BNE,SUDOC,BAV,BNC,NLI,B2Q,PTBNP,NLP,LNB,SELIBR,NLA,ICCU,NDL,DNB,NUKAT,NKC",
                 joinSources(firstResult.getNameEntries().get(0).getNameSources(), ","));
 
-        assertEquals("n  79081460", firstResult.getSourceId("LC"));
+        // test that our source ID mappings work
+        assertEquals("n79081460", firstResult.getSourceId("LC"));
         assertEquals("x90081598", firstResult.getSourceId("BIBSYS"));
-        assertEquals("11925483", firstResult.getSourceId("BNF"));
+        assertEquals("http://catalogue.bnf.fr/ark:/12148/cb119254833", firstResult.getSourceId("BNF"));
+        assertEquals("IT\\ICCU\\CFIV\\000628", firstResult.getSourceId("ICCU"));
 
         assertEquals("Steinbeck, John (John Ernst), 1902-1968",
                 firstResult.getNameEntries().get(1).getName());

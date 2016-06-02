@@ -26,7 +26,7 @@ public class NonVIAFSource extends Source {
         // DBC = no outgoing link
         urls.put("DNB", "http://d-nb.info/gnd/{{id}}");
         // EGAXA = no outgoing link
-        // ICCU = id in URL not same as parsed id (TODO?)
+        urls.put("ICCU", "http://id.sbn.it/af/{{id}}");
         urls.put("JPG", "http://www.getty.edu/vow/ULANFullDisplay?find=&role=&nation=&subjectid={{id}}");
         // KRNLK = no outgoing link
         // LAK = no outgoing link
@@ -59,16 +59,6 @@ public class NonVIAFSource extends Source {
 
     public String getCode() {
         return code;
-    }
-
-    @Override
-    public String formatID(String id) {
-        if(id != null) {
-            if("LC".equals(code)) {
-                return id.replace(" ", "");
-            }
-        }
-        return id;
     }
 
     public String getServiceURLTemplate() {
