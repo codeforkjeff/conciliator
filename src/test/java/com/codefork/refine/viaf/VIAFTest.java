@@ -5,6 +5,9 @@ import org.junit.Test;
 import com.codefork.refine.NameType;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.resources.Result;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -181,6 +184,68 @@ public class VIAFTest {
         List<Result> results = viaf.search(query);
 
         assertEquals(0, results.size());
+    }
+
+    @Test
+    public void testCache() throws Exception {
+        // http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml
+        viafService = mock(VIAFService.class);
+        InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
+        when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
+
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
+        viaf.setCacheEnabled(true);
+        viaf.setCacheLifetime(1);
+
+        SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should");
+        List<Result> results = viaf.search(query);
+
+        assertEquals(3, results.size());
+
+        SearchQuery query2 = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should");
+        List<Result> results2 = viaf.search(query2);
+
+        assertEquals(3, results2.size());
+
+        verify(viafService, times(1)).doSearch(anyString(), anyInt());
+    }
+
+    @Test
+    public void testExpireCache() throws Exception {
+        // http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml
+        viafService = mock(VIAFService.class);
+        final Class testClass = getClass();
+        doAnswer(new Answer<InputStream>() {
+            @Override
+            public InputStream answer(InvocationOnMock invocation) {
+                return testClass.getResourceAsStream("/shakespeare.xml");
+            }
+        }).when(viafService).doSearch(anyString(), anyInt());
+
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
+        viaf.setCacheEnabled(true);
+        viaf.setCacheLifetime(1);
+
+        SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should");
+        List<Result> results = viaf.search(query);
+
+        assertEquals(3, results.size());
+
+        Thread.sleep(1100);
+        viaf.expireCache();
+
+        SearchQuery query2 = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should");
+        List<Result> results2 = viaf.search(query2);
+
+        assertEquals(3, results2.size());
+
+        verify(viafService, times(2)).doSearch(anyString(), anyInt());
     }
 
     @Test
