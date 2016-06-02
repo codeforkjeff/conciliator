@@ -20,18 +20,18 @@ public class SearchQuery {
     private NameType nameType;
     private String typeStrict;
     private String source;
-    private boolean throughMode;
+    private boolean proxyMode;
 
-    public SearchQuery(String query, int limit, NameType nameType, String typeStrict, boolean throughMode) {
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict, boolean proxyMode) {
         this.query = query;
         this.limit = limit;
         this.nameType = nameType;
         this.typeStrict = typeStrict;
-        this.throughMode = throughMode;
+        this.proxyMode = proxyMode;
     }
 
     /**
-     * Constructor setting throughMode = false
+     * Constructor setting proxyMode = false
      */
     public SearchQuery(String query, int limit, NameType nameType, String typeStrict) {
         this(query, limit, nameType, typeStrict, false);
@@ -77,12 +77,12 @@ public class SearchQuery {
         this.source = source;
     }
 
-    public boolean isThroughMode() {
-        return throughMode;
+    public boolean isProxyMode() {
+        return proxyMode;
     }
 
-    public void setThroughMode(boolean throughMode) {
-        this.throughMode = throughMode;
+    public void setProxyMode(boolean proxyMode) {
+        this.proxyMode = proxyMode;
     }
 
     /**
@@ -111,7 +111,7 @@ public class SearchQuery {
                 (nameType != null ? nameType.getId() : "") + "|" +
                 (typeStrict != null ? typeStrict : "") + "|" +
                 (source != null ? source : "") + "|" +
-                throughMode;
+                proxyMode;
     }
 
 }

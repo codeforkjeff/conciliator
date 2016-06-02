@@ -72,11 +72,23 @@ public class ReconcileController {
     }
 
     /**
-     * "Through viaf" endpoint
+     * TODO: DEPRECATED
      */
     @RequestMapping(value = "/throughviaf/{source}")
     @ResponseBody
-    public Object reconcileThrough(
+    public Object reconcileProxyDeprecated(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "queries", required = false) String queries,
+            @PathVariable("source") String sourceFromPath) {
+        return reconcile(query, queries, sourceFromPath, true);
+    }
+
+    /**
+     * proxy mode URL
+     */
+    @RequestMapping(value = "/viafproxy/{source}")
+    @ResponseBody
+    public Object reconcileProxy(
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "queries", required = false) String queries,
             @PathVariable("source") String sourceFromPath) {
@@ -88,14 +100,14 @@ public class ReconcileController {
      * @param query
      * @param queries
      * @param sourceFromPath
-     * @param throughMode
+     * @param proxyMode
      * @return
      */
     private Object reconcile(
             String query,
             String queries,
             String sourceFromPath,
-            boolean throughMode) {
+            boolean proxyMode) {
 
         String source = (sourceFromPath != null) ? sourceFromPath : null;
 
@@ -105,9 +117,9 @@ public class ReconcileController {
                 SearchQuery searchQuery;
                 if (query.startsWith("{")) {
                     JsonNode root = mapper.readTree(query);
-                    searchQuery = createSearchQuery(root, source, throughMode);
+                    searchQuery = createSearchQuery(root, source, proxyMode);
                 } else {
-                    searchQuery = new SearchQuery(query, 3, null, "should", throughMode);
+                    searchQuery = new SearchQuery(query, 3, null, "should", proxyMode);
                 }
                 List<Result> results = viaf.search(searchQuery);
                 return new SearchResponse(results);
@@ -138,7 +150,7 @@ public class ReconcileController {
                     String indexKey = fieldEntry.getKey();
                     JsonNode queryStruct = fieldEntry.getValue();
 
-                    SearchQuery searchQuery = createSearchQuery(queryStruct, source, throughMode);
+                    SearchQuery searchQuery = createSearchQuery(queryStruct, source, proxyMode);
 
                     SearchThread worker = new SearchThread(viaf, searchQuery);
                     executor.execute(worker);
@@ -170,7 +182,7 @@ public class ReconcileController {
             }
         }
 
-        if(throughMode) {
+        if(proxyMode) {
             return new SourceMetaDataResponse(config, viaf.findNonViafSource(source));
         }
         return new ServiceMetaDataResponse(config, source);
@@ -183,7 +195,7 @@ public class ReconcileController {
      * @param source two-letter source code
      * @return SearchQuery
      */
-    private SearchQuery createSearchQuery(JsonNode queryStruct, String source, boolean throughMode) {
+    private SearchQuery createSearchQuery(JsonNode queryStruct, String source, boolean proxyMode) {
         int limit = queryStruct.path("limit").asInt();
         if(limit == 0) {
             limit = 3;
@@ -201,7 +213,7 @@ public class ReconcileController {
                 limit,
                 nameType,
                 typeStrict,
-                throughMode
+                proxyMode
                 );
 
         if(source != null) {

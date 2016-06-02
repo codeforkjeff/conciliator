@@ -136,7 +136,7 @@ public class VIAF {
      * @return
      */
     public Source findSource(SearchQuery query) {
-        if(!query.isThroughMode()) {
+        if(!query.isProxyMode()) {
             if(viafSource == null) {
                 viafSource = new VIAFSource();
             }

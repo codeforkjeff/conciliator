@@ -4,7 +4,7 @@ import com.codefork.refine.Config;
 import com.codefork.refine.viaf.sources.NonVIAFSource;
 
 /**
- * Service metadata for "throughMode": the important thing here is
+ * Service metadata for "proxy mode": the important thing here is
  * "view" key contains URL template for the non-VIAF source (for example,
  * the LC website) rather than for VIAF.
  */
