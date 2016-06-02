@@ -75,6 +75,22 @@ public class VIAFResult {
         return null;
     }
 
+    /**
+     * Get the name's VIAF source ID (of the form "ORG|ID")
+     * @param sourceArg
+     * @return
+     */
+    public String getViafSourceId(String sourceArg) {
+        for(NameEntry nameEntry : getNameEntries()) {
+            for(NameSource nameSource : nameEntry.getNameSources()) {
+                if(nameSource.getCode().equals(sourceArg)) {
+                    return nameSource.getViafSourceId();
+                }
+            }
+        }
+        return null;
+    }
+
     public String getExactNameOrMostCommonName(String nameArg) {
         int count = 0;
         String name = null;

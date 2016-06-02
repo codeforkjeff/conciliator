@@ -22,7 +22,8 @@ public class NonVIAFSource extends Source {
         // BIBSYS = no outgoing link
         // BNC = no outgoing link
         // BNCHL = no outgoing link
-        urls.put("BNF", "http://catalogue.bnf.fr/ark:/12148/cb{{id}}");
+        // BNF = id in URL is different from id in "sid" field, so we disable this for now
+        // urls.put("BNF", "http://catalogue.bnf.fr/ark:/12148/cb{{id}}");
         // DBC = no outgoing link
         urls.put("DNB", "http://d-nb.info/gnd/{{id}}");
         // EGAXA = no outgoing link
@@ -64,6 +65,10 @@ public class NonVIAFSource extends Source {
     public String getServiceURLTemplate() {
         String url = urls.get(code);
         if(url == null) {
+            // TODO: This only works when IDs match IDs in source institution URLs,
+            // which is NOT the case for several sources that don't have URL templates:
+            // namely: BNC, BNF, DBC, NUKAT
+            // Can't think of a way to fix this right now.
             url = String.format("https://viaf.org/viaf/sourceID/%s|{{id}}", code);
         }
         return url;
@@ -78,9 +83,22 @@ public class NonVIAFSource extends Source {
                 viafResult.getExactNameOrMostCommonName(query.getQuery());
         boolean exactMatch = name != null ? name.equals(query.getQuery()) : false;
 
+        String sourceId = viafResult.getSourceId(query.getSource());
+
+        // special cases: VIAF gives the source institution IDs as URLs,
+        // which won't do. So the best we can do is parse the ID out of the "sid" element
+        if("BNF".equals(query.getSource()) || "DNB".equals(query.getSource())) {
+            String viafSourceId = viafResult.getViafSourceId(query.getSource());
+            String[] parts = viafSourceId.split("\\|");
+            if (parts.length == 2) {
+                sourceId = parts[1];
+            } else {
+                sourceId = null;
+            }
+        }
+
         // if there's no source ID, we still have to return something,
         // so we return 0.
-        String sourceId = viafResult.getSourceId(query.getSource());
         if(sourceId == null) {
             sourceId = "0";
         }

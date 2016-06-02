@@ -20,11 +20,11 @@ Features
 * Support for the following types of names provided by VIAF: Corporate
   Names, Geographic Names, Personal Names, Works, Expressions
 
-* "Proxy mode" to reconcile names to IDs used by source
-  institutions, instead of VIAF IDs. (Hyperlinks to source record
-  pages in OpenRefine are supported for BNE, BNF, DNB, JPG, LC, NDL,
-  SELIBR, SUDOC, and WKP; for other sources, the links will take you
-  to the VIAF page.)
+* "Proxy mode" to reconcile names to IDs used by source institutions,
+  instead of VIAF IDs. (Hyperlinks to source record pages in
+  OpenRefine are supported for BNE, DNB, ICCU, JPG, LC, NDL, SELIBR,
+  SUDOC, and WKP. Links are BROKEN for BNC, BNF, DBC, and NUKAT. For
+  all other sources, the links will take you to the VIAF page.)
 
 * Good performance (uses threads; stable memory usage; caches results)
 

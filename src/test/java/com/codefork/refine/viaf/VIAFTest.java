@@ -182,5 +182,81 @@ public class VIAFTest {
 
         assertEquals(0, results.size());
     }
-    
+
+    @Test
+    public void testSearchProxyModeLC() throws Exception {
+        viafService = mock(VIAFService.class);
+        InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
+        when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
+
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
+
+        SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should", true);
+        query.setSource("LC");
+
+        List<Result> results = viaf.search(query);
+
+        assertEquals(3, results.size());
+        Result result1 = results.get(0);
+        assertEquals("Shakespeare, William, 1564-1616.", result1.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result1.getType().get(0));
+        assertEquals("n78095332", result1.getId());
+        assertTrue(result1.isMatch());
+
+        Result result2 = results.get(1);
+        assertEquals("Zamenhof, L. L. (Ludwik Lazar), 1859-1917", result2.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result2.getType().get(0));
+        assertEquals("no90015706", result2.getId());
+        assertFalse(result2.isMatch());
+
+        Result result3 = results.get(2);
+        assertEquals("Tieck, Ludwig, 1773-1853", result3.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result3.getType().get(0));
+        assertEquals("n78096841", result3.getId());
+        assertFalse(result3.isMatch());
+    }
+
+    /**
+     * VIAF gives a URL for the BNF source record ID. this test
+     * checks that we use the ID parsed out of the "sid" XML element instead.
+     */
+    @Test
+    public void testSearchProxyModeBNF() throws Exception {
+        viafService = mock(VIAFService.class);
+        InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
+        when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
+
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
+
+        SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should", true);
+        query.setSource("BNF");
+
+        List<Result> results = viaf.search(query);
+
+        assertEquals(3, results.size());
+        Result result1 = results.get(0);
+        assertEquals("Shakespeare, William, 1564-1616.", result1.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result1.getType().get(0));
+        assertEquals("11924607", result1.getId());
+        assertTrue(result1.isMatch());
+
+        Result result2 = results.get(1);
+        assertEquals("Zamenhof, Lejzer Ludwik, 1859-1917", result2.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result2.getType().get(0));
+        assertEquals("12115775", result2.getId());
+        assertFalse(result2.isMatch());
+
+        Result result3 = results.get(2);
+        assertEquals("Tieck, Ludwig, 1773-1853", result3.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result3.getType().get(0));
+        assertEquals("11926644", result3.getId());
+        assertFalse(result3.isMatch());
+    }
+
 }
