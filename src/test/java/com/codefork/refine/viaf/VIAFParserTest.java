@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class VIAFParserTest {
 
@@ -129,6 +130,24 @@ public class VIAFParserTest {
         assertEquals("NLP,ICCU,DNB,BNF",
                 joinSources(secondResult.getNameEntries().get(0).getNameSources(), ","));
 
+    }
+
+    @Test
+    public void testParseTime() throws Exception {
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        SAXParser parser = spf.newSAXParser();
+
+        int n = 100;
+        long start = System.currentTimeMillis();
+        for(int i = 0; i < n; i++) {
+            VIAFParser viafParser = new VIAFParser();
+            InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
+            parser.parse(is, viafParser);
+        }
+        long t = (System.currentTimeMillis() - start) / n;
+
+        // should take less than
+        assertTrue("should take less than 50ms, on average, to parse a big XML doc", t < 50);
     }
 
 }
