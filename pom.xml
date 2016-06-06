@@ -4,7 +4,7 @@
 
     <groupId>org.refine_viaf</groupId>
     <artifactId>refine_viaf</artifactId>
-    <version>1.3</version>
+    <version>1.4</version>
     <packaging>jar</packaging>
 
     <name>refine_viaf</name>
