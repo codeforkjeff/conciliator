@@ -6,110 +6,265 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * SAX parser handler. We use SAX b/c it's faster than loading a whole DOM.
  */
 public class VIAFParser extends DefaultHandler {
 
+    private static abstract class StartElementHandler {
+        public abstract void handle(VIAFParser parser, String uri, String localName, String qName, Attributes attributes);
+    }
+
+    private static abstract class EndElementHandler {
+        public abstract void handle(VIAFParser parser, String uri, String localName, String qName);
+    }
+
+    private static final Map<String, StartElementHandler> startElementHandlers = new HashMap<String, StartElementHandler>();
+    private static final Map<String, EndElementHandler> endElementHandlers = new HashMap<String, EndElementHandler>();
+
+    static {
+        startElementHandlers.put("searchRetrieveResponse/records/record",
+                new StartElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName, Attributes attributes) {
+                        parser.result = new VIAFResult();
+                    }
+                });
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/sources",
+                new StartElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName, Attributes attributes) {
+                        parser.sourceIdMappings = new HashMap<String, String>();
+                    }
+                });
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings",
+                new StartElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName, Attributes attributes) {
+                        parser.nameEntries = new ArrayList<NameEntry>();
+                    }
+                });
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data",
+                new StartElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName, Attributes attributes) {
+                        parser.nameEntry = new NameEntry();
+                    }
+                });
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data/sources",
+                new StartElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName, Attributes attributes) {
+                        parser.nameSources = new ArrayList<NameSource>();
+                    }
+                });
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/sources/source",
+                new StartElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName, Attributes attributes) {
+                        parser.nsidAttribute = attributes.getValue("nsid");
+                        parser.captureChars = true;
+                    }
+                });
+
+        StartElementHandler captureHandler = new StartElementHandler() {
+            public void handle(VIAFParser parser, String uri, String localName, String qName, Attributes attributes) {
+                parser.captureChars = true;
+            }
+        };
+
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/nameType",
+                captureHandler);
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/viafID",
+                captureHandler);
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data/text",
+                captureHandler);
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data/sources/s",
+                captureHandler);
+        startElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data/sources/sid",
+                captureHandler);
+
+        endElementHandlers.put("searchRetrieveResponse/records/record",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        parser.associateSourceIds();
+
+                        parser.results.add(parser.result);
+                        parser.result = null;
+                    }
+                });
+        endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/nameType",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        parser.result.setNameType(NameType.getByViafCode(parser.buf.toString())) ;
+                        parser.buf = new StringBuilder();
+                        parser.captureChars = false;
+                    }
+                });
+        endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/viafID",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        parser.result.setViafId(parser.buf.toString());
+                        parser.buf = new StringBuilder();
+                        parser.captureChars = false;
+                    }
+                });
+        endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/sources/source",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        parser.sourceIdMappings.put(parser.buf.toString(), parser.nsidAttribute);
+                        parser.nsidAttribute = null;
+                        parser.buf = new StringBuilder();
+                        parser.captureChars = false;
+                    }
+                });
+        endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        parser.result.setNameEntries(parser.nameEntries);
+                        parser.nameEntries = null;
+                    }
+                });
+        endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        parser.nameEntries.add(parser.nameEntry);
+                        parser.nameEntry = null;
+                    }
+                });
+        endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data/sources",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        parser.nameEntry.setNameSources(parser.nameSources);
+                        parser.nameSources = null;
+                    }
+                });
+        endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data/text",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        parser.nameEntry.setName(parser.buf.toString());
+                        parser.buf = new StringBuilder();
+                        parser.captureChars = false;
+                    }
+                });
+        endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data/sources/s",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        String source = parser.buf.toString();
+                        parser.nameSources.add(new NameSource(source, null));
+                        parser.buf = new StringBuilder();
+                        parser.captureChars = false;
+                    }
+                });
+
+        endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data/sources/sid",
+                new EndElementHandler() {
+                    public void handle(VIAFParser parser, String uri, String localName, String qName) {
+                        /*
+                        NOTE! The string in "sid" element is VIAF's own source identifier,
+                        in the format "ORG_ID|RECORD_ID". For example, the sid element
+                        contains "LC|n  79081460" for John Steinbeck.
+
+                        This record id is NOT ALWAYS the same as the record id used by the
+                        source institution itself (though often, it is). In the case above,
+                        the LC record ID for Steinbeck is "n79081460". The difference is
+                        not always simply a matter of whitespace.
+
+                        The mappings between this "sid" element and the ID used by the
+                        source institution can be found at
+                        "/records/record/recordData/VIAFCluster/sources"
+                        which we store and associate at the end of each "record" element.
+                        */
+
+                        // has the form "CODE|ID"
+                        String viafSourceId = parser.buf.toString();
+
+                        String[] parts = viafSourceId.split("\\|");
+                        if (parts.length == 2) {
+                            String code = parts[0];
+
+                            // check if Source object was already created from 's' element
+                            boolean sourceAlreadyExists = false;
+                            for (NameSource s : parser.nameSources) {
+                                if (s.getCode().equals(code)) {
+                                    s.setViafSourceId(viafSourceId);
+                                    sourceAlreadyExists = true;
+                                    break;
+                                }
+                            }
+                            if (!sourceAlreadyExists) {
+                                parser.nameSources.add(new NameSource(code, viafSourceId));
+                            }
+                        } else {
+                            System.out.println("ARGH, len of parts=" + parts.length);
+                        }
+                        parser.buf = new StringBuilder();
+                        parser.captureChars = false;
+                    }
+                });
+    }
+
     private boolean captureChars = false;
 
-    private List<VIAFResult> results = new ArrayList<VIAFResult>();
+    private final Stack<String> path = new Stack<String>();
+
+    private final List<VIAFResult> results = new ArrayList<VIAFResult>();
     private VIAFResult result = null;
     private List<NameEntry> nameEntries = null;
     private NameEntry nameEntry = null;
-    private List<String> sources = null;
+    private List<NameSource> nameSources = null;
 
-    // viaf's weird indexed namespacing
-    private int nsIndex = 2;
+    private Map<String, String> sourceIdMappings = null;
+    private String nsidAttribute = null;
 
     /** buffer for collecting contents of an Element as parser does processing */
-    StringBuilder buf = new StringBuilder();
+    private StringBuilder buf = new StringBuilder();
 
     public List<VIAFResult> getResults() {
         return results;
     }
 
-    /**
-     * Elements in the XML have namespaces that are indexed. This returns
-     * the namespace prefix for the current namespace index.
-     * @param name the elementName to which the namespace is prepended
-     * @return fully qualified element name
-     */
-    public String getElementNameWithNS(String name) {
-        return "ns" + nsIndex + ":" + name;
+    private String getPath() {
+        StringBuilder buf = new StringBuilder();
+        String delim = "";
+        for(String part : path) {
+            buf.append(delim);
+            buf.append(part);
+            delim = "/";
+        }
+        return buf.toString();
     }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (result != null) {
-            if (nameEntries != null) {
-                if (nameEntry != null) {
-                    if (sources != null) {
-                        if (getElementNameWithNS("s").equals(qName)) {
-                            captureChars = true;
-                        }
-                    } else if (getElementNameWithNS("sources").equals(qName)) {
-                        sources = new ArrayList<String>();
-                    } else if (getElementNameWithNS("text").equals(qName)) {
-                        captureChars = true;
-                    }
-                } else if (getElementNameWithNS("data").equals(qName)) {
-                    nameEntry = new NameEntry();
-                }
-            } else if (getElementNameWithNS("mainHeadings").equals(qName)) {
-                nameEntries = new ArrayList<NameEntry>();
-            } else if (getElementNameWithNS("viafID").equals(qName)) {
-                captureChars = true;
-            } else if (getElementNameWithNS("nameType").equals(qName)) {
-                captureChars = true;
-            }
-        } else if("record".equals(qName)) {
-            result = new VIAFResult();
+
+        // strip ns prefix
+        String name = qName;
+        if(name.contains(":")) {
+            name = qName.split("\\:")[1];
+        }
+        path.push(name);
+
+        String path = getPath();
+        //System.out.println(path);
+
+        StartElementHandler handler = startElementHandlers.get(path);
+        if(handler != null) {
+            handler.handle(this, uri, localName, qName, attributes);
         }
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (result != null) {
-            if("record".equals(qName)) {
-                results.add(result);
-                result = null;
-                nsIndex++;
-            } else if (nameEntries != null) {
-                if (getElementNameWithNS("mainHeadings").equals(qName)) {
-                    result.setNameEntries(nameEntries);
-                    nameEntries = null;
-                } else if (nameEntry != null) {
-                    if (getElementNameWithNS("data").equals(qName)) {
-                        nameEntries.add(nameEntry);
-                        nameEntry = null;
-                    } else if (getElementNameWithNS("text").equals(qName)) {
-                        nameEntry.setName(buf.toString());
-                        buf = new StringBuilder();
-                        captureChars = false;
-                    } else if (sources != null) {
-                        if (getElementNameWithNS("sources").equals(qName)) {
-                            nameEntry.setSources(sources);
-                            sources = null;
-                        } else if (getElementNameWithNS("s").equals(qName)) {
-                            sources.add(buf.toString());
-                            buf = new StringBuilder();
-                            captureChars = false;
-                        }
-                    }
-                }
-            } else if (getElementNameWithNS("viafID").equals(qName)) {
-                result.setViafId(buf.toString());
-                buf = new StringBuilder();
-                captureChars = false;
-            } else if (getElementNameWithNS("nameType").equals(qName)) {
-                result.setNameType(NameType.getByViafCode(buf.toString())) ;
-                buf = new StringBuilder();
-                captureChars = false;
-            }
+
+        String path = getPath();
+        //System.out.println(path);
+
+        EndElementHandler handler = endElementHandlers.get(path);
+        if(handler != null) {
+            handler.handle(this, uri, localName, qName);
         }
+
+        this.path.pop();
     }
 
     @Override
@@ -118,4 +273,22 @@ public class VIAFParser extends DefaultHandler {
             buf.append(ch, start, length);
         }
     }
+
+    private void associateSourceIds() {
+        for(NameEntry nameEntry : result.getNameEntries()) {
+            for(NameSource nameSource : nameEntry.getNameSources()) {
+                String sourceId = sourceIdMappings.get(nameSource.getViafSourceId());
+                if(sourceId != null) {
+                    nameSource.setSourceId(sourceId);
+                }
+            }
+        }
+        /*
+        System.out.println("source id mappings=");
+        for(String k : sourceIdMappings.keySet()) {
+            System.out.println("k=" + k + "," + sourceIdMappings.get(k));
+        }
+        */
+    }
+
 }

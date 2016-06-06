@@ -9,14 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Metadata about this reconciliation service.
+ * Metadata about this reconciliation service, operating in normal VIAF mode.
  */
 public class ServiceMetaDataResponse {
 
     Log log = LogFactory.getLog(ServiceMetaDataResponse.class);
 
     public static class View {
-        private String url = "http://viaf.org/viaf/{{id}}";
+        private String url;
+
+        public View(String url) {
+            this.url = url;
+        }
 
         public String getUrl() {
             return url;
@@ -30,7 +34,7 @@ public class ServiceMetaDataResponse {
     
     private String name = "";
     private final static String IDENTIFIER_SPACE = "http://rdf.freebase.com/ns/user/hangy/viaf";
-    private final static View VIEW = new View();
+    private final static View VIEW = new View("http://viaf.org/viaf/{{id}}");
     private final static String SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
     private final static List<VIAFNameType> DEFAULT_TYPES = new ArrayList<VIAFNameType>();
 
@@ -40,12 +44,8 @@ public class ServiceMetaDataResponse {
         }
     }
     
-    public ServiceMetaDataResponse(Config config) {
-        setName(config.getServiceName());
-    }
-
     public ServiceMetaDataResponse(Config config, String source) {
-        this(config);
+        setName(config.getServiceName());
         if(source != null) {
             setName(getName() + " - " + source);
         }

@@ -20,14 +20,23 @@ public class SearchQuery {
     private NameType nameType;
     private String typeStrict;
     private String source;
-    
-    public SearchQuery(String query, int limit, NameType nameType, String typeStrict) {
+    private boolean proxyMode;
+
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict, boolean proxyMode) {
         this.query = query;
         this.limit = limit;
         this.nameType = nameType;
         this.typeStrict = typeStrict;
+        this.proxyMode = proxyMode;
     }
-    
+
+    /**
+     * Constructor setting proxyMode = false
+     */
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict) {
+        this(query, limit, nameType, typeStrict, false);
+    }
+
     public String getQuery() {
         return query;
     }
@@ -67,7 +76,15 @@ public class SearchQuery {
     public void setSource(String source) {
         this.source = source;
     }
-    
+
+    public boolean isProxyMode() {
+        return proxyMode;
+    }
+
+    public void setProxyMode(boolean proxyMode) {
+        this.proxyMode = proxyMode;
+    }
+
     /**
      * @return String used for the cql 'query' URL param passed to VIAF 
      */
@@ -93,7 +110,8 @@ public class SearchQuery {
                 limit + "|" +
                 (nameType != null ? nameType.getId() : "") + "|" +
                 (typeStrict != null ? typeStrict : "") + "|" +
-                (source != null ? source : "");
+                (source != null ? source : "") + "|" +
+                proxyMode;
     }
 
 }

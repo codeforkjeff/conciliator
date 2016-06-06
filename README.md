@@ -20,6 +20,12 @@ Features
 * Support for the following types of names provided by VIAF: Corporate
   Names, Geographic Names, Personal Names, Works, Expressions
 
+* "Proxy mode" to retrieve IDs used by source institutions, instead of
+  VIAF IDs. (NOTE: hyperlinks to source record pages in OpenRefine are
+  supported for BNE, DNB, ICCU, JPG, LC, NDL, SELIBR, SUDOC, and
+  WKP. Links are BROKEN for BNC, BNF, DBC, and NUKAT. For all other
+  sources, the links will take you to the VIAF page.)
+
 * Good performance (uses threads; stable memory usage; caches results)
 
 * Super easy to run
@@ -73,6 +79,14 @@ Configuring OpenRefine
     
     ```
     http://localhost:8080/reconcile/viaf/BNF
+    ```
+
+    To retrieve the IDs used by source institutions, rather than VIAF
+    IDs, use "proxy mode." For example, to search only names from the
+    Library of Congress and retrieve their IDs, type in:
+    
+    ```
+    http://localhost:8080/reconcile/viafproxy/LC
     ```
 
 4. Follow the instructions on the dialog box to start reconciling
