@@ -89,11 +89,14 @@ public class NonVIAFSource extends Source {
         // which won't do. So the best we can do is parse the ID out of the "sid" element
         if("BNF".equals(query.getSource()) || "DNB".equals(query.getSource())) {
             String viafSourceId = viafResult.getViafSourceId(query.getSource());
-            String[] parts = viafSourceId.split("\\|");
-            if (parts.length == 2) {
-                sourceId = parts[1];
-            } else {
-                sourceId = null;
+            // apparently this is possible? See https://github.com/codeforkjeff/refine_viaf/issues/2
+            if(viafSourceId != null) {
+                String[] parts = viafSourceId.split("\\|");
+                if (parts.length == 2) {
+                    sourceId = parts[1];
+                } else {
+                    sourceId = null;
+                }
             }
         }
 
