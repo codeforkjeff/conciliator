@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is a result as it's parsed directly from the VIAF XML.
- * This is an "intermediate" data structure used only in this outer class.
- * It needs to translated into another format for sending back to the client.
+ * The VIAFParser extracts relevant data from the VIAF XML into
+ * VIAFResult instances.
+ *
+ * This is an "intermediate" data structure which needs to get
+ * translated into the final format for OpenRefine to consume.
  */
 public class VIAFResult {
 
