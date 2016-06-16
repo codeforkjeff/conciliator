@@ -134,6 +134,13 @@ public class VIAFParserTest {
 
     @Test
     public void testParseTime() throws Exception {
+
+        int maxTime = 50; // milliseconds
+        // travis ci can be a bit pokey
+        if("true".equals(System.getenv("TRAVIS"))) {
+            maxTime = 75;
+        }
+
         SAXParserFactory spf = SAXParserFactory.newInstance();
         SAXParser parser = spf.newSAXParser();
 
@@ -147,7 +154,7 @@ public class VIAFParserTest {
         long t = (System.currentTimeMillis() - start) / n;
 
         // should take less than
-        assertTrue("should take less than 50ms, on average, to parse a big XML doc", t < 50);
+        assertTrue("should take less than " + maxTime + "ms, on average, to parse a big XML doc, but took " + t + "ms", t < maxTime);
     }
 
 }
