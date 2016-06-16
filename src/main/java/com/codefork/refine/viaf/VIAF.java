@@ -169,12 +169,8 @@ public class VIAF {
                 try {
                     results = doSearch(query);
                     cacheRef.put(key, results);
-                } catch(ParserConfigurationException e) {
-                    log.error("parser error: " + e);
-                } catch (SAXException e) {
-                    log.error("sax error: " + e);
-                } catch (IOException e) {
-                    log.error("ioerror: " + e);
+                } catch(Exception e) {
+                    log.error(String.format("error for query=%s: %s", query.getQuery(), e));
                 }
                 if(results != null) {
                     return results;
@@ -189,12 +185,8 @@ public class VIAF {
 
         try {
             return doSearch(query);
-        } catch(ParserConfigurationException e) {
-            log.error("parser error: " + e);
-        } catch (SAXException e) {
-            log.error("sax error: " + e);
-        } catch (IOException e) {
-            log.error("ioerror: " + e);
+        } catch(Exception e) {
+            log.error(String.format("error for query=%s: %s", query.getQuery(), e));
         }
         return new ArrayList<Result>();
     }
