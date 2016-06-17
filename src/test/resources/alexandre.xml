@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<searchRetrieveResponse xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.loc.gov/zing/srw/" xsi:schemaLocation="http://www.loc.gov/zing/srw/ http://www.loc.gov/standards/sru/sru1-1archive/xml-files/srw-types.xsd">
+  <version xsi:type="xsd:string">1.1</version>
+  <numberOfRecords xsi:type="xsd:nonNegativeInteger">1</numberOfRecords>
+  <resultSetIdleTime xsi:type="xsd:positiveInteger">1</resultSetIdleTime>
+  <records xmlns:ns1="http://www.loc.gov/zing/srw/" xsi:type="ns1:recordsType">
+    <record xsi:type="ns1:recordType">
+      <recordSchema xsi:type="xsd:string">http://viaf.org/VIAFCluster</recordSchema>
+      <recordPacking xsi:type="xsd:string">xml</recordPacking>
+      <recordData xsi:type="ns1:stringOrXmlFragment">
+        <ns2:VIAFCluster xmlns="http://viaf.org/viaf/terms#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:void="http://rdfs.org/ns/void#" xmlns:ns2="http://viaf.org/viaf/terms#">
+          <ns2:viafID>76304784</ns2:viafID>
+          <ns2:Document about="http://viaf.org/viaf/76304784/">
+            <ns2:inDataset resource="http://viaf.org/viaf/data"/>
+            <ns2:primaryTopic resource="http://viaf.org/viaf/76304784"/>
+          </ns2:Document>
+          <ns2:nameType>Personal</ns2:nameType>
+          <ns2:sources>
+            <ns2:source nsid="http://catalogue.bnf.fr/ark:/12148/cb10341017g">BNF|10341017</ns2:source>
+          </ns2:sources>
+          <ns2:length>19</ns2:length>
+          <ns2:mainHeadings>
+            <ns2:data>
+              <ns2:text>Alexandre, Jean-François 1804-1874</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+            <ns2:mainHeadingEl>
+              <ns2:datafield dtype="UNIMARC" ind1=" " ind2="|" tag="200">
+                <ns2:subfield code="7">ba0yba0y</ns2:subfield>
+                <ns2:subfield code="8">fre</ns2:subfield>
+                <ns2:subfield code="9">0</ns2:subfield>
+                <ns2:subfield code="a">Alexandre</ns2:subfield>
+                <ns2:subfield code="b">Jean-François</ns2:subfield>
+                <ns2:subfield code="f">1804-1874</ns2:subfield>
+              </ns2:datafield>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+              <ns2:id>BNF|10341017</ns2:id>
+            </ns2:mainHeadingEl>
+          </ns2:mainHeadings>
+          <ns2:fixed>
+            <ns2:gender>b</ns2:gender>
+          </ns2:fixed>
+          <ns2:coauthors>
+            <ns2:data count="1" tag="950">
+              <ns2:text>Lescoët, Jonathas-Marie-Joseph Barbier, Mis de</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+            <ns2:data count="1" tag="950">
+              <ns2:text>Lescoet, Cte de</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+          </ns2:coauthors>
+          <ns2:publishers>
+            <ns2:data count="2">
+              <ns2:text>L. Prud'homme</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+            <ns2:data count="1">
+              <ns2:text>moulet gand E. Blot</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+            <ns2:data count="1">
+              <ns2:text>impr. de J.-B. Defournier aîné</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+          </ns2:publishers>
+          <ns2:birthDate>1804-04-26</ns2:birthDate>
+          <ns2:deathDate>1874-03-19</ns2:deathDate>
+          <ns2:dateType>lived</ns2:dateType>
+          <ns2:RecFormats>
+            <ns2:data count="5">
+              <ns2:text>am</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+          </ns2:RecFormats>
+          <ns2:RelatorCodes>
+            <ns2:data count="3">
+              <ns2:text>070</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+            <ns2:data count="2">
+              <ns2:text>730</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+          </ns2:RelatorCodes>
+          <ns2:countries>
+            <ns2:data count="5" scaled="3">
+              <ns2:text>FR</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+          </ns2:countries>
+          <ns2:languageOfEntity>
+            <ns2:data>
+              <ns2:text>fre</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+          </ns2:languageOfEntity>
+          <ns2:nationalityOfEntity>
+            <ns2:data>
+              <ns2:text>FR</ns2:text>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+            </ns2:data>
+          </ns2:nationalityOfEntity>
+          <ns2:titles>
+            <ns2:work>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+              <ns2:title>Ar Virionez da Vreiz-Izel, scrivet gant an aotrou'n abad Alexandre,...</ns2:title>
+            </ns2:work>
+            <ns2:work>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+              <ns2:title>Calon an aotrou Paul de Parcevaux,... Leoric great e gallec gant ar c'hont de Lescoet ha lekeat e brezounec gant an abad Alexandre, 1860...</ns2:title>
+            </ns2:work>
+            <ns2:work>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+              <ns2:title>Calon an aotrou Paul de Parcevaux, oficer a regimant ar zouaved en arme hon tad Santel ar Pab Pius IX...</ns2:title>
+            </ns2:work>
+            <ns2:work>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+              <ns2:title>Cantique en l'honneur de l'Immaculée Conception de la très Sainte Vierge Marie, par M. Alexandre,...</ns2:title>
+            </ns2:work>
+            <ns2:work>
+              <ns2:sources>
+                <ns2:s>BNF</ns2:s>
+              </ns2:sources>
+              <ns2:title>Leoriou ar baradoz : approche bibliographique du livre religieux en langue bretonne</ns2:title>
+            </ns2:work>
+          </ns2:titles>
+          <ns2:history>
+            <ns2:ht recid="BNF|10341017" time="2009-03-03T12:03:17+00:00" type="add"/>
+          </ns2:history>
+        </ns2:VIAFCluster>
+      </recordData>
+      <recordPosition xsi:type="xsd:positiveInteger">1</recordPosition>
+    </record>
+  </records>
+  <echoedSearchRetrieveRequest xmlns:ns3="http://www.loc.gov/zing/srw/" xsi:type="ns3:echoedSearchRetrieveRequestType">
+    <version xsi:type="xsd:string">1.1</version>
+    <query xsi:type="xsd:string">local.mainHeadingEl all "Jean-François Alexandre 1804 1874" and local.sources = "bnf"</query>
+    <xQuery>
+      <ns4:triple xmlns:ns4="http://www.loc.gov/zing/cql/xcql/" xsi:type="ns4:tripleType">
+        <ns4:boolean xsi:type="ns4:booleanType">
+          <ns4:value xsi:type="xsd:string">and</ns4:value>
+        </ns4:boolean>
+        <ns4:leftOperand xsi:type="ns4:operandType">
+          <ns4:searchClause xsi:type="ns4:searchClauseType">
+            <ns4:index xsi:type="xsd:string">local.mainHeadingEl</ns4:index>
+            <ns4:relation xsi:type="ns4:relationType">
+              <ns4:value xsi:type="xsd:string">all</ns4:value>
+            </ns4:relation>
+            <ns4:term xsi:type="xsd:string">Jean-François Alexandre 1804 1874</ns4:term>
+          </ns4:searchClause>
+        </ns4:leftOperand>
+        <ns4:rightOperand xsi:type="ns4:operandType">
+          <ns4:searchClause xsi:type="ns4:searchClauseType">
+            <ns4:index xsi:type="xsd:string">local.sources</ns4:index>
+            <ns4:relation xsi:type="ns4:relationType">
+              <ns4:value xsi:type="xsd:string">=</ns4:value>
+            </ns4:relation>
+            <ns4:term xsi:type="xsd:string">bnf</ns4:term>
+          </ns4:searchClause>
+        </ns4:rightOperand>
+      </ns4:triple>
+    </xQuery>
+    <maximumRecords xsi:type="xsd:nonNegativeInteger">3</maximumRecords>
+    <recordSchema xsi:type="xsd:string">default</recordSchema>
+    <sortKeys xsi:type="xsd:string">holdingscount</sortKeys>
+  </echoedSearchRetrieveRequest>
+  <extraResponseData xmlns:ns5="http://www.loc.gov/zing/srw/" xsi:type="ns5:extraDataType">
+    <ns6:extraData xmlns="http://oclc.org/srw/extraData" xmlns:ns6="http://oclc.org/srw/extraData">
+      <ns6:databaseTitle>VIAF: The Virtual International Authority File</ns6:databaseTitle>
+    </ns6:extraData>
+  </extraResponseData>
+</searchRetrieveResponse>

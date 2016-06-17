@@ -278,6 +278,27 @@ public class VIAFParser extends DefaultHandler {
         for(NameEntry nameEntry : result.getNameEntries()) {
             for(NameSource nameSource : nameEntry.getNameSources()) {
                 String sourceId = sourceIdMappings.get(nameSource.getViafSourceId());
+                if(sourceId == null) {
+                    // sometimes ../mainHeadings/data/sources will list a source
+                    // without an ID, but the XML will contain an ID under
+                    // ../VIAFCluster/sources. This is the case for record 76304784,
+                    // as of 6/17/2016.
+                    //
+                    // This screws up the association here, so to deal,
+                    // we look for just the ORG prefix in sourceIdMappings keys.
+                    for(String k : sourceIdMappings.keySet()) {
+                        if(k.contains("|")) {
+                            String[] pieces = k.split("\\|");
+                            if(pieces.length == 2) {
+                                String orgCode = pieces[0];
+                                String id = pieces[1];
+                                if (orgCode.equals(nameSource.getCode())) {
+                                    sourceId = id;
+                                }
+                            }
+                        }
+                    }
+                }
                 if(sourceId != null) {
                     nameSource.setSourceId(sourceId);
                 }
