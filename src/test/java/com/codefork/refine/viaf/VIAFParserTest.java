@@ -132,6 +132,37 @@ public class VIAFParserTest {
 
     }
 
+    /**
+     * Test case for XML missing an ID in ../mainHeadings/data/sources
+     * but having an ID under ../VIAFCluster/sources.
+     * @throws Exception
+     */
+    @Test
+    public void testParseXMLWithoutSourceID() throws Exception {
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        SAXParser parser = spf.newSAXParser();
+        VIAFParser viafParser = new VIAFParser();
+
+        InputStream is = getClass().getResourceAsStream("/alexandre.xml");
+        parser.parse(is, viafParser);
+
+        List<VIAFResult> results = viafParser.getResults();
+
+        assertEquals(1, results.size());
+
+        VIAFResult firstResult = results.get(0);
+
+        assertEquals(1, firstResult.getNameEntries().size());
+
+        assertEquals("Alexandre, Jean-François 1804-1874",
+                firstResult.getNameEntries().get(0).getName());
+        assertEquals("BNF",
+                joinSources(firstResult.getNameEntries().get(0).getNameSources(), ","));
+
+        // test that our source ID mappings work
+        assertEquals("10341017", firstResult.getSourceId("BNF"));
+    }
+
     @Test
     public void testParseTime() throws Exception {
 
