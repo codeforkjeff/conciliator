@@ -87,7 +87,7 @@ public class NonVIAFSource extends Source {
 
         // special cases: VIAF gives the source institution IDs as URLs,
         // which won't do. So the best we can do is parse the ID out of the "sid" element
-        if("BNF".equals(query.getSource()) || "DNB".equals(query.getSource())) {
+        if(sourceId != null && sourceId.startsWith("http")) {
             String viafSourceId = viafResult.getViafSourceId(query.getSource());
             // apparently this is possible? See https://github.com/codeforkjeff/refine_viaf/issues/2
             if(viafSourceId != null) {

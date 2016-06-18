@@ -324,4 +324,87 @@ public class VIAFTest {
         assertFalse(result3.isMatch());
     }
 
+    /**
+     * Test case for XML missing an ID in ../mainHeadings/data/sources
+     * but having an ID under ../VIAFCluster/sources.
+     */
+    @Test
+    public void testSearchProxyModeBNFMissingID() throws Exception {
+        viafService = mock(VIAFService.class);
+        InputStream is = getClass().getResourceAsStream("/alexandre.xml");
+        when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
+
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
+
+        SearchQuery query = new SearchQuery("Jean-François Alexandre 1804 1874", 3, NameType.Person, "should", true);
+        query.setSource("BNF");
+
+        List<Result> results = viaf.search(query);
+
+        assertEquals(3, results.size());
+
+        Result result1 = results.get(0);
+        assertEquals("Arago, Jacques, 1790-1855", result1.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result1.getType().get(0));
+        assertEquals("12265696", result1.getId());
+        assertFalse(result1.isMatch());
+
+        Result result2 = results.get(1);
+        assertEquals("Blanc, François 166.-1742", result2.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result2.getType().get(0));
+        assertEquals("10343440", result2.getId());
+        assertFalse(result2.isMatch());
+
+        // this entry in XML is missing an ID ../mainHeadings/data/sources
+        Result result3 = results.get(2);
+        assertEquals("Alexandre, Jean-François 1804-1874", result3.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result3.getType().get(0));
+        assertEquals("10341017", result3.getId());
+        assertFalse(result3.isMatch());
+    }
+
+    /**
+     * Test case for URL in source ID mapping, which formatResult() should treat
+     * as special case
+     */
+    @Test
+    public void testSearchProxyModeDNB() throws Exception {
+        viafService = mock(VIAFService.class);
+        InputStream is = getClass().getResourceAsStream("/hegel.xml");
+        when(viafService.doSearch(anyString(), anyInt())).thenReturn(is);
+
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        VIAF viaf = new VIAF(viafService, config);
+
+        SearchQuery query = new SearchQuery("hegel", 3, NameType.Person, "should", true);
+        query.setSource("DNB");
+
+        List<Result> results = viaf.search(query);
+
+        assertEquals(3, results.size());
+
+        Result result1 = results.get(0);
+        assertEquals("Hegel, Georg Wilhelm Friedrich, 1770-1831", result1.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result1.getType().get(0));
+        assertEquals("118547739", result1.getId());
+        assertFalse(result1.isMatch());
+
+        Result result2 = results.get(1);
+        assertEquals("Friedrich, Carl J. 1901-1984", result2.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result2.getType().get(0));
+        assertEquals("118535870", result2.getId());
+        assertFalse(result2.isMatch());
+
+        Result result3 = results.get(2);
+        assertEquals("Bosanquet, Bernard, 1848-1923", result3.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result3.getType().get(0));
+        assertEquals("118659391", result3.getId());
+        assertFalse(result3.isMatch());
+    }
+
 }
