@@ -42,18 +42,10 @@ public class VIAFResult {
         this.nameEntries = nameEntries;
     }
 
-    public void addNameEntry() {
-        nameEntries.add(new NameEntry());
-    }
-
-    public NameEntry getLastNameEntry() {
-        return nameEntries.get(nameEntries.size() - 1);
-    }
-
     public String getNameBySource(String sourceArg) {
         for(NameEntry nameEntry : getNameEntries()) {
             for(NameSource nameSource : nameEntry.getNameSources()) {
-                if(nameSource.getCode().equals(sourceArg)) {
+                if(nameSource.getSource().equals(sourceArg)) {
                     return nameEntry.getName();
                 }
             }
@@ -66,11 +58,11 @@ public class VIAFResult {
      * @param sourceArg
      * @return
      */
-    public String getSourceId(String sourceArg) {
+    public String getSourceNameId(String sourceArg) {
         for(NameEntry nameEntry : getNameEntries()) {
             for(NameSource nameSource : nameEntry.getNameSources()) {
-                if(nameSource.getCode().equals(sourceArg)) {
-                    return nameSource.getSourceId();
+                if(nameSource.getSource().equals(sourceArg)) {
+                    return nameSource.getSourceNameId();
                 }
             }
         }
@@ -78,15 +70,15 @@ public class VIAFResult {
     }
 
     /**
-     * Get the name's VIAF source ID (of the form "ORG|ID")
+     * Get the name's ID, as extracted from "SOURCE|NAME_ID" for the given source
      * @param sourceArg
      * @return
      */
-    public String getViafSourceId(String sourceArg) {
+    public String getNameId(String sourceArg) {
         for(NameEntry nameEntry : getNameEntries()) {
             for(NameSource nameSource : nameEntry.getNameSources()) {
-                if(nameSource.getCode().equals(sourceArg)) {
-                    return nameSource.getViafSourceId();
+                if(nameSource.getSource().equals(sourceArg)) {
+                    return nameSource.getNameId();
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.codefork.refine.viaf;
 
 import com.codefork.refine.Config;
+import org.junit.After;
 import org.junit.Test;
 import com.codefork.refine.NameType;
 import com.codefork.refine.SearchQuery;
@@ -21,6 +22,34 @@ public class VIAFTest {
 
     VIAFService viafService;
     Config config;
+    VIAF viaf;
+
+    /**
+     * Simple test for parsing live VIAF XML
+     */
+    @Test
+    public void testLiveSearch() throws Exception {
+        viafService = new VIAFService();
+
+        config = mock(Config.class);
+        when(config.getProperties()).thenReturn(new Properties());
+
+        viaf = new VIAF(viafService, config);
+
+        SearchQuery query = new SearchQuery("shakespeare", 3, null, "should");
+        List<Result> results = viaf.search(query);
+
+        // first result for shakespeare shouldn't ever change;
+        // it makes for a fairly stable test
+
+        assertEquals(3, results.size());
+
+        Result result1 = results.get(0);
+        assertEquals("Shakespeare, William, 1564-1616.", result1.getName());
+        assertEquals(NameType.Person.asVIAFNameType(), result1.getType().get(0));
+        assertEquals("96994048", result1.getId());
+        assertFalse(result1.isMatch());
+    }
 
     @Test
     public void testSearchPersonalName() throws Exception {
@@ -31,7 +60,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("wittgenstein", 3, NameType.Person, "should");
         List<Result> results = viaf.search(query);
@@ -69,7 +98,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("steinbeck", 3, null, "should");
         List<Result> results = viaf.search(query);
@@ -106,7 +135,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("nabokov", 3, null, "should");
         query.setSource("NSK"); // NSK=Croatia
@@ -142,7 +171,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should");
         List<Result> results = viaf.search(query);
@@ -178,7 +207,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("ncjecerence", 3, null, "should");
         List<Result> results = viaf.search(query);
@@ -196,7 +225,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
         viaf.setCacheEnabled(true);
         viaf.setCacheLifetime(1);
 
@@ -228,7 +257,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
         viaf.setCacheEnabled(true);
         viaf.setCacheLifetime(1);
 
@@ -257,7 +286,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should", true);
         query.setSource("LC");
@@ -297,7 +326,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, NameType.Person, "should", true);
         query.setSource("BNF");
@@ -337,7 +366,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("Jean-François Alexandre 1804 1874", 3, NameType.Person, "should", true);
         query.setSource("BNF");
@@ -379,7 +408,7 @@ public class VIAFTest {
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
-        VIAF viaf = new VIAF(viafService, config);
+        viaf = new VIAF(viafService, config);
 
         SearchQuery query = new SearchQuery("hegel", 3, NameType.Person, "should", true);
         query.setSource("DNB");
@@ -405,6 +434,13 @@ public class VIAFTest {
         assertEquals(NameType.Person.asVIAFNameType(), result3.getType().get(0));
         assertEquals("118659391", result3.getId());
         assertFalse(result3.isMatch());
+    }
+
+    @After
+    public void shutdownVIAF() {
+        if(viaf != null) {
+            viaf.shutdown();
+        }
     }
 
 }

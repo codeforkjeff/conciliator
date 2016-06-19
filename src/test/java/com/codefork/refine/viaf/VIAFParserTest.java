@@ -30,7 +30,7 @@ public class VIAFParserTest {
             if(b.length() > 0) {
                 b.append(delimiter);
             }
-            b.append(s.getCode());
+            b.append(s.getSource());
         }
         return b.toString();
     }
@@ -96,10 +96,10 @@ public class VIAFParserTest {
                 joinSources(firstResult.getNameEntries().get(0).getNameSources(), ","));
 
         // test that our source ID mappings work
-        assertEquals("n79081460", firstResult.getSourceId("LC"));
-        assertEquals("x90081598", firstResult.getSourceId("BIBSYS"));
-        assertEquals("http://catalogue.bnf.fr/ark:/12148/cb119254833", firstResult.getSourceId("BNF"));
-        assertEquals("IT\\ICCU\\CFIV\\000628", firstResult.getSourceId("ICCU"));
+        assertEquals("n79081460", firstResult.getSourceNameId("LC"));
+        assertEquals("x90081598", firstResult.getSourceNameId("BIBSYS"));
+        assertEquals("http://catalogue.bnf.fr/ark:/12148/cb119254833", firstResult.getSourceNameId("BNF"));
+        assertEquals("IT\\ICCU\\CFIV\\000628", firstResult.getSourceNameId("ICCU"));
 
         assertEquals("Steinbeck, John (John Ernst), 1902-1968",
                 firstResult.getNameEntries().get(1).getName());

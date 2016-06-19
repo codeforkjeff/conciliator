@@ -1,7 +1,7 @@
 package com.codefork.refine.viaf;
 
 import com.codefork.refine.Cache;
-import com.codefork.refine.CacheExpire;
+import com.codefork.refine.CacheManager;
 import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.resources.Result;
@@ -37,9 +37,7 @@ public class VIAF {
     Log log = LogFactory.getLog(VIAF.class);
     private final VIAFService viafService;
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
-    private Cache<String, List<Result>> cache = new Cache<String, List<Result>>();
-    private final Object cacheLock = new Object();
-    private CacheExpire cacheExpire;
+    private CacheManager cacheManager = new CacheManager();
 
     private VIAFSource viafSource = null;
     private Map<String, NonVIAFSource> nonViafSources = new HashMap<String, NonVIAFSource>();
@@ -73,51 +71,29 @@ public class VIAF {
     public void setCacheEnabled(boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
         if(isCacheEnabled()) {
-            if(cacheExpire == null) {
-                cacheExpire = new CacheExpire(this);
-
-                Thread thread = new Thread(cacheExpire);
-                thread.setDaemon(true);
-                thread.start();
-            }
+            cacheManager.startExpireThread();
         } else {
-            if(cacheExpire != null) {
-                cacheExpire.stopGracefully();
-                // null out reference to break circular reference
-                // so it can be gc'd
-                cacheExpire = null;
-            }
+            cacheManager.stopExpireThread();
         }
     }
 
     public void setCacheMaxSize(int maxSize) {
-        this.cache.setMaxSize(maxSize);
+        cacheManager.getCache().setMaxSize(maxSize);
     }
 
     public int getCacheMaxSize() {
-        return this.cache.getMaxSize();
+        return cacheManager.getCache().getMaxSize();
     }
     public void setCacheLifetime(int lifetime) {
-        this.cache.setLifetime(lifetime);
+        cacheManager.getCache().setLifetime(lifetime);
     }
 
     public int getCacheLifetime() {
-        return this.cache.getLifetime();
+        return cacheManager.getCache().getLifetime();
     }
 
     public void expireCache() {
-        if (cacheEnabled && cache.getCount() > 0) {
-            // expire entries and replace original cache with new one
-            int size = cache.getCount();
-            Cache<String, List<Result>> newCache = cache.expireCache();
-            synchronized (cacheLock) {
-                int size2 = cache.getCount();
-                if(size2 != size) {
-                    log.warn("Cache grew during expiration. This happens sometimes, but shouldn't happen frequently. size diff=" + (size2 - size));
-                }
-                cache = newCache;
-            }
-        }
+        cacheManager.expireCache();
     }
 
     /**
@@ -152,15 +128,7 @@ public class VIAF {
      */
     public List<Result> search(SearchQuery query) {
         if (cacheEnabled) {
-            Cache<String, List<Result>> cacheRef = null;
-
-            // synchronize when getting a reference to the cache;
-            // this way, if cache is expired during this block,
-            // (i.e. a new Cache instance replaces it), we're still using
-            // the "old" cache until this method finishes.
-            synchronized (cacheLock) {
-                cacheRef = cache;
-            }
+            Cache<String, List<Result>> cacheRef = cacheManager.getCache();
 
             String key = query.getHashKey();
             if (!cacheRef.containsKey(key)) {
@@ -225,6 +193,15 @@ public class VIAF {
                 query.getQuery(), parseTime, viafParser.getResults().size()));
 
         return results;
+    }
+
+    /**
+     * Shuts down the cache thread immediately.
+     */
+    public void shutdown() {
+        if(isCacheEnabled()) {
+            cacheManager.stopExpireThread();
+        }
     }
 
 }

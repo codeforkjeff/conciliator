@@ -1,40 +1,31 @@
 package com.codefork.refine;
 
-import com.codefork.refine.viaf.VIAF;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class CacheExpire implements Runnable {
 
-    private final VIAF viaf;
+    private CacheManager cacheManager;
     private Log log = LogFactory.getLog(CacheExpire.class);
     private boolean keepGoing = true;
 
-    /**
-     * Keeps a reference to VIAF object b/c its cache object
-     * changes, so we have to avoid holding on to a Cache instance
-     * in this class.
-     * @param viaf
-     */
-    public CacheExpire(VIAF viaf) {
-        this.viaf = viaf;
-    }
-
-    public void stopGracefully() {
-        keepGoing = false;
+    public CacheExpire(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 
     @Override
     public void run() {
-        log.info("Starting cache expiration thread: waking every 60s, lifetime=" + viaf.getCacheLifetime() + ", maxSize=" + viaf.getCacheMaxSize());
+        log.info("Starting cache expiration thread: waking every 60s, lifetime=" + cacheManager.getCache().getLifetime() + ", maxSize=" + cacheManager.getCache().getMaxSize());
         try {
             while(keepGoing) {
                 Thread.sleep(60000);
-                viaf.expireCache();
+                cacheManager.expireCache();
             }
         } catch (InterruptedException e) {
-            log.info("CacheExpire interrupted");
+            // noop
         }
         log.info("exiting CacheExpire");
+        // break circular reference
+        cacheManager = null;
     }
 }
