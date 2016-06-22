@@ -111,7 +111,8 @@ public class VIAFParser extends DefaultHandler {
         endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/sources/source",
                 new EndElementHandler() {
                     public void handle(VIAFParser parser, String uri, String localName, String qName) {
-                        parser.sourceIdMappings.put(parser.buf.toString(), parser.nsidAttribute);
+                        String sourceId = parser.buf.toString();
+                        parser.sourceIdMappings.put(sourceId, parser.nsidAttribute);
                         parser.nsidAttribute = null;
                         parser.buf = new StringBuilder();
                         parser.captureChars = false;
@@ -150,7 +151,7 @@ public class VIAFParser extends DefaultHandler {
                 new EndElementHandler() {
                     public void handle(VIAFParser parser, String uri, String localName, String qName) {
                         String source = parser.buf.toString();
-                        parser.nameSources.add(new NameSource(source, null));
+                        parser.nameSources.add(new NameSource(source));
                         parser.buf = new StringBuilder();
                         parser.captureChars = false;
                     }
@@ -160,11 +161,11 @@ public class VIAFParser extends DefaultHandler {
                 new EndElementHandler() {
                     public void handle(VIAFParser parser, String uri, String localName, String qName) {
                         /*
-                        NOTE! The string in "sid" element is VIAF's own source identifier,
-                        in the format "ORG_ID|RECORD_ID". For example, the sid element
+                        NOTE! The string in "sid" element is VIAF's own source ID,
+                        in the format "SOURCE|NAME_ID". For example, the sid element
                         contains "LC|n  79081460" for John Steinbeck.
 
-                        This record id is NOT ALWAYS the same as the record id used by the
+                        This name id is NOT ALWAYS the same as the record id used by the
                         source institution itself (though often, it is). In the case above,
                         the LC record ID for Steinbeck is "n79081460". The difference is
                         not always simply a matter of whitespace.
@@ -175,7 +176,7 @@ public class VIAFParser extends DefaultHandler {
                         which we store and associate at the end of each "record" element.
                         */
 
-                        // has the form "CODE|ID"
+                        // has the form "SOURCE|NAME_ID"
                         String viafSourceId = parser.buf.toString();
 
                         String[] parts = viafSourceId.split("\\|");
@@ -185,14 +186,14 @@ public class VIAFParser extends DefaultHandler {
                             // check if Source object was already created from 's' element
                             boolean sourceAlreadyExists = false;
                             for (NameSource s : parser.nameSources) {
-                                if (s.getCode().equals(code)) {
-                                    s.setViafSourceId(viafSourceId);
+                                if (s.getSource().equals(code)) {
+                                    s.parseSourceId(viafSourceId);
                                     sourceAlreadyExists = true;
                                     break;
                                 }
                             }
                             if (!sourceAlreadyExists) {
-                                parser.nameSources.add(new NameSource(code, viafSourceId));
+                                parser.nameSources.add(new NameSource(viafSourceId));
                             }
                         } else {
                             System.out.println("ARGH, len of parts=" + parts.length);
@@ -274,33 +275,40 @@ public class VIAFParser extends DefaultHandler {
         }
     }
 
+    /**
+     * Associate VIAF's source IDs with name IDs from source institutions.
+     * This is called at the end of each result, because the relevant data
+     * was collected from different parts of the XML.
+     */
     private void associateSourceIds() {
         for(NameEntry nameEntry : result.getNameEntries()) {
             for(NameSource nameSource : nameEntry.getNameSources()) {
-                String sourceId = sourceIdMappings.get(nameSource.getViafSourceId());
-                if(sourceId == null) {
+                String sourceNameId = sourceIdMappings.get(nameSource.getSourceId());
+                if (sourceNameId == null) {
                     // sometimes ../mainHeadings/data/sources will list a source
                     // without an ID, but the XML will contain an ID under
                     // ../VIAFCluster/sources. This is the case for record 76304784,
                     // as of 6/17/2016.
                     //
-                    // This screws up the association here, so to deal,
-                    // we look for just the ORG prefix in sourceIdMappings keys.
-                    for(String k : sourceIdMappings.keySet()) {
-                        if(k.contains("|")) {
+                    // This code handles that case...
+                    for (String k : sourceIdMappings.keySet()) {
+                        if (k.contains("|")) {
                             String[] pieces = k.split("\\|");
-                            if(pieces.length == 2) {
+                            if (pieces.length == 2) {
                                 String orgCode = pieces[0];
                                 String id = pieces[1];
-                                if (orgCode.equals(nameSource.getCode())) {
-                                    sourceId = id;
+                                if (orgCode.equals(nameSource.getSource())) {
+                                    // since we have an ID now, find the NameSource and update it
+                                    nameSource.parseSourceId(k);
+                                    // also set the sourceNameId on NameSource
+                                    sourceNameId = sourceIdMappings.get(k);
                                 }
                             }
                         }
                     }
                 }
-                if(sourceId != null) {
-                    nameSource.setSourceId(sourceId);
+                if (sourceNameId != null) {
+                    nameSource.setSourceNameId(sourceNameId);
                 }
             }
         }

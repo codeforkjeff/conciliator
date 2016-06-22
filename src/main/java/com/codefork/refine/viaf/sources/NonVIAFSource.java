@@ -83,31 +83,22 @@ public class NonVIAFSource extends Source {
                 viafResult.getExactNameOrMostCommonName(query.getQuery());
         boolean exactMatch = name != null ? name.equals(query.getQuery()) : false;
 
-        String sourceId = viafResult.getSourceId(query.getSource());
+        String sourceNameId = viafResult.getSourceNameId(query.getSource());
 
-        // special cases: VIAF gives the source institution IDs as URLs,
-        // which won't do. So the best we can do is parse the ID out of the "sid" element
-        if("BNF".equals(query.getSource()) || "DNB".equals(query.getSource())) {
-            String viafSourceId = viafResult.getViafSourceId(query.getSource());
-            // apparently this is possible? See https://github.com/codeforkjeff/refine_viaf/issues/2
-            if(viafSourceId != null) {
-                String[] parts = viafSourceId.split("\\|");
-                if (parts.length == 2) {
-                    sourceId = parts[1];
-                } else {
-                    sourceId = null;
-                }
-            }
+        // if we don't have a sourceNameId or VIAF gives it as a URL,
+        // use the name ID according to VIAF instead.
+        if(sourceNameId == null || sourceNameId.startsWith("http")) {
+            sourceNameId = viafResult.getNameId(query.getSource());
         }
 
-        // if there's no source ID, we still have to return something,
+        // if there's STILL no source ID, we still have to return something,
         // so we return 0.
-        if(sourceId == null) {
-            sourceId = "0";
+        if(sourceNameId == null) {
+            sourceNameId = "0";
         }
 
         Result r = new Result(
-                formatID(sourceId),
+                formatID(sourceNameId),
                 name,
                 viafResult.getNameType(),
                 StringUtil.levenshteinDistanceRatio(name, query.getQuery()),

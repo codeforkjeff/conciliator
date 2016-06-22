@@ -30,7 +30,7 @@ public class VIAFParserTest {
             if(b.length() > 0) {
                 b.append(delimiter);
             }
-            b.append(s.getCode());
+            b.append(s.getSource());
         }
         return b.toString();
     }
@@ -96,10 +96,10 @@ public class VIAFParserTest {
                 joinSources(firstResult.getNameEntries().get(0).getNameSources(), ","));
 
         // test that our source ID mappings work
-        assertEquals("n79081460", firstResult.getSourceId("LC"));
-        assertEquals("x90081598", firstResult.getSourceId("BIBSYS"));
-        assertEquals("http://catalogue.bnf.fr/ark:/12148/cb119254833", firstResult.getSourceId("BNF"));
-        assertEquals("IT\\ICCU\\CFIV\\000628", firstResult.getSourceId("ICCU"));
+        assertEquals("n79081460", firstResult.getSourceNameId("LC"));
+        assertEquals("x90081598", firstResult.getSourceNameId("BIBSYS"));
+        assertEquals("http://catalogue.bnf.fr/ark:/12148/cb119254833", firstResult.getSourceNameId("BNF"));
+        assertEquals("IT\\ICCU\\CFIV\\000628", firstResult.getSourceNameId("ICCU"));
 
         assertEquals("Steinbeck, John (John Ernst), 1902-1968",
                 firstResult.getNameEntries().get(1).getName());
@@ -130,37 +130,6 @@ public class VIAFParserTest {
         assertEquals("NLP,ICCU,DNB,BNF",
                 joinSources(secondResult.getNameEntries().get(0).getNameSources(), ","));
 
-    }
-
-    /**
-     * Test case for XML missing an ID in ../mainHeadings/data/sources
-     * but having an ID under ../VIAFCluster/sources.
-     * @throws Exception
-     */
-    @Test
-    public void testParseXMLWithoutSourceID() throws Exception {
-        SAXParserFactory spf = SAXParserFactory.newInstance();
-        SAXParser parser = spf.newSAXParser();
-        VIAFParser viafParser = new VIAFParser();
-
-        InputStream is = getClass().getResourceAsStream("/alexandre.xml");
-        parser.parse(is, viafParser);
-
-        List<VIAFResult> results = viafParser.getResults();
-
-        assertEquals(1, results.size());
-
-        VIAFResult firstResult = results.get(0);
-
-        assertEquals(1, firstResult.getNameEntries().size());
-
-        assertEquals("Alexandre, Jean-François 1804-1874",
-                firstResult.getNameEntries().get(0).getName());
-        assertEquals("BNF",
-                joinSources(firstResult.getNameEntries().get(0).getNameSources(), ","));
-
-        // test that our source ID mappings work
-        assertEquals("10341017", firstResult.getSourceId("BNF"));
     }
 
     @Test
