@@ -6,6 +6,7 @@ import com.codefork.refine.StringUtil;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -22,9 +23,13 @@ public class VIAFServiceTest {
 
         SearchQuery query = new SearchQuery("william shakespeare", 3, NameType.Person, "should");
 
-        InputStream is = viafService.doSearch(query.createCqlQueryString(), query.getLimit());
+        HttpURLConnection conn = viafService.doSearch(query.createCqlQueryString(), query.getLimit());
 
         // make sure we get something back
+        assertNotNull(conn);
+
+        InputStream is = conn.getInputStream();
+
         assertNotNull(is);
 
         // as of 5/2/2016, size of XML document returned is 877914.

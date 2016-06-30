@@ -11,7 +11,9 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ReconcileControllerTest {
 
@@ -50,14 +53,18 @@ public class ReconcileControllerTest {
 
         VIAFService viafService = mock(VIAFService.class);
         final Class testClass = getClass();
-        doAnswer(new Answer<InputStream>() {
+        doAnswer(new Answer<HttpURLConnection>() {
             @Override
-            public InputStream answer(InvocationOnMock invocation) {
+            public HttpURLConnection answer(InvocationOnMock invocation) throws Exception {
                 String arg1 = (String) invocation.getArguments()[0];
                 if (arg1.contains("shakespeare")) {
-                    return testClass.getResourceAsStream("/shakespeare.xml");
+                    HttpURLConnection conn = mock(HttpURLConnection.class);
+                    when(conn.getInputStream()).thenReturn(testClass.getResourceAsStream("/shakespeare.xml"));
+                    return conn;
                 } else if(arg1.contains("wittgenstein")) {
-                    return testClass.getResourceAsStream("/wittgenstein.xml");
+                    HttpURLConnection conn = mock(HttpURLConnection.class);
+                    when(conn.getInputStream()).thenReturn(testClass.getResourceAsStream("/wittgenstein.xml"));
+                    return conn;
                 }
                 return null;
             }

@@ -4,7 +4,8 @@ package com.codefork.refine.controllers;
 import com.codefork.refine.Config;
 import com.codefork.refine.NameType;
 import com.codefork.refine.SearchQuery;
-import com.codefork.refine.SearchThread;
+import com.codefork.refine.SearchResult;
+import com.codefork.refine.SearchTask;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
@@ -21,9 +22,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 
 /**
  * Controller to handle all /reconcile/viaf paths.
@@ -35,6 +37,14 @@ public class ReconcileController {
      * Time to wait for all search threads to finish in a single web request.
      */
     private static final int REQUEST_TIMEOUT_SECONDS = 10;
+
+    /**
+     * Single ExecutorService shared across all requests.
+     * NOTE: VIAF seems to have a limit of 6 simultaneous
+     * requests. To be conservative, we default to 4 for
+     * the entire app.
+     */
+    private static final ExecutorService executor = Executors.newFixedThreadPool(4);
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -136,15 +146,11 @@ public class ReconcileController {
 
                 JsonNode root = mapper.readTree(queries);
 
-                // NOTE: VIAF seems to have a limit of 6 simultaneous
-                // requests. To be conservative, we default to 3.
-                ExecutorService executor = Executors.newFixedThreadPool(3);
-                Map<String, SearchThread> threads = new HashMap<String, SearchThread>();
-
                 long start = System.currentTimeMillis();
 
-                Iterator<Map.Entry<String, JsonNode>> iter = root.fields();
-                while (iter.hasNext()) {
+                List<SearchTask> tasks = new ArrayList<SearchTask>();
+
+                for(Iterator<Map.Entry<String, JsonNode>> iter = root.fields(); iter.hasNext(); ) {
                     Map.Entry<String, JsonNode> fieldEntry = iter.next();
 
                     String indexKey = fieldEntry.getKey();
@@ -152,22 +158,30 @@ public class ReconcileController {
 
                     SearchQuery searchQuery = createSearchQuery(queryStruct, source, proxyMode);
 
-                    SearchThread worker = new SearchThread(viaf, searchQuery);
-                    executor.execute(worker);
-                    threads.put(indexKey, worker);
+                    SearchTask task = new SearchTask(viaf, indexKey, searchQuery);
+                    tasks.add(task);
                 }
 
-                executor.shutdown();
-                executor.awaitTermination(REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                List<Future<SearchResult>> futures = executor.invokeAll(tasks);
 
-                log.debug(String.format("%s threads finished in %s", threads.size(), System.currentTimeMillis() - start));
+                log.debug(String.format("%s tasks finished in %s", tasks.size(), System.currentTimeMillis() - start));
 
-                // collect results from the finished threads
-                for (Map.Entry<String, SearchThread> threadStruct : threads.entrySet()) {
-                    String indexKey = threadStruct.getKey();
-                    SearchThread searchThread = threadStruct.getValue();
-                    List<Result> results = searchThread.getResults();
-                    allResults.put(indexKey, new SearchResponse(results));
+                for(Future<SearchResult> future : futures) {
+                    try {
+                        SearchResult result = future.get();
+                        String indexKey = result.getKey();
+                        allResults.put(indexKey, new SearchResponse(result.getResults()));
+                    } catch(ExecutionException e) {
+
+                    }
+                }
+                // return empty arrays for searches that resulted in errors
+                for(Iterator<Map.Entry<String, JsonNode>> iter = root.fields(); iter.hasNext(); ) {
+                    Map.Entry<String, JsonNode> fieldEntry = iter.next();
+                    String indexKey = fieldEntry.getKey();
+                    if(!allResults.containsKey(indexKey)) {
+                        allResults.put(indexKey, new SearchResponse(new ArrayList<Result>()));
+                    }
                 }
 
                 log.debug(String.format("response=%s", new DeferredJSON(allResults)));

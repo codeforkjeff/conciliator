@@ -19,6 +19,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -160,7 +161,8 @@ public class VIAF {
     }
 
     private List<Result> doSearch(SearchQuery query) throws ParserConfigurationException, SAXException, IOException {
-        InputStream response = viafService.doSearch(query.createCqlQueryString(), query.getLimit());
+        HttpURLConnection conn = viafService.doSearch(query.createCqlQueryString(), query.getLimit());
+        InputStream response = conn.getInputStream();
 
         SAXParser parser = spf.newSAXParser();
         VIAFParser viafParser = new VIAFParser();
@@ -171,8 +173,9 @@ public class VIAF {
 
         try {
             response.close();
+            conn.disconnect();
         } catch(IOException ioe) {
-            log.error("Ignoring error from trying to close connection input stream: " + ioe);
+            log.error("Ignoring error from trying to close input stream and connection: " + ioe);
         }
 
         List<Result> results = new ArrayList<Result>();
