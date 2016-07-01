@@ -7,12 +7,11 @@ import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.resources.SourceMetaDataResponse;
 import com.codefork.refine.viaf.VIAF;
 import com.codefork.refine.viaf.VIAFService;
+import com.codefork.refine.viaf.VIAFThreadPool;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,8 @@ public class ReconcileControllerTest {
     @SuppressWarnings("unchecked")
     public void testServiceMetaData() throws Exception {
         Config config = new Config();
-        ReconcileController rc = new ReconcileController(new VIAF(new VIAFService(), config), config);
+        VIAF viaf = new VIAF(new VIAFService(), config);
+        ReconcileController rc = new ReconcileController(viaf, new VIAFThreadPool(viaf), config);
         ServiceMetaDataResponse response = (ServiceMetaDataResponse) rc.reconcileNoSource(null, null);
         assertEquals(response.getView().getUrl(), "http://viaf.org/viaf/{{id}}");
     }
@@ -39,7 +39,8 @@ public class ReconcileControllerTest {
     @SuppressWarnings("unchecked")
     public void testProxyMetaData() throws Exception {
         Config config = new Config();
-        ReconcileController rc = new ReconcileController(new VIAF(new VIAFService(), config), config);
+        VIAF viaf = new VIAF(new VIAFService(), config);
+        ReconcileController rc = new ReconcileController(viaf, new VIAFThreadPool(viaf), config);
         SourceMetaDataResponse response = (SourceMetaDataResponse) rc.reconcileProxy(null, null, "LC");
         assertEquals(response.getView().getUrl(), "http://id.loc.gov/authorities/names/{{id}}");
     }
@@ -71,7 +72,8 @@ public class ReconcileControllerTest {
         }).when(viafService).doSearch(anyString(), anyInt());
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
-        ReconcileController rc = new ReconcileController(new VIAF(viafService, config), config);
+        VIAF viaf = new VIAF(new VIAFService(), config);
+        ReconcileController rc = new ReconcileController(viaf, new VIAFThreadPool(viaf), config);
 
         Map<String, SearchResponse> results = (Map<String, SearchResponse>) rc.reconcileNoSource(null, json);
 
