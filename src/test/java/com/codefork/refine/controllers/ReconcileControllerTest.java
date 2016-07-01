@@ -7,11 +7,12 @@ import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.resources.SourceMetaDataResponse;
 import com.codefork.refine.viaf.VIAF;
 import com.codefork.refine.viaf.VIAFService;
+import com.codefork.refine.viaf.VIAFThreadPool;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ReconcileControllerTest {
 
@@ -27,7 +29,8 @@ public class ReconcileControllerTest {
     @SuppressWarnings("unchecked")
     public void testServiceMetaData() throws Exception {
         Config config = new Config();
-        ReconcileController rc = new ReconcileController(new VIAF(new VIAFService(), config), config);
+        VIAF viaf = new VIAF(new VIAFService(), config);
+        ReconcileController rc = new ReconcileController(viaf, new VIAFThreadPool(viaf), config);
         ServiceMetaDataResponse response = (ServiceMetaDataResponse) rc.reconcileNoSource(null, null);
         assertEquals(response.getView().getUrl(), "http://viaf.org/viaf/{{id}}");
     }
@@ -36,7 +39,8 @@ public class ReconcileControllerTest {
     @SuppressWarnings("unchecked")
     public void testProxyMetaData() throws Exception {
         Config config = new Config();
-        ReconcileController rc = new ReconcileController(new VIAF(new VIAFService(), config), config);
+        VIAF viaf = new VIAF(new VIAFService(), config);
+        ReconcileController rc = new ReconcileController(viaf, new VIAFThreadPool(viaf), config);
         SourceMetaDataResponse response = (SourceMetaDataResponse) rc.reconcileProxy(null, null, "LC");
         assertEquals(response.getView().getUrl(), "http://id.loc.gov/authorities/names/{{id}}");
     }
@@ -50,21 +54,26 @@ public class ReconcileControllerTest {
 
         VIAFService viafService = mock(VIAFService.class);
         final Class testClass = getClass();
-        doAnswer(new Answer<InputStream>() {
+        doAnswer(new Answer<HttpURLConnection>() {
             @Override
-            public InputStream answer(InvocationOnMock invocation) {
+            public HttpURLConnection answer(InvocationOnMock invocation) throws Exception {
                 String arg1 = (String) invocation.getArguments()[0];
                 if (arg1.contains("shakespeare")) {
-                    return testClass.getResourceAsStream("/shakespeare.xml");
+                    HttpURLConnection conn = mock(HttpURLConnection.class);
+                    when(conn.getInputStream()).thenReturn(testClass.getResourceAsStream("/shakespeare.xml"));
+                    return conn;
                 } else if(arg1.contains("wittgenstein")) {
-                    return testClass.getResourceAsStream("/wittgenstein.xml");
+                    HttpURLConnection conn = mock(HttpURLConnection.class);
+                    when(conn.getInputStream()).thenReturn(testClass.getResourceAsStream("/wittgenstein.xml"));
+                    return conn;
                 }
                 return null;
             }
         }).when(viafService).doSearch(anyString(), anyInt());
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
-        ReconcileController rc = new ReconcileController(new VIAF(viafService, config), config);
+        VIAF viaf = new VIAF(new VIAFService(), config);
+        ReconcileController rc = new ReconcileController(viaf, new VIAFThreadPool(viaf), config);
 
         Map<String, SearchResponse> results = (Map<String, SearchResponse>) rc.reconcileNoSource(null, json);
 
