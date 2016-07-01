@@ -14,4 +14,4 @@
 # the JVM from having to dynamically allocate memory, which takes time.
 # -Xms128m -Xmx128m
 
-java -Xms128m -Xmx128m -Dlogging.level.com.codefork.refine=DEBUG -jar target/refine_viaf-1.4.jar
+java -Xms128m -Xmx128m -Dlogging.level.com.codefork.refine=DEBUG -jar target/refine_viaf-1.5.jar
