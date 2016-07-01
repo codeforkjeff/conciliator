@@ -75,18 +75,6 @@ public class ReconcileController {
     }
 
     /**
-     * TODO: DEPRECATED
-     */
-    @RequestMapping(value = "/throughviaf/{source}")
-    @ResponseBody
-    public Object reconcileProxyDeprecated(
-            @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "queries", required = false) String queries,
-            @PathVariable("source") String sourceFromPath) {
-        return reconcile(query, queries, sourceFromPath, true);
-    }
-
-    /**
      * proxy mode URL
      */
     @RequestMapping(value = "/viafproxy/{source}")
