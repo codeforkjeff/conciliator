@@ -7,7 +7,6 @@ import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.resources.SourceMetaDataResponse;
 import com.codefork.refine.viaf.VIAF;
 import com.codefork.refine.viaf.VIAFService;
-import com.codefork.refine.viaf.VIAFThreadPool;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -30,7 +29,7 @@ public class ReconcileControllerTest {
     public void testServiceMetaData() throws Exception {
         Config config = new Config();
         VIAF viaf = new VIAF(new VIAFService(), config);
-        ReconcileController rc = new ReconcileController(viaf, new VIAFThreadPool(viaf), config);
+        ReconcileController rc = new ReconcileController(viaf, config);
         ServiceMetaDataResponse response = (ServiceMetaDataResponse) rc.reconcileNoSource(null, null);
         assertEquals(response.getView().getUrl(), "http://viaf.org/viaf/{{id}}");
     }
@@ -40,7 +39,7 @@ public class ReconcileControllerTest {
     public void testProxyMetaData() throws Exception {
         Config config = new Config();
         VIAF viaf = new VIAF(new VIAFService(), config);
-        ReconcileController rc = new ReconcileController(viaf, new VIAFThreadPool(viaf), config);
+        ReconcileController rc = new ReconcileController(viaf, config);
         SourceMetaDataResponse response = (SourceMetaDataResponse) rc.reconcileProxy(null, null, "LC");
         assertEquals(response.getView().getUrl(), "http://id.loc.gov/authorities/names/{{id}}");
     }
@@ -73,7 +72,7 @@ public class ReconcileControllerTest {
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
         VIAF viaf = new VIAF(new VIAFService(), config);
-        ReconcileController rc = new ReconcileController(viaf, new VIAFThreadPool(viaf), config);
+        ReconcileController rc = new ReconcileController(viaf, config);
 
         Map<String, SearchResponse> results = (Map<String, SearchResponse>) rc.reconcileNoSource(null, json);
 

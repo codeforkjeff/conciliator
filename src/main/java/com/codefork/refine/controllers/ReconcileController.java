@@ -4,14 +4,10 @@ package com.codefork.refine.controllers;
 import com.codefork.refine.Config;
 import com.codefork.refine.NameType;
 import com.codefork.refine.SearchQuery;
-import com.codefork.refine.SearchResult;
-import com.codefork.refine.SearchTask;
-import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.resources.SourceMetaDataResponse;
 import com.codefork.refine.viaf.VIAF;
-import com.codefork.refine.viaf.VIAFThreadPool;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * Controller to handle all /reconcile/viaf paths.
@@ -41,13 +35,11 @@ public class ReconcileController {
 
     Log log = LogFactory.getLog(ReconcileController.class);
     private final VIAF viaf;
-    private final VIAFThreadPool viafThreadPool;
     private final Config config;
 
     @Autowired
-    public ReconcileController(VIAF viaf, VIAFThreadPool viafThreadPool, Config config) {
+    public ReconcileController(VIAF viaf, Config config) {
         this.viaf = viaf;
-        this.viafThreadPool = viafThreadPool;
         this.config = config;
     }
 
@@ -99,7 +91,6 @@ public class ReconcileController {
             String queries,
             String sourceFromPath,
             boolean proxyMode) {
-
         String source = (sourceFromPath != null) ? sourceFromPath : null;
 
         if (query != null) {
@@ -112,17 +103,13 @@ public class ReconcileController {
                 } else {
                     searchQuery = new SearchQuery(query, 3, null, "should", proxyMode);
                 }
-                Future<SearchResult> future = viafThreadPool.submit(new SearchTask(viaf, "", searchQuery));
-                List<Result> results = new ArrayList<Result>();
-                try {
-                    SearchResult searchResult = future.get();
-                    results = searchResult.getResults();
-                } catch(ExecutionException e) {
-                    log.error("execution error: " + e.toString());
-                } catch(InterruptedException e) {
-                    log.error("interrupted error: " + e.toString());
-                }
-                return new SearchResponse(results);
+
+                Map<String, SearchQuery> queriesMap = new HashMap<String, SearchQuery>();
+                queriesMap.put("q0", searchQuery);
+
+                Map<String, SearchResponse> resultsMap = viaf.search(queriesMap);
+
+                return new SearchResponse(resultsMap.get("q0").getResult());
             } catch (JsonProcessingException jse) {
                 log.error("Got an error processing JSON: " + jse.toString());
             } catch (IOException ioe) {
@@ -132,13 +119,11 @@ public class ReconcileController {
         } else if (queries != null) {
             log.debug("queries=" + queries);
             try {
-                Map<String, SearchResponse> allResults = new HashMap<String, SearchResponse>();
-
                 JsonNode root = mapper.readTree(queries);
 
                 long start = System.currentTimeMillis();
 
-                List<SearchTask> tasks = new ArrayList<SearchTask>();
+                Map<String, SearchQuery> queriesMap = new HashMap<String, SearchQuery>();
 
                 for(Iterator<Map.Entry<String, JsonNode>> iter = root.fields(); iter.hasNext(); ) {
                     Map.Entry<String, JsonNode> fieldEntry = iter.next();
@@ -147,45 +132,20 @@ public class ReconcileController {
                     JsonNode queryStruct = fieldEntry.getValue();
 
                     SearchQuery searchQuery = createSearchQuery(queryStruct, source, proxyMode);
-
-                    SearchTask task = new SearchTask(viaf, indexKey, searchQuery);
-                    tasks.add(task);
+                    queriesMap.put(indexKey, searchQuery);
                 }
 
-                List<Future<SearchResult>> futures = new ArrayList<Future<SearchResult>>();
-                for(SearchTask task : tasks) {
-                    futures.add(viafThreadPool.submit(task));
-                }
+                Map<String, SearchResponse> resultsMap = viaf.search(queriesMap);
 
-                for(Future<SearchResult> future : futures) {
-                    try {
-                        SearchResult result = future.get();
-                        String indexKey = result.getKey();
-                        allResults.put(indexKey, new SearchResponse(result.getResults()));
-                    } catch(ExecutionException e) {
-                        log.error("error getting value from future: " + e);
-                    }
-                }
-                // return empty arrays for searches that didn't complete due to errors
-                for(Iterator<Map.Entry<String, JsonNode>> iter = root.fields(); iter.hasNext(); ) {
-                    Map.Entry<String, JsonNode> fieldEntry = iter.next();
-                    String indexKey = fieldEntry.getKey();
-                    if(!allResults.containsKey(indexKey)) {
-                        allResults.put(indexKey, new SearchResponse(new ArrayList<Result>()));
-                    }
-                }
+                log.debug(String.format("%s tasks finished in %s (thread pool size=%s)", queriesMap.size(), System.currentTimeMillis() - start, viaf.getThreadPool().getPoolSize()));
 
-                log.debug(String.format("%s tasks finished in %s", tasks.size(), System.currentTimeMillis() - start));
+                log.debug(String.format("response=%s", new DeferredJSON(resultsMap)));
 
-                log.debug(String.format("response=%s", new DeferredJSON(allResults)));
-
-                return allResults;
+                return resultsMap;
             } catch (JsonProcessingException jse) {
                 log.error("Got an error processing JSON: " + jse.toString());
             } catch (IOException ioe) {
                 log.error("Got IO error processing JSON: " + ioe.toString());
-            } catch (InterruptedException ex) {
-                log.error("Executor interrupted while running tasks: " + ex.toString());
             }
         }
 
