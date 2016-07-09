@@ -172,11 +172,20 @@ public class VIAF {
             }
         }
 
-        // second tries
-        Map<String, SearchResult> resultsFromSecondTries = doSearchInThreadPool(secondTries);
+        if(secondTries.size() > 0) {
+            // sleep a bit, avoid doing second tries immediately
+            try {
+                Thread.sleep(1500);
+            } catch(InterruptedException e) {
+                log.error("sleep interrupted before doing second tries");
+            }
 
-        // merge into results
-        results.putAll(resultsFromSecondTries);
+            // second tries
+            Map<String, SearchResult> resultsFromSecondTries = doSearchInThreadPool(secondTries);
+
+            // merge into results
+            results.putAll(resultsFromSecondTries);
+        }
 
         // return empty arrays for searches that didn't complete due to errors
         for(Map.Entry<String, SearchResult> queryEntry : results.entrySet()) {
