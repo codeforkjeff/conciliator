@@ -51,7 +51,7 @@ build the .jar file using maven.
 Run this command:
 
 ```
-java -jar refine_viaf-1.5.jar
+java -jar refine_viaf-1.5.1.jar
 ```
 
 That's it! You should see some messages as the application starts
