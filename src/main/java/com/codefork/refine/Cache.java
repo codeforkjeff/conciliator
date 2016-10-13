@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Simple cache implementation. This does NOT do any locking. Clients should
@@ -22,7 +22,7 @@ public class Cache<K, V> {
 
     private int lifetime = DEFAULT_LIFETIME; // in seconds
     private int maxSize = DEFAULT_MAXSIZE;
-    private HashMap<K, CachedValue> cacheMap = new HashMap<K, CachedValue>();
+    private ConcurrentHashMap<K, CachedValue> cacheMap = new ConcurrentHashMap<K, CachedValue>();
 
     public int getLifetime() {
         return lifetime;
@@ -82,7 +82,7 @@ public class Cache<K, V> {
 
         // processing keys in descending timestamp order makes
         // it easier to break out of the copy loop when we hit maxSize
-        final HashMap<K, CachedValue> oldMap = getMap();
+        final ConcurrentHashMap<K, CachedValue> oldMap = getMap();
         K[] sorted = (K[]) oldMap.keySet().toArray();
         Arrays.sort(sorted, new ReverseTimestampComparator());
         int total = oldMap.size();
@@ -110,7 +110,7 @@ public class Cache<K, V> {
         return newCache;
     }
 
-    private HashMap<K, CachedValue> getMap() {
+    private ConcurrentHashMap<K, CachedValue> getMap() {
         return cacheMap;
     }
 
