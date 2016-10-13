@@ -19,7 +19,13 @@ public class CacheExpire implements Runnable {
         try {
             while(keepGoing) {
                 Thread.sleep(60000);
-                cacheManager.expireCache();
+                try {
+                    cacheManager.expireCache();
+                } catch(Exception e) {
+                    // if we don't catch here, a possibly intermittent or edge-case error
+                    // causes the cache expire thread to die, and the cache will grow uncontrollably
+                    log.error("Ignoring error that occurred in cacheManager.expireCache(): " + e.toString());
+                }
             }
         } catch (InterruptedException e) {
             // noop
