@@ -1,7 +1,7 @@
 
 package com.codefork.refine.resources;
 
-import com.codefork.refine.NameType;
+import com.codefork.refine.viaf.VIAFNameType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +32,15 @@ public class Result {
      * A VIAF result only ever has one type, but maybe other reconciliation
      * services return multiple types for a name?
      */
-    private List<VIAFNameType> type;
+    private List<NameType> type;
     private double score;
     private boolean match;
 
-    public Result(String id, String name, NameType nameType, double score, boolean match) {
+    public Result(String id, String name, VIAFNameType nameType, double score, boolean match) {
         this.id = id;
         this.name = name;
-        this.type = new ArrayList<VIAFNameType>();
-        this.type.add(nameType.asVIAFNameType());
+        this.type = new ArrayList<NameType>();
+        this.type.add(nameType.asNameType());
         this.score = score;
         this.match = match;
     }
@@ -61,11 +61,11 @@ public class Result {
         this.name = name;
     }
 
-    public List<VIAFNameType> getType() {
+    public List<NameType> getType() {
         return type;
     }
 
-    public void setType(List<VIAFNameType> resultType) {
+    public void setType(List<NameType> resultType) {
         this.type = resultType;
     }
 

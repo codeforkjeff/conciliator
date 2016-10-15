@@ -1,5 +1,6 @@
 package com.codefork.refine;
 
+import com.codefork.refine.datasource.SearchTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

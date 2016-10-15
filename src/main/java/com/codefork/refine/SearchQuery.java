@@ -1,6 +1,13 @@
 
 package com.codefork.refine;
 
+import com.codefork.refine.resources.NameType;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * Represents a single query in a request sent by Open Refine.
  * For the JSON format of this query, see
@@ -19,22 +26,55 @@ public class SearchQuery {
     private int limit;
     private NameType nameType;
     private String typeStrict;
-    private String source;
-    private boolean proxyMode;
+    private Map<String, String> extraParams;
 
-    public SearchQuery(String query, int limit, NameType nameType, String typeStrict, boolean proxyMode) {
+    /**
+     * Factory method that builds SearchQuery instances out of the JSON structure
+     * representing a single name query.
+     * @return SearchQuery
+     */
+    public static SearchQuery createFromJson(JsonNode queryStruct, Map<String, String> extraParams) {
+
+        int limit = queryStruct.path("limit").asInt();
+        if(limit == 0) {
+            limit = 3;
+        }
+
+        String typeFromJson = queryStruct.path("type").asText();
+        NameType nameType = null;
+        if(typeFromJson != null && typeFromJson.length() > 0) {
+            nameType = new NameType(typeFromJson, null);
+        }
+
+        String typeStrict = null;
+        if(!queryStruct.path("type_strict").isMissingNode()) {
+            typeStrict = queryStruct.path("type_strict").asText();
+        }
+
+        SearchQuery searchQuery = new SearchQuery(
+                queryStruct.path("query").asText().trim(),
+                limit,
+                nameType,
+                typeStrict,
+                extraParams
+        );
+
+        return searchQuery;
+    }
+
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict, Map<String, String> extraParams) {
         this.query = query;
         this.limit = limit;
         this.nameType = nameType;
         this.typeStrict = typeStrict;
-        this.proxyMode = proxyMode;
+        this.extraParams = extraParams;
     }
 
     /**
      * Constructor setting proxyMode = false
      */
     public SearchQuery(String query, int limit, NameType nameType, String typeStrict) {
-        this(query, limit, nameType, typeStrict, false);
+        this(query, limit, nameType, typeStrict, Collections.EMPTY_MAP);
     }
 
     public String getQuery() {
@@ -69,49 +109,25 @@ public class SearchQuery {
         this.typeStrict = typeStrict;
     }
 
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public boolean isProxyMode() {
-        return proxyMode;
-    }
-
-    public void setProxyMode(boolean proxyMode) {
-        this.proxyMode = proxyMode;
-    }
-
-    /**
-     * @return String used for the cql 'query' URL param passed to VIAF 
-     */
-   public String createCqlQueryString() {
-        String cqlTemplate = "local.mainHeadingEl all \"%s\"";
-        if(getNameType() != null) {
-            cqlTemplate = getNameType().getCqlString();
-        }
-        String cql = String.format(cqlTemplate, getQuery());
-
-        // NOTE: this query means return all the name records that 
-        // have an entry for this source; it does NOT mean search the name 
-        // values for this source ONLY. I think.
-        if(getSource() != null) {
-            cql += String.format(" and local.sources = \"%s\"", getSource().toLowerCase());
-        }
-
-        return cql;
+    public Map<String, String> getExtraParams() {
+        return extraParams;
     }
 
     public String getHashKey() {
-        return (query != null ? query : "") + "|" +
+        StringBuilder buf = new StringBuilder();
+        buf.append((query != null ? query : "") + "|" +
                 limit + "|" +
                 (nameType != null ? nameType.getId() : "") + "|" +
-                (typeStrict != null ? typeStrict : "") + "|" +
-                (source != null ? source : "") + "|" +
-                proxyMode;
+                (typeStrict != null ? typeStrict : ""));
+
+        Map<String, String> extraParams = getExtraParams();
+        Object[] keysAsObj = extraParams.keySet().toArray();
+        String[] keys = Arrays.copyOf(keysAsObj, keysAsObj.length, String[].class);
+        Arrays.sort(keys, String.CASE_INSENSITIVE_ORDER);
+        for(String key : keys) {
+            buf.append("|" + key + "=" + extraParams.get(key));
+        }
+        return buf.toString();
     }
 
 }

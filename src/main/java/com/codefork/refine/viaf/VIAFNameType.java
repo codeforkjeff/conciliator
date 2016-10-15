@@ -1,14 +1,14 @@
 
-package com.codefork.refine;
+package com.codefork.refine.viaf;
 
-import com.codefork.refine.resources.VIAFNameType;
+import com.codefork.refine.resources.NameType;
 
 /**
  * Different types of names. Note that this is for the application's internal
- * use; see VIAFNameType (and the asVIAFNameType() method in this enum) for a
+ * use; see NameType (and the asNameType() method in this enum) for a
  * class used to format data sent to VIAF.
  */
-public enum NameType {
+public enum VIAFNameType {
     Person("/people/person", "Person", "Personal", "local.personalNames all \"%s\""),
     Organization("/organization/organization", "Corporate Name", "Corporate", "local.corporateNames all \"%s\""),
     Location("/location/location", "Geographic Name", "Geographic", "local.geographicNames all \"%s\""),
@@ -22,7 +22,7 @@ public enum NameType {
     private final String viafCode;
     private final String cqlString;
 
-    NameType(String id, String displayName, String viafCode, String cqlString) {
+    VIAFNameType(String id, String displayName, String viafCode, String cqlString) {
        this.id = id;
        this.displayName = displayName;
        this.viafCode = viafCode;
@@ -45,12 +45,12 @@ public enum NameType {
         return cqlString;
     }
 
-    public VIAFNameType asVIAFNameType() {
-        return new VIAFNameType(getId(), getDisplayName());
+    public NameType asNameType() {
+        return new NameType(getId(), getDisplayName());
     }
 
-    public static NameType getByViafCode(String viafCodeArg) {
-        for(NameType nameType: NameType.values()) {
+    public static VIAFNameType getByViafCode(String viafCodeArg) {
+        for(VIAFNameType nameType: VIAFNameType.values()) {
             if(nameType.viafCode.equals(viafCodeArg)) {
                 return nameType;
             }
@@ -58,8 +58,8 @@ public enum NameType {
         return null;
     }
 
-    public static NameType getById(String idArg) {
-        for(NameType nameType: NameType.values()) {
+    public static VIAFNameType getById(String idArg) {
+        for(VIAFNameType nameType: VIAFNameType.values()) {
             if(nameType.id.equals(idArg)) {
                 return nameType;
             }

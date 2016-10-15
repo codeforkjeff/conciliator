@@ -1,7 +1,5 @@
 package com.codefork.refine.viaf;
 
-import com.codefork.refine.NameType;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +13,7 @@ import java.util.List;
 public class VIAFResult {
 
     private String viafId;
-    private NameType nameType;
+    private VIAFNameType nameType;
     private List<NameEntry> nameEntries = new ArrayList<NameEntry>();
 
     public String getViafId() {
@@ -26,11 +24,11 @@ public class VIAFResult {
         this.viafId = viafId;
     }
 
-    public NameType getNameType() {
+    public VIAFNameType getNameType() {
         return nameType;
     }
 
-    public void setNameType(NameType nameType) {
+    public void setNameType(VIAFNameType nameType) {
         this.nameType = nameType;
     }
 

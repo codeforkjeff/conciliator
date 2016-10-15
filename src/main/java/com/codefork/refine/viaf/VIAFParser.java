@@ -1,6 +1,5 @@
 package com.codefork.refine.viaf;
 
-import com.codefork.refine.NameType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -95,7 +94,7 @@ public class VIAFParser extends DefaultHandler {
         endElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/nameType",
                 new EndElementHandler() {
                     public void handle(VIAFParser parser, String uri, String localName, String qName) {
-                        parser.result.setNameType(NameType.getByViafCode(parser.buf.toString())) ;
+                        parser.result.setNameType(VIAFNameType.getByViafCode(parser.buf.toString())) ;
                         parser.buf = new StringBuilder();
                         parser.captureChars = false;
                     }

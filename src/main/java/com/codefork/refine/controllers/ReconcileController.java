@@ -2,11 +2,9 @@
 package com.codefork.refine.controllers;
 
 import com.codefork.refine.Config;
-import com.codefork.refine.NameType;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.datasource.DataSource;
 import com.codefork.refine.resources.SearchResponse;
-import com.codefork.refine.resources.ServiceMetaDataResponse;
-import com.codefork.refine.resources.SourceMetaDataResponse;
 import com.codefork.refine.viaf.VIAF;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,11 +12,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Controller to handle all /reconcile/viaf paths.
@@ -26,72 +31,59 @@ import java.util.*;
 @Controller
 @RequestMapping("/reconcile")
 public class ReconcileController {
-    /**
-     * Time to wait for all search threads to finish in a single web request.
-     */
-    private static final int REQUEST_TIMEOUT_SECONDS = 10;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     Log log = LogFactory.getLog(ReconcileController.class);
-    private final VIAF viaf;
+
     private final Config config;
+    private final Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
 
     @Autowired
-    public ReconcileController(VIAF viaf, Config config) {
-        this.viaf = viaf;
+    public ReconcileController(Config config) {
         this.config = config;
+        initDataSourceMap();
     }
 
-    /**
-     * Endpoint that does non-source-specific reconciliation.
-     */
-    @RequestMapping(value = "/viaf")
-    @ResponseBody
-    public Object reconcileNoSource(
-            @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "queries", required = false) String queries) {
-        return reconcile(query, queries, null, false);
+    public void initDataSourceMap() {
+        VIAF viaf = new VIAF();
+        viaf.init(config);
+        dataSourceMap.put("viaf", viaf);
+        dataSourceMap.put("viafproxy", viaf);
     }
 
-    /**
-     * Endpoint that does source-specific reconciliation.
-     */
-    @RequestMapping(value = "/viaf/{source}")
-    @ResponseBody
-    public Object reconcileWithSource(
-            @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "queries", required = false) String queries,
-            @PathVariable("source") String sourceFromPath) {
-        return reconcile(query, queries, sourceFromPath, false);
-    }
-
-    /**
-     * proxy mode URL
-     */
-    @RequestMapping(value = "/viafproxy/{source}")
-    @ResponseBody
-    public Object reconcileProxy(
-            @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "queries", required = false) String queries,
-            @PathVariable("source") String sourceFromPath) {
-        return reconcile(query, queries, sourceFromPath, true);
+    public DataSource getDataSource(String name) {
+        return dataSourceMap.get(name);
     }
 
     /**
      * Entry point for all reconciliation code
-     * @param query
-     * @param queries
-     * @param sourceFromPath
-     * @param proxyMode
-     * @return
      */
-    private Object reconcile(
+    @RequestMapping(value = "/**")
+    @ResponseBody
+    public Object reconcile(
+            HttpServletRequest request,
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "queries", required = false) String queries) {
+        String path = request.getServletPath();
+        String[] parts = path.split("/");
+        String dataSourceStr = parts[2];
+
+        DataSource dataSource = getDataSource(dataSourceStr);
+        if(dataSource == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        Map<String, String> extraParams = dataSource.parseRequestToExtraParams(request);
+
+        return reconcile(dataSource, query, queries, extraParams);
+    }
+
+    public Object reconcile(
+            DataSource dataSource,
             String query,
             String queries,
-            String sourceFromPath,
-            boolean proxyMode) {
-        String source = (sourceFromPath != null) ? sourceFromPath : null;
+            Map<String, String> extraParams) {
 
         if (query != null) {
             log.debug("query=" + query);
@@ -99,15 +91,15 @@ public class ReconcileController {
                 SearchQuery searchQuery;
                 if (query.startsWith("{")) {
                     JsonNode root = mapper.readTree(query);
-                    searchQuery = createSearchQuery(root, source, proxyMode);
+                    searchQuery = SearchQuery.createFromJson(root, extraParams);
                 } else {
-                    searchQuery = new SearchQuery(query, 3, null, "should", proxyMode);
+                    searchQuery = new SearchQuery(query, 3, null, "should", extraParams);
                 }
 
                 Map<String, SearchQuery> queriesMap = new HashMap<String, SearchQuery>();
                 queriesMap.put("q0", searchQuery);
 
-                Map<String, SearchResponse> resultsMap = viaf.search(queriesMap);
+                Map<String, SearchResponse> resultsMap = dataSource.search(queriesMap);
 
                 return new SearchResponse(resultsMap.get("q0").getResult());
             } catch (JsonProcessingException jse) {
@@ -121,8 +113,6 @@ public class ReconcileController {
             try {
                 JsonNode root = mapper.readTree(queries);
 
-                long start = System.currentTimeMillis();
-
                 Map<String, SearchQuery> queriesMap = new HashMap<String, SearchQuery>();
 
                 for(Iterator<Map.Entry<String, JsonNode>> iter = root.fields(); iter.hasNext(); ) {
@@ -131,13 +121,11 @@ public class ReconcileController {
                     String indexKey = fieldEntry.getKey();
                     JsonNode queryStruct = fieldEntry.getValue();
 
-                    SearchQuery searchQuery = createSearchQuery(queryStruct, source, proxyMode);
+                    SearchQuery searchQuery = SearchQuery.createFromJson(queryStruct, extraParams);
                     queriesMap.put(indexKey, searchQuery);
                 }
 
-                Map<String, SearchResponse> resultsMap = viaf.search(queriesMap);
-
-                log.debug(String.format("%s tasks finished in %s (thread pool size=%s)", queriesMap.size(), System.currentTimeMillis() - start, viaf.getThreadPool().getPoolSize()));
+                Map<String, SearchResponse> resultsMap = dataSource.search(queriesMap);
 
                 log.debug(String.format("response=%s", new DeferredJSON(resultsMap)));
 
@@ -149,45 +137,7 @@ public class ReconcileController {
             }
         }
 
-        if(proxyMode) {
-            return new SourceMetaDataResponse(config, viaf.findNonViafSource(source));
-        }
-        return new ServiceMetaDataResponse(config, source);
-    }
-
-    /**
-     * Factory method that builds SearchQuery instances out of the JSON structure
-     * representing a single name query.
-     * @param queryStruct a single name query
-     * @param source two-letter source code
-     * @return SearchQuery
-     */
-    private SearchQuery createSearchQuery(JsonNode queryStruct, String source, boolean proxyMode) {
-        int limit = queryStruct.path("limit").asInt();
-        if(limit == 0) {
-            limit = 3;
-        }
-
-        NameType nameType = NameType.getById(queryStruct.path("type").asText());
-
-        String typeStrict = null;
-        if(!queryStruct.path("type_strict").isMissingNode()) {
-            typeStrict = queryStruct.path("type_strict").asText();
-        }
-
-        SearchQuery searchQuery = new SearchQuery(
-                queryStruct.path("query").asText().trim(),
-                limit,
-                nameType,
-                typeStrict,
-                proxyMode
-                );
-
-        if(source != null) {
-            searchQuery.setSource(source);
-        }
-
-        return searchQuery;
+        return dataSource.createServiceMetaDataResponse(extraParams);
     }
 
     /**

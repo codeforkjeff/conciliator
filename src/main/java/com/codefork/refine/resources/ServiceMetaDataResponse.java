@@ -1,19 +1,11 @@
 package com.codefork.refine.resources;
 
-import com.codefork.refine.Config;
-import com.codefork.refine.NameType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Metadata about this reconciliation service, operating in normal VIAF mode.
+ * Metadata about this reconciliation service
  */
-public class ServiceMetaDataResponse {
-
-    Log log = LogFactory.getLog(ServiceMetaDataResponse.class);
+public abstract class ServiceMetaDataResponse {
 
     public static class View {
         private String url;
@@ -33,24 +25,7 @@ public class ServiceMetaDataResponse {
     }
     
     private String name = "";
-    private final static String IDENTIFIER_SPACE = "http://rdf.freebase.com/ns/user/hangy/viaf";
-    private final static View VIEW = new View("http://viaf.org/viaf/{{id}}");
-    private final static String SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
-    private final static List<VIAFNameType> DEFAULT_TYPES = new ArrayList<VIAFNameType>();
 
-    static {
-        for(NameType nameType : NameType.values()) {
-            DEFAULT_TYPES.add(nameType.asVIAFNameType());
-        }
-    }
-    
-    public ServiceMetaDataResponse(Config config, String source) {
-        setName(config.getServiceName());
-        if(source != null) {
-            setName(getName() + " - " + source);
-        }
-    }
-    
     public String getName() {
         return name;
     }
@@ -59,20 +34,12 @@ public class ServiceMetaDataResponse {
         this.name = name;
     }
 
-    public String getIdentifierSpace() {
-        return IDENTIFIER_SPACE;
-    }
+    public abstract String getIdentifierSpace();
 
-    public String getSchemaSpace() {
-        return SCHEMA_SPACE;
-    }
+    public abstract String getSchemaSpace();
 
-    public View getView() {
-        return VIEW;
-    }
+    public abstract View getView();
 
-    public List<VIAFNameType> getDefaultTypes() {
-        return DEFAULT_TYPES;
-    }
-    
+    public abstract List<NameType> getDefaultTypes();
+
 }

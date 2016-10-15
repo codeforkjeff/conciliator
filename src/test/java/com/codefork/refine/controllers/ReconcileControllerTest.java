@@ -4,7 +4,7 @@ import com.codefork.refine.Config;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
-import com.codefork.refine.resources.SourceMetaDataResponse;
+import com.codefork.refine.viaf.VIAFProxyModeMetaDataResponse;
 import com.codefork.refine.viaf.VIAF;
 import com.codefork.refine.viaf.VIAFService;
 import org.junit.Test;
@@ -12,6 +12,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.net.HttpURLConnection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +30,10 @@ public class ReconcileControllerTest {
     @SuppressWarnings("unchecked")
     public void testServiceMetaData() throws Exception {
         Config config = new Config();
-        VIAF viaf = new VIAF(new VIAFService(), config);
-        ReconcileController rc = new ReconcileController(viaf, config);
-        ServiceMetaDataResponse response = (ServiceMetaDataResponse) rc.reconcileNoSource(null, null);
+        VIAF viaf = new VIAF();
+        viaf.init(config);
+        ReconcileController rc = new ReconcileController(config);
+        ServiceMetaDataResponse response = (ServiceMetaDataResponse) rc.reconcile(viaf, null, null, Collections.EMPTY_MAP);
         assertEquals(response.getView().getUrl(), "http://viaf.org/viaf/{{id}}");
     }
 
@@ -38,9 +41,15 @@ public class ReconcileControllerTest {
     @SuppressWarnings("unchecked")
     public void testProxyMetaData() throws Exception {
         Config config = new Config();
-        VIAF viaf = new VIAF(new VIAFService(), config);
-        ReconcileController rc = new ReconcileController(viaf, config);
-        SourceMetaDataResponse response = (SourceMetaDataResponse) rc.reconcileProxy(null, null, "LC");
+        VIAF viaf = new VIAF();
+        viaf.init(config);
+        ReconcileController rc = new ReconcileController(config);
+
+        Map<String, String> extraParams = new HashMap<String, String>();
+        extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "LC");
+        extraParams.put(VIAF.EXTRA_PARAM_PROXY_MODE, "true");
+
+        VIAFProxyModeMetaDataResponse response = (VIAFProxyModeMetaDataResponse) rc.reconcile(viaf, null, null, extraParams);
         assertEquals(response.getView().getUrl(), "http://id.loc.gov/authorities/names/{{id}}");
     }
 
@@ -71,10 +80,12 @@ public class ReconcileControllerTest {
         }).when(viafService).doSearch(anyString(), anyInt());
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
-        VIAF viaf = new VIAF(new VIAFService(), config);
-        ReconcileController rc = new ReconcileController(viaf, config);
+        VIAF viaf = new VIAF();
+        viaf.init(config);
+        viaf.setViafService(viafService);
+        ReconcileController rc = new ReconcileController(config);
 
-        Map<String, SearchResponse> results = (Map<String, SearchResponse>) rc.reconcileNoSource(null, json);
+        Map<String, SearchResponse> results = (Map<String, SearchResponse>) rc.reconcile(viaf, null, json, Collections.EMPTY_MAP);
 
         assertEquals(results.size(), 2);
 

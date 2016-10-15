@@ -5,12 +5,12 @@ package com.codefork.refine.resources;
  * Name Types are a JSON object found in the service metadata
  * and in the results data.
  */
-public class VIAFNameType {
+public class NameType {
 
     private String id;
     private String name;
 
-    public VIAFNameType(String id, String name) {
+    public NameType(String id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -33,8 +33,8 @@ public class VIAFNameType {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof VIAFNameType) {
-            VIAFNameType obj2 = (VIAFNameType) obj;
+        if(obj instanceof NameType) {
+            NameType obj2 = (NameType) obj;
             return obj2.getId().equals(getId())
                     && obj2.getName().equals(getName());
         }

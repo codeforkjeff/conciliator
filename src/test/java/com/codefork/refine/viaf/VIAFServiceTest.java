@@ -1,8 +1,8 @@
 package com.codefork.refine.viaf;
 
-import com.codefork.refine.NameType;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.StringUtil;
+import com.codefork.refine.resources.NameType;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -21,9 +21,9 @@ public class VIAFServiceTest {
     public void testDoSearch() throws Exception {
         VIAFService viafService = new VIAFService();
 
-        SearchQuery query = new SearchQuery("william shakespeare", 3, NameType.Person, "should");
+        SearchQuery query = new SearchQuery("william shakespeare", 3, VIAFNameType.Person.asNameType(), "should");
 
-        HttpURLConnection conn = viafService.doSearch(query.createCqlQueryString(), query.getLimit());
+        HttpURLConnection conn = viafService.doSearch(VIAF.createCqlQueryString(query), query.getLimit());
 
         // make sure we get something back
         assertNotNull(conn);
