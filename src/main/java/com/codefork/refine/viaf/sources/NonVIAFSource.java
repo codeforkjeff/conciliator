@@ -102,7 +102,7 @@ public class NonVIAFSource extends Source {
         Result r = new Result(
                 formatID(sourceNameId),
                 name,
-                viafResult.getNameType(),
+                viafResult.getNameType().asNameType(),
                 StringUtil.levenshteinDistanceRatio(name, query.getQuery()),
                 exactMatch);
         return r;

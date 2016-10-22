@@ -2,7 +2,6 @@ package com.codefork.refine.orcid;
 
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
-import com.codefork.refine.viaf.VIAFNameType;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,6 @@
 
 package com.codefork.refine.resources;
 
-import com.codefork.refine.viaf.VIAFNameType;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,11 +37,11 @@ public class Result {
     public Result() {
     }
 
-    public Result(String id, String name, VIAFNameType nameType, double score, boolean match) {
+    public Result(String id, String name, NameType nameType, double score, boolean match) {
         this.id = id;
         this.name = name;
         this.type = new ArrayList<NameType>();
-        this.type.add(nameType.asNameType());
+        this.type.add(nameType);
         this.score = score;
         this.match = match;
     }

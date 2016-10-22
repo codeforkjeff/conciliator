@@ -29,7 +29,7 @@ public class VIAFSource extends Source {
         Result r = new Result(
                 viafResult.getViafId(),
                 name,
-                viafResult.getNameType(),
+                viafResult.getNameType().asNameType(),
                 StringUtil.levenshteinDistanceRatio(name, query.getQuery()),
                 exactMatch);
         return r;

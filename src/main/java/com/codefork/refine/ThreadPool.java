@@ -14,11 +14,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class ThreadPool {
 
-    /**
-     * NOTE: VIAF seems to have a limit of 6 simultaneous
-     * requests. To be conservative, we default to 4 for
-     * the entire app.
-     */
     public static final int INITIAL_POOL_SIZE = 4;
 
     // shrink rapidly, but grow slowly

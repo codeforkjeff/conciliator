@@ -5,7 +5,6 @@ import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.datasource.DataSource;
 import com.codefork.refine.resources.SearchResponse;
-import com.codefork.refine.viaf.VIAF;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -26,7 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is the main API for doing VIAF searches.
+ * VIAF data source.
+ *
+ * NOTE: VIAF seems to have a limit of 6 simultaneous
+ * requests. To be conservative, we default to 4.
  */
 public class VIAF extends WebServiceDataSource {
 
