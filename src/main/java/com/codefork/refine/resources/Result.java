@@ -36,6 +36,9 @@ public class Result {
     private double score;
     private boolean match;
 
+    public Result() {
+    }
+
     public Result(String id, String name, VIAFNameType nameType, double score, boolean match) {
         this.id = id;
         this.name = name;

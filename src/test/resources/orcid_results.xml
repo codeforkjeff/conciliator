@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orcid-message xmlns="http://www.orcid.org/ns/orcid">
+    <message-version>1.2</message-version>
+    <orcid-search-results num-found="337007">
+        <orcid-search-result>
+            <relevancy-score>0.83170503</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0002-3756-9095</uri>
+                    <path>0000-0002-3756-9095</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">jose manuel</given-names>
+                        <family-name visibility="public">de la cruz coba</family-name>
+                    </personal-details>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.7087979</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0001-7051-649X</uri>
+                    <path>0000-0001-7051-649X</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Guillermo Manuel</given-names>
+                        <family-name visibility="public">Márquez Cruz</family-name>
+                        <other-names visibility="public">
+                            <other-name>Guillermo Márquez Cruz</other-name>
+                        </other-names>
+                    </personal-details>
+                    <contact-details>
+                        <address>
+                            <country visibility="public">ES</country>
+                        </address>
+                    </contact-details>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.66536397</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0001-6192-4803</uri>
+                    <path>0000-0001-6192-4803</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">JESUS MANUEL DE LA</given-names>
+                        <family-name visibility="public">CRUZ GARCIA</family-name>
+                    </personal-details>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.63439196</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0003-2420-8378</uri>
+                    <path>0000-0003-2420-8378</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Manuel de la Cruz</given-names>
+                        <family-name visibility="public">Chaves Maza</family-name>
+                    </personal-details>
+                    <researcher-urls visibility="public">
+                        <researcher-url>
+                            <url-name>Departamento Economía, Métodos Cuantitativos e Historia Económica</url-name>
+                            <url>https://edirc.repec.org/data/dmupoes.html</url>
+                        </researcher-url>
+                    </researcher-urls>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.6329915</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0001-8535-1018</uri>
+                    <path>0000-0001-8535-1018</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">JUAN MANUEL DE LA</given-names>
+                        <family-name visibility="public">CRUZ ALBERCA</family-name>
+                    </personal-details>
+                    <researcher-urls visibility="public">
+                        <researcher-url>
+                            <url-name>Web de la Universidad Politécnica de Madrid - Technical University of Madrid</url-name>
+                            <url>http://www.upm.es</url>
+                        </researcher-url>
+                    </researcher-urls>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.6317522</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0002-8384-9776</uri>
+                    <path>0000-0002-8384-9776</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Juan Manuel</given-names>
+                        <family-name visibility="public">Abad Gutierrez</family-name>
+                    </personal-details>
+                    <researcher-urls visibility="public">
+                        <researcher-url>
+                            <url-name>SISIUS</url-name>
+                            <url>https://investigacion.us.es/sisius/sis_showpub.php?idpers=6289</url>
+                        </researcher-url>
+                    </researcher-urls>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.629129</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0002-9898-0021</uri>
+                    <path>0000-0002-9898-0021</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">José Manuel de la</given-names>
+                        <family-name visibility="public">Cruz Gómez</family-name>
+                    </personal-details>
+                    <biography visibility="public">Personal Docente e Investigador de la Universidad de Castilla-La Mancha, adscrito al Departamento de Ingeniería Eléctrica, Electrónica, Automática y Comunicaciones</biography>
+                    <researcher-urls visibility="public">
+                        <researcher-url>
+                            <url-name>Departamento de Ingeniería Eléctrica, Electrónica, Automática y Comunicaciones</url-name>
+                            <url>http://www.dieeac.uclm.es/</url>
+                        </researcher-url>
+                    </researcher-urls>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.6252206</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0003-0122-4877</uri>
+                    <path>0000-0003-0122-4877</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Manuel Antonio</given-names>
+                        <family-name visibility="public">Serrano de la Cruz Santos-Olmo</family-name>
+                    </personal-details>
+                    <biography visibility="public">Personal Docente e Investigador de la Universidad de Castilla-La Mancha, adscrito al Departamento de Geografía y Ordenación del Territorio</biography>
+                    <researcher-urls visibility="public">
+                        <researcher-url>
+                            <url-name>Departamento de Geografía y Ordenación del Territorio</url-name>
+                            <url>http://www.uclm.es/dep/geoterr/</url>
+                        </researcher-url>
+                        <researcher-url>
+                            <url-name>ResearchGate</url-name>
+                            <url>https://www.researchgate.net/profile/Manuel_Antonio_Santos-Olmo</url>
+                        </researcher-url>
+                    </researcher-urls>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.61547107</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0003-2581-0483</uri>
+                    <path>0000-0003-2581-0483</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">MANUEL</given-names>
+                        <family-name visibility="public">IGLESIAS GUTIERREZ DEL ALAMO</family-name>
+                    </personal-details>
+                    <researcher-urls visibility="public">
+                        <researcher-url>
+                            <url-name>Web de la Universidad Politécnica de Madrid - Technical University of Madrid</url-name>
+                            <url>http://www.upm.es</url>
+                        </researcher-url>
+                    </researcher-urls>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.6146481</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0001-8796-941X</uri>
+                    <path>0000-0001-8796-941X</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Manuel</given-names>
+                        <family-name visibility="public">de la Cruz Gutierrez</family-name>
+                        <other-names visibility="public">
+                            <other-name>Manuel D. Gutierrez</other-name>
+                            <other-name>Manuel de la Cruz</other-name>
+                        </other-names>
+                    </personal-details>
+                    <contact-details>
+                        <email primary="true" current="true" verified="true" visibility="public" source="0000-0001-8796-941X">dmanuel@upenn.edu</email>
+                        <address>
+                            <country visibility="public">US</country>
+                        </address>
+                    </contact-details>
+                    <keywords visibility="public">
+                        <keyword>Data Management</keyword>
+                        <keyword>Knowledge Management</keyword>
+                        <keyword>Library Science</keyword>
+                        <keyword>Quantum Information</keyword>
+                        <keyword>Quantum Optics</keyword>
+                        <keyword>Research Networks</keyword>
+                    </keywords>
+                    <external-identifiers visibility="public">
+                        <external-identifier>
+                            <external-id-common-name>Scopus Author ID</external-id-common-name>
+                            <external-id-reference>15080615700</external-id-reference>
+                            <external-id-url>http://www.scopus.com/inward/authorDetails.url?authorID=15080615700&amp;partnerID=MN8TOARS</external-id-url>
+                            <source>
+                                <source-orcid>
+                                    <uri>http://orcid.org/0000-0002-5982-8983</uri>
+                                    <path>0000-0002-5982-8983</path>
+                                    <host>orcid.org</host>
+                                </source-orcid>
+                                <source-name>Scopus to ORCID</source-name>
+                                <source-date>2015-04-06T15:26:04.671Z</source-date>
+                            </source>
+                        </external-identifier>
+                    </external-identifiers>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+    </orcid-search-results>
+</orcid-message>

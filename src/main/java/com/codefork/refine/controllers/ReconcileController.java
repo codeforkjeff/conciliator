@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Controller to handle all /reconcile/viaf paths.
@@ -46,10 +47,47 @@ public class ReconcileController {
     }
 
     public void initDataSourceMap() {
-        VIAF viaf = new VIAF();
-        viaf.init(config);
-        dataSourceMap.put("viaf", viaf);
-        dataSourceMap.put("viafproxy", viaf);
+        Map<String, DataSource> classNamesToDataSources = new HashMap<String, DataSource>();
+
+        Properties props = new Properties();
+        props.put("datasource.viaf", "com.codefork.refine.viaf.VIAF");
+        props.put("datasource.viafproxy", "com.codefork.refine.viaf.VIAF");
+
+        props.put("datasource.orcid", "com.codefork.refine.orcid.Orcid");
+
+        props.putAll(config.getProperties());
+
+        String prefix = "datasource.";
+
+        for(String propertyName : props.stringPropertyNames()) {
+            if(propertyName.startsWith(prefix)) {
+                String dataSourceName = propertyName.substring(prefix.length());
+                String className = props.getProperty(propertyName);
+
+                DataSource dataSource = null;
+                // reuse dataSource object if already created
+                if(classNamesToDataSources.containsKey(className)) {
+                    dataSource = classNamesToDataSources.get(className);
+                } else {
+                    try {
+                        dataSource = (DataSource) Class.forName(className).newInstance();
+                        dataSource.init(config);
+                        classNamesToDataSources.put(className, dataSource);
+                        log.info(String.format("Registered data source '%s' (%s)", dataSourceName, className));
+                    } catch(ClassNotFoundException e) {
+                        log.error("ClassNotFoundException trying to instantiate object: " + className + " - " + e.toString());
+                    } catch(IllegalAccessException e) {
+                        log.error("IllegalAccessException trying to instantiate object: " + className + " - " + e.toString());
+                    } catch(InstantiationException e) {
+                        log.error("InstantiationException trying to instantiate object: " + className + " - " + e.toString());
+                    }
+                }
+
+                if(dataSource != null) {
+                    dataSourceMap.put(dataSourceName, dataSource);
+                }
+            }
+        }
     }
 
     public DataSource getDataSource(String name) {

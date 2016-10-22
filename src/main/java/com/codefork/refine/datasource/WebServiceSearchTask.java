@@ -45,7 +45,7 @@ public class WebServiceSearchTask implements SearchTask {
         try {
             results = dataSource.searchCheckCache(searchQuery);
         } catch(Exception e) {
-            log.error(String.format("error for query=%s: %s", searchQuery.getQuery(), e));
+            log.error(String.format("error for query=%s", searchQuery.getQuery()), e);
             if (e.toString().contains("HTTP response code: 429")) {
                 return new SearchResult(key, SearchResult.ErrorType.TOO_MANY_REQUESTS);
             }
