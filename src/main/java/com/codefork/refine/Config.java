@@ -15,11 +15,9 @@ import java.util.Properties;
 @Service
 public class Config {
 
-    public static final String DEFAULT_SERVICE_NAME = "VIAF Reconciliation Service";
-    private static final String CONFIG_FILENAME = "refine_viaf.properties";
+    private static final String CONFIG_FILENAME = "conciliator.properties";
 
     private Log log = LogFactory.getLog(Config.class);
-    private String serviceName = DEFAULT_SERVICE_NAME;
     private Properties properties = new Properties();
 
     public Config() {
@@ -30,15 +28,6 @@ public class Config {
                 log.error("Error reading config file, skipping it: " + ex);
             }
         }
-        setServiceName(properties.getProperty("service_name", getServiceName()));
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
     }
 
     public Properties getProperties() {

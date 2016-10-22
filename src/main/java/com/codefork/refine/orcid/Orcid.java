@@ -24,7 +24,7 @@ public class Orcid extends WebServiceDataSource {
 
     @Override
     public ServiceMetaDataResponse createServiceMetaDataResponse(Map<String, String> extraParams) {
-        return new OrcidMetaDataResponse("ORCID");
+        return new OrcidMetaDataResponse(getName());
     }
 
     @Override

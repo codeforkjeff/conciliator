@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -48,43 +50,60 @@ public class ReconcileController {
     public void initDataSourceMap() {
         Map<String, DataSource> classNamesToDataSources = new HashMap<String, DataSource>();
 
+        // defaults
         Properties props = new Properties();
         props.put("datasource.viaf", "com.codefork.refine.viaf.VIAF");
         props.put("datasource.viafproxy", "com.codefork.refine.viaf.VIAF");
 
         props.put("datasource.orcid", "com.codefork.refine.orcid.Orcid");
+        props.put("datasource.orcid.name", "ORCID");
 
         props.putAll(config.getProperties());
 
         String prefix = "datasource.";
 
+        List<String> dataSourceNames = new ArrayList<String>();
+
+        // figure out what the datasources are
         for(String propertyName : props.stringPropertyNames()) {
             if(propertyName.startsWith(prefix)) {
                 String dataSourceName = propertyName.substring(prefix.length());
-                String className = props.getProperty(propertyName);
+                if(dataSourceName.indexOf('.') == -1) {
+                    dataSourceNames.add(dataSourceName);
+                }
+            }
+        }
 
-                DataSource dataSource = null;
-                // reuse dataSource object if already created
-                if(classNamesToDataSources.containsKey(className)) {
-                    dataSource = classNamesToDataSources.get(className);
-                } else {
-                    try {
-                        dataSource = (DataSource) Class.forName(className).newInstance();
-                        dataSource.init(config);
-                        classNamesToDataSources.put(className, dataSource);
-                        log.info(String.format("Registered data source '%s' (%s)", dataSourceName, className));
-                    } catch(ClassNotFoundException e) {
-                        log.error("ClassNotFoundException trying to instantiate object: " + className + " - " + e.toString());
-                    } catch(IllegalAccessException e) {
-                        log.error("IllegalAccessException trying to instantiate object: " + className + " - " + e.toString());
-                    } catch(InstantiationException e) {
-                        log.error("InstantiationException trying to instantiate object: " + className + " - " + e.toString());
+        for(String dataSourceName : dataSourceNames) {
+            String baseKey = prefix + dataSourceName;
+            String className = props.getProperty(baseKey);
+
+            DataSource dataSource = null;
+            // reuse dataSource object if already created
+            if(classNamesToDataSources.containsKey(className)) {
+                // note that reusing DataSources means we can't set unique names for them.
+                dataSource = classNamesToDataSources.get(className);
+            } else {
+                try {
+                    dataSource = (DataSource) Class.forName(className).newInstance();
+                    dataSource.init(config);
+                    String name = props.getProperty(baseKey + ".name");
+                    if(name != null) {
+                        dataSource.setName(name);
                     }
+                    classNamesToDataSources.put(className, dataSource);
+                } catch(ClassNotFoundException e) {
+                    log.error("ClassNotFoundException trying to instantiate object: " + className + " - " + e.toString());
+                } catch(IllegalAccessException e) {
+                    log.error("IllegalAccessException trying to instantiate object: " + className + " - " + e.toString());
+                } catch(InstantiationException e) {
+                    log.error("InstantiationException trying to instantiate object: " + className + " - " + e.toString());
                 }
+            }
 
-                if(dataSource != null) {
-                    dataSourceMap.put(dataSourceName, dataSource);
-                }
+            if(dataSource != null) {
+                log.info(String.format("Registered data source '%s' (%s)", dataSourceName, className));
+                dataSourceMap.put(dataSourceName, dataSource);
             }
         }
     }

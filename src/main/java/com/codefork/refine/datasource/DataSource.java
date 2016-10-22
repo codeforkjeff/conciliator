@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public abstract class DataSource {
 
+    private String name = this.getClass().getName();
+
     private Config config;
 
     public void init(Config config) {
@@ -22,6 +24,14 @@ public abstract class DataSource {
 
     public Config getConfig() {
         return config;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

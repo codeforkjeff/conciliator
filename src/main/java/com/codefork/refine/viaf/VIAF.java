@@ -101,10 +101,11 @@ public class VIAF extends WebServiceDataSource {
 
     @Override
     public ServiceMetaDataResponse createServiceMetaDataResponse(Map<String, String> extraParams) {
+        // we don't call getName() for service name b/c we reuse this VIAF object
         if(Boolean.valueOf(extraParams.get(EXTRA_PARAM_PROXY_MODE))) {
-            return new VIAFProxyModeMetaDataResponse(getConfig().getServiceName(), findNonViafSource(extraParams.get(EXTRA_PARAM_SOURCE_FROM_PATH)));
+            return new VIAFProxyModeMetaDataResponse(findNonViafSource(extraParams.get(EXTRA_PARAM_SOURCE_FROM_PATH)));
         }
-        return new VIAFMetaDataResponse(getConfig().getServiceName(), extraParams.get(EXTRA_PARAM_SOURCE_FROM_PATH));
+        return new VIAFMetaDataResponse("VIAF", extraParams.get(EXTRA_PARAM_SOURCE_FROM_PATH));
     }
 
     public Map<String, String> parseRequestToExtraParams(HttpServletRequest request) {

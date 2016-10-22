@@ -13,10 +13,9 @@ public class VIAFProxyModeMetaDataResponse extends VIAFMetaDataResponse {
 
     private String url;
 
-    public VIAFProxyModeMetaDataResponse(String baseServiceName, NonVIAFSource nonVIAFSource) {
-        super(baseServiceName, nonVIAFSource.getCode());
+    public VIAFProxyModeMetaDataResponse(NonVIAFSource nonVIAFSource) {
+        super(nonVIAFSource.getCode() + " (by way of VIAF)", null);
         this.url = nonVIAFSource.getServiceURLTemplate();
-        setName(getName() + " (by way of VIAF)");
     }
 
     @Override
