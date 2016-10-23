@@ -1,21 +1,29 @@
 
-refine_viaf
+conciliator
 ===========
 
-refine_viaf implements a [VIAF](http://viaf.org) (Virtual
-International Authority File) Reconciliation Service for
-[OpenRefine](http://openrefine.org). This is used for resolving many
-types of names (ie. persons, organizations, geographic regions) to
-standard IDs representing those entities.
+conciliator is a Java framework for creating
+[OpenRefine](http://openrefine.org) reconciliation services. A
+reconciliation service tries to match variant text (usually names of
+things) to standard IDs for the entity represented by that text.
 
-This project was rewritten in Java in Dec 2015. For more info, see
-[this page](http://codefork.com/blog/index.php/2015/12/10/a-major-update-to-refine-viaf/). The
-old version written in Python is no longer being maintained, but can
-be found in the
-[python-deprecated branch](https://github.com/codeforkjeff/refine_viaf/tree/python-deprecated).
+This project supercedes [refine_viaf](https://github.com/codeforkjeff/refine_viaf).
 
-Features
---------
+General Features
+----------------
+
+* Out of the box support for the following data sources:
+
+- [VIAF](http://viaf.org) - Virtual International Authority File
+- [ORCID](http://orcid.org) - digital identifiers for researchers
+- more to come (if you can contribute, please submit pull requests!)
+
+* Good performance (uses threads; stable memory usage; caches results)
+
+* Super easy to run (works on Linux, Mac, Windows)
+
+VIAF Data Source Features
+-------------------------
 
 * Support for the following types of names provided by VIAF: Corporate
   Names, Geographic Names, Personal Names, Works, Expressions
@@ -26,9 +34,10 @@ Features
   WKP. Links are BROKEN for BNC, BNF, DBC, and NUKAT. For all other
   sources, the links will take you to the VIAF page.)
 
-* Good performance (uses threads; stable memory usage; caches results)
+ORCID Data Source Features
+--------------------------
 
-* Super easy to run
+* TODO
 
 Public Server
 -------------
@@ -38,20 +47,20 @@ yourself, you can use the public server at
 <http://refine.codefork.com/>. Visit that address for more
 instructions.
 
-Running the Service on Your Computer
-------------------------------------
+Running Conciliator on Your Own Computer
+----------------------------------------
 
 Install Java 1.7 or greater if you don't already have it.
 
 Download the .jar file for the
-[latest release](https://github.com/codeforkjeff/refine_viaf/releases). Alternatively,
+[latest release](https://github.com/codeforkjeff/conciliator/releases). Alternatively,
 you can download the source code tarball or clone this repository, and
 build the .jar file using maven.
 
 Run this command:
 
 ```
-java -jar refine_viaf-1.5.2.jar
+java -jar conciliator-1.0.0.jar
 ```
 
 That's it! You should see some messages as the application starts
@@ -67,7 +76,9 @@ Configuring OpenRefine
 
 2. Click "Add Standard Service..."
 
-3. To reconcile against names from any VIAF source, type in:
+3. Enter a URL based on the data source you wish to use. 
+
+    To reconcile against names from any VIAF source, type in:
 
     ```
     http://localhost:8080/reconcile/viaf
@@ -89,8 +100,42 @@ Configuring OpenRefine
     http://localhost:8080/reconcile/viafproxy/LC
     ```
 
+    To use ORCID:
+
+    ```
+    http://localhost:8080/reconcile/orcid
+    ```
+
 4. Follow the instructions on the dialog box to start reconciling
    names.
+
+Creating Your Own Data Source
+-----------------------------
+
+1. Clone this repository to get the source code.
+
+2. Create a class for your data source that extends
+   `com.codefork.refine.datasource.WebServiceDataSource`. Implement
+   the abstract methods as required.
+
+3. Create a class for the service metadata response, extending
+   `com.codefork.refine.resources.ServiceMetaDataResponse`
+
+4. Register your new data source class in the `conciliator.properties`
+   file by adding the following lines:
+
+   ```
+   datasource.new_source=com.company.MyDataSource
+   datasource.new_source.name=My DataSource
+   ```
+
+5. Build a new .jar by running `mvn package`. Run the .jar file as in
+   the instructions above, and you should be able to access the service
+   for your new data source at:
+
+   ```
+   http://localhost:8080/reconcile/new_source
+   ```
 
 Advanced Usage
 --------------
@@ -105,9 +150,14 @@ If you want to host this software on a server for long-term usage or
 if you want to enable logging for debugging purposes, take a look at
 `run.sh` for some helpful options.
 
-You can change several run-time options (including the service name
-that appears in OpenRefine and turning caching on/off) by editing the
-`refine_viaf.properties` file.
+You can change run-time options by editing the
+`conciliator.properties` file.
+
+TODO
+----
+
+A few aspects of the Reconciliation Service API aren't implemented by
+this framework yet.
 
 Resources
 ---------
@@ -125,7 +175,7 @@ Do you use this thing??
 -----------------------
 
 If so, please take a few seconds to leave a comment on
-[this page](http://codefork.com/blog/index.php/2015/12/10/a-major-update-to-refine-viaf/). Hearing
+[this page](http://TODO). Hearing
 from users really motivates me to continue improving this project.
 
 License
