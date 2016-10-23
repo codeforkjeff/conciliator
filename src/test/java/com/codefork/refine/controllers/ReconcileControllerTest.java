@@ -10,12 +10,16 @@ import com.codefork.refine.viaf.VIAFService;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
@@ -34,6 +38,7 @@ public class ReconcileControllerTest {
         viaf.init(config);
         ReconcileController rc = new ReconcileController(config);
         ServiceMetaDataResponse response = (ServiceMetaDataResponse) rc.reconcile(viaf, null, null, Collections.EMPTY_MAP);
+        assertEquals(response.getName(), "VIAF");
         assertEquals(response.getView().getUrl(), "http://viaf.org/viaf/{{id}}");
     }
 
@@ -50,6 +55,7 @@ public class ReconcileControllerTest {
         extraParams.put(VIAF.EXTRA_PARAM_PROXY_MODE, "true");
 
         VIAFProxyModeMetaDataResponse response = (VIAFProxyModeMetaDataResponse) rc.reconcile(viaf, null, null, extraParams);
+        assertEquals(response.getName(), "LC (by way of VIAF)");
         assertEquals(response.getView().getUrl(), "http://id.loc.gov/authorities/names/{{id}}");
     }
 
@@ -80,12 +86,12 @@ public class ReconcileControllerTest {
         }).when(viafService).doSearch(anyString(), anyInt());
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
-        VIAF viaf = new VIAF();
-        viaf.init(config);
-        viaf.setViafService(viafService);
         ReconcileController rc = new ReconcileController(config);
 
-        Map<String, SearchResponse> results = (Map<String, SearchResponse>) rc.reconcile(viaf, null, json, Collections.EMPTY_MAP);
+        HttpServletRequest request  = mock(HttpServletRequest.class);
+        when(request.getServletPath()).thenReturn("/reconcile/viaf");
+
+        Map<String, SearchResponse> results = (Map<String, SearchResponse>) rc.reconcile(request, null, json);
 
         assertEquals(results.size(), 2);
 
@@ -108,6 +114,17 @@ public class ReconcileControllerTest {
         assertEquals(result2.get(0).getType().get(0).getName(), "Person");
         assertEquals(String.valueOf(result2.get(0).getScore()), "0.3548387096774194");
         assertEquals(result2.get(0).isMatch(), false);
+    }
+
+    public void testMissingDataSource() throws Exception {
+        Config config = new Config();
+        ReconcileController rc = new ReconcileController(config);
+
+        HttpServletRequest request  = mock(HttpServletRequest.class);
+        when(request.getServletPath()).thenReturn("/reconcile/nonexistingdatasource");
+
+        ResponseEntity response = (ResponseEntity) rc.reconcile(request, null, null);
+        assertEquals(404, response.getStatusCode().value());
     }
 
 }
