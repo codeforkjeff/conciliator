@@ -44,8 +44,15 @@ public abstract class DataSource {
         return Collections.EMPTY_MAP;
     }
 
+    /**
+     * This is the main entry point for running a set of queries contained in a HTTP request.
+     */
     public abstract Map<String, SearchResponse> search(Map<String, SearchQuery> queryEntries);
 
+    /**
+     * Returns the service metadata that OpenRefine uses on its first request
+     * to the service.
+     */
     public abstract ServiceMetaDataResponse createServiceMetaDataResponse(Map<String, String> extraParams);
 
 }

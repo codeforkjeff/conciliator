@@ -89,7 +89,19 @@ public abstract class WebServiceDataSource extends DataSource {
     }
 
     /**
-     * This is the entry point for running a set of queries.
+     * Factory method for creating a search task for given key and SearchQuery.
+     * This provides a way to return customized SearchTask subclasses
+     * so they have what they need to perform searches.
+     * @param key
+     * @param searchQuery
+     * @return
+     */
+    public SearchTask createSearchTask(String key, SearchQuery searchQuery) {
+        return new WebServiceSearchTask(this, key, searchQuery);
+    }
+
+    /**
+     * This is the main entry point for running a set of queries.
      * Web app controllers use this.
      *
      * It makes use of the threadpool, shrinking/growing it as necessary
@@ -100,12 +112,13 @@ public abstract class WebServiceDataSource extends DataSource {
      *                     => SearchQuery objects
      * @return map of string ids => SearchResult objects
      */
+    @Override
     public Map<String, SearchResponse> search(Map<String, SearchQuery> queryEntries) {
         long start = System.currentTimeMillis();
 
         Map<String, SearchResponse> allResults = new HashMap<String, SearchResponse>();
 
-        Map<String, SearchResult> results = doSearchInThreadPool(queryEntries);
+        Map<String, SearchResult> results = searchUsingThreadPool(queryEntries);
 
         // adjust thread pool if necessary on unsuccessful results
         for(Map.Entry<String, SearchResult> queryEntry : results.entrySet()) {
@@ -137,7 +150,7 @@ public abstract class WebServiceDataSource extends DataSource {
             }
 
             // second tries
-            Map<String, SearchResult> resultsFromSecondTries = doSearchInThreadPool(secondTries);
+            Map<String, SearchResult> resultsFromSecondTries = searchUsingThreadPool(secondTries);
 
             // merge into results
             results.putAll(resultsFromSecondTries);
@@ -166,7 +179,7 @@ public abstract class WebServiceDataSource extends DataSource {
      * @param queryEntries
      * @return
      */
-    private Map<String, SearchResult> doSearchInThreadPool(Map<String, SearchQuery> queryEntries) {
+    private Map<String, SearchResult> searchUsingThreadPool(Map<String, SearchQuery> queryEntries) {
         Map<String, SearchResult> results = new HashMap<String, SearchResult>();
 
         List<SearchTask> tasks = new ArrayList<SearchTask>();
@@ -218,18 +231,6 @@ public abstract class WebServiceDataSource extends DataSource {
         }
 
         return search(query);
-    }
-
-    /**
-     * Factory method for creating a search task for given key and SearchQuery.
-     * This provides a way to return customized SearchTask subclasses
-     * so they have what they need to perform searches.
-     * @param key
-     * @param searchQuery
-     * @return
-     */
-    public SearchTask createSearchTask(String key, SearchQuery searchQuery) {
-        return new WebServiceSearchTask(this, key, searchQuery);
     }
 
     /**
