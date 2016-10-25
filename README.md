@@ -15,9 +15,9 @@ General Features
 
 * Out of the box support for the following data sources:
 
-- [VIAF](http://viaf.org) - Virtual International Authority File
-- [ORCID](http://orcid.org) - digital identifiers for researchers
-- more to come (if you can contribute, please submit pull requests!)
+  - [VIAF](http://viaf.org) - Virtual International Authority File
+  - [ORCID](http://orcid.org) - digital identifiers for researchers
+  - more to come (if you can contribute, please submit pull requests!)
 
 * Good performance (uses threads; stable memory usage; caches results)
 
