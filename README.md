@@ -10,6 +10,14 @@ the entity represented by that text.
 
 This project supercedes [refine_viaf](https://github.com/codeforkjeff/refine_viaf).
 
+Public Server
+-------------
+
+If your needs are low and you can't or don't want to run this software
+yourself, you can use the public server at
+<http://refine.codefork.com/>. Visit that address for more
+instructions.
+
 General Features
 ----------------
 
@@ -38,15 +46,7 @@ VIAF Data Source Features
 ORCID Data Source Features
 --------------------------
 
-* TODO
-
-Public Server
--------------
-
-If your needs are low and you can't or don't want to run this software
-yourself, you can use the public server at
-<http://refine.codefork.com/>. Visit that address for more
-instructions.
+* It works!
 
 Running Conciliator on Your Own Computer
 ----------------------------------------
@@ -117,7 +117,7 @@ Creating Your Own Data Source
 
 2. Create a class for your data source that extends
    `com.codefork.refine.datasource.WebServiceDataSource`. Implement
-   the abstract methods as required.
+   the abstract methods as required. Write a test or two if you like.
 
 3. Create a class for the service metadata response, extending
    `com.codefork.refine.resources.ServiceMetaDataResponse`
@@ -176,7 +176,7 @@ Do you use this thing??
 -----------------------
 
 If so, please take a few seconds to leave a comment on
-[this page](http://TODO). Hearing
+[this page](http://codefork.com/blog/index.php/2016/10/24/announcing-conciliator/). Hearing
 from users really motivates me to continue improving this project.
 
 License
