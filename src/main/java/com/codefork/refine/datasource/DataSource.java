@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public abstract class DataSource {
 
-    private String name = this.getClass().getName();
+    private String name = this.getClass().getSimpleName();
 
     private Config config;
 

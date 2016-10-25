@@ -40,6 +40,13 @@ public class ReconcileController {
 
     private final Config config;
     private final Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
+    private static final String BODY_404 = "<html>" +
+            "<head><title>404 Not Found</title></head>" +
+            "<body bgcolor=\"white\">" +
+            "<h1>404 Not Found</h1>" +
+            "<p>%s</p>" +
+            "</body>" +
+            "</html>";
 
     @Autowired
     public ReconcileController(Config config) {
@@ -127,7 +134,8 @@ public class ReconcileController {
 
         DataSource dataSource = getDataSource(dataSourceStr);
         if(dataSource == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>(
+                    String.format(BODY_404, "data source '" + dataSourceStr + "' not defined"), HttpStatus.NOT_FOUND);
         }
 
         Map<String, String> extraParams = dataSource.parseRequestToExtraParams(request);
