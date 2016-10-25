@@ -16,10 +16,20 @@ public class CacheManager {
 
     Log log = LogFactory.getLog(CacheManager.class);
 
-    private Cache<String, List<Result>> cache = new Cache<String, List<Result>>();
+    private Cache<String, List<Result>> cache;
     private Object cacheLock = new Object();
     private CacheExpire cacheExpire;
     private Thread thread;
+    private String name;
+
+    public CacheManager(String name) {
+        this.name = name;
+        this.cache = new Cache<String, List<Result>>(getName());
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public void startExpireThread() {
         if(!isExpireThreadRunning()) {

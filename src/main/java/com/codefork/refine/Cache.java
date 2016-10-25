@@ -23,6 +23,15 @@ public class Cache<K, V> {
     private int lifetime = DEFAULT_LIFETIME; // in seconds
     private int maxSize = DEFAULT_MAXSIZE;
     private ConcurrentHashMap<K, CachedValue> cacheMap = new ConcurrentHashMap<K, CachedValue>();
+    private String name;
+
+    public Cache(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public int getLifetime() {
         return lifetime;
@@ -71,7 +80,7 @@ public class Cache<K, V> {
      * and discarding entries if we're over the maxSize limit.
      */
     public Cache<K, V> expireCache() {
-        Cache<K, V> newCache = new Cache<K, V>();
+        Cache<K, V> newCache = new Cache<K, V>(getName());
         newCache.setLifetime(getLifetime());
         newCache.setMaxSize(getMaxSize());
 
@@ -105,7 +114,7 @@ public class Cache<K, V> {
 
         int remaining = total - expiredCount - overageCount;
         if(expiredCount> 0 || overageCount > 0) {
-            log.debug("expireCache() took " + (System.currentTimeMillis() - now) + "ms: removed " + expiredCount + " expired entries, " + overageCount + " entries over maxsize limit; " + remaining + " remaining");
+            log.debug(getName() + ": expireCache() took " + (System.currentTimeMillis() - now) + "ms: removed " + expiredCount + " expired entries, " + overageCount + " entries over maxsize limit; " + remaining + " remaining");
         }
         return newCache;
     }

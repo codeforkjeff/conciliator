@@ -28,7 +28,7 @@ public abstract class WebServiceDataSource extends DataSource {
     Log log = LogFactory.getLog(WebServiceDataSource.class);
 
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
-    private CacheManager cacheManager = new CacheManager();
+    private CacheManager cacheManager = new CacheManager(getName() + " Cache");
 
     private ThreadPool threadPool = new ThreadPool();
 

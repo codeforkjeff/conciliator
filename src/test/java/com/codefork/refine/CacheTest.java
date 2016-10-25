@@ -11,7 +11,7 @@ public class CacheTest {
 
     @Test
     public void testBasic() throws Exception {
-        Cache<String, String> cache = new Cache<String, String>();
+        Cache<String, String> cache = new Cache<String, String>("test cache");
         cache.put("hi", "testing");
         assertTrue(cache.containsKey("hi"));
         assertEquals("testing", cache.get("hi"));
@@ -20,7 +20,7 @@ public class CacheTest {
 
     @Test
     public void testExpire() throws Exception {
-        Cache<String, String> cache = new Cache<String, String>();
+        Cache<String, String> cache = new Cache<String, String>("test cache");
         cache.put("hi", "testing");
         assertTrue(cache.containsKey("hi"));
         assertEquals("testing", cache.get("hi"));
@@ -38,7 +38,7 @@ public class CacheTest {
 
     @Test
     public void testOverage() throws Exception {
-        Cache<String, String> cache = new Cache<String, String>();
+        Cache<String, String> cache = new Cache<String, String>("test cache");
         cache.put("hi1", "testing1");
         Thread.sleep(100);
         cache.put("hi2", "testing2");
