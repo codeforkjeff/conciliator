@@ -2,10 +2,11 @@
 conciliator
 ===========
 
-conciliator is a Java framework for creating
-[OpenRefine](http://openrefine.org) reconciliation services. A
-reconciliation service tries to match variant text (usually names of
-things) to standard IDs for the entity represented by that text.
+conciliator is a growing collection of
+[OpenRefine](http://openrefine.org) reconciliation services, as well
+as a Java framework for creating them. A reconciliation service tries
+to match variant text (usually names of things) to standard IDs for
+the entity represented by that text.
 
 This project supercedes [refine_viaf](https://github.com/codeforkjeff/refine_viaf).
 
