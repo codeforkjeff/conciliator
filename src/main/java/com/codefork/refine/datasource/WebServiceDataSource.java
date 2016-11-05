@@ -23,7 +23,7 @@ import java.util.concurrent.Future;
  */
 public abstract class WebServiceDataSource extends DataSource {
 
-    public static final boolean DEFAULT_CACHE_ENABLED = true;
+    public static final boolean DEFAULT_CACHE_ENABLED = false;
 
     Log log = LogFactory.getLog(WebServiceDataSource.class);
 
