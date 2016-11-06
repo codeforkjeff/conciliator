@@ -53,7 +53,7 @@ public class VIAF extends WebServiceDataSource {
         spf = SAXParserFactory.newInstance();
 
         boolean cacheEnabled = Boolean.valueOf(config.getProperties().getProperty("cache.enabled",
-                String.valueOf(DEFAULT_CACHE_ENABLED)));
+                "true"));
         int cacheLifetime = Integer.valueOf(config.getProperties().getProperty("cache.lifetime",
                 String.valueOf(Cache.DEFAULT_LIFETIME)));
         int cacheMaxSize = Integer.valueOf(config.getProperties().getProperty("cache.max_size",
