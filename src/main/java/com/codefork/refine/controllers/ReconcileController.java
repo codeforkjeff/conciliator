@@ -98,6 +98,7 @@ public class ReconcileController {
                     if(name != null) {
                         dataSource.setName(name);
                     }
+                    dataSource.setConfigName(dataSourceName);
                     classNamesToDataSources.put(className, dataSource);
                 } catch(ClassNotFoundException e) {
                     log.error("ClassNotFoundException trying to instantiate object: " + className + " - " + e.toString());
