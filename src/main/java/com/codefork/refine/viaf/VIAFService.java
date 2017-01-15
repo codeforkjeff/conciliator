@@ -15,6 +15,8 @@ import java.net.URL;
 @Service
 public class VIAFService {
 
+    public static int TIMEOUT = 20000;
+
     Log log = LogFactory.getLog(VIAFService.class);
 
     /**
@@ -28,6 +30,8 @@ public class VIAFService {
                 UriUtils.encodeQueryParam(cql, "UTF-8"), limit);
         log.debug("Making request to " + url);
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setConnectTimeout(TIMEOUT);
+        connection.setReadTimeout(TIMEOUT);
         return connection;
     }
 
