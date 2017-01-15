@@ -5,7 +5,7 @@ import com.codefork.refine.resources.Result;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParseResult {
+public class ParseState {
 
     public boolean captureChars = false;
 

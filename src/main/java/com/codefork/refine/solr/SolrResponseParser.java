@@ -12,30 +12,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SolrResponseParser extends XMLParser<SolrParseResult> {
+public class SolrResponseParser extends XMLParser<SolrParseState> {
 
-    private final static Map<String, StartElementHandler<SolrParseResult>> staticStartElementHandlers = new HashMap<String, StartElementHandler<SolrParseResult>>();
-    private final static Map<String, EndElementHandler<SolrParseResult>> staticEndElementHandlers  = new HashMap<String, EndElementHandler<SolrParseResult>>();
+    private final static Map<String, StartElementHandler<SolrParseState>> staticStartElementHandlers = new HashMap<String, StartElementHandler<SolrParseState>>();
+    private final static Map<String, EndElementHandler<SolrParseState>> staticEndElementHandlers  = new HashMap<String, EndElementHandler<SolrParseState>>();
 
     static {
         final List<NameType> nameTypes = new ArrayList<NameType>();
         nameTypes.add(new NameType("/people/person", "Person"));
 
         staticStartElementHandlers.put("response/result/doc",
-                new StartElementHandler<SolrParseResult>() {
-                    public void handle(SolrParseResult parseResult, String uri, String localName, String qName, Attributes attributes) {
+                new StartElementHandler<SolrParseState>() {
+                    public void handle(SolrParseState parseResult, String uri, String localName, String qName, Attributes attributes) {
                         parseResult.result = new Result();
                         parseResult.result.setType(nameTypes);
                     }
                 });
 
         staticEndElementHandlers.put("response/result/doc/str",
-                new EndElementHandler<SolrParseResult>() {
-                    public void handle(SolrParseResult parseResult, String uri, String localName, String qName) {
+                new EndElementHandler<SolrParseState>() {
+                    public void handle(SolrParseState parseResult, String uri, String localName, String qName) {
                         String s = parseResult.buf.toString();
-                        if (SolrParseResult.Field.ID.equals(parseResult.fieldBeingCaptured)) {
+                        if (SolrParseState.Field.ID.equals(parseResult.fieldBeingCaptured)) {
                             parseResult.result.setId(s);
-                        } else if (SolrParseResult.Field.NAME.equals(parseResult.fieldBeingCaptured)) {
+                        } else if (SolrParseState.Field.NAME.equals(parseResult.fieldBeingCaptured)) {
                             parseResult.result.setName(s);
                         }
                         parseResult.fieldBeingCaptured = null;
@@ -45,8 +45,8 @@ public class SolrResponseParser extends XMLParser<SolrParseResult> {
                 });
 
         staticEndElementHandlers.put("response/result/doc",
-                new EndElementHandler<SolrParseResult>() {
-                    public void handle(SolrParseResult parseResult, String uri, String localName, String qName) {
+                new EndElementHandler<SolrParseState>() {
+                    public void handle(SolrParseState parseResult, String uri, String localName, String qName) {
                         parseResult.results.add(parseResult.result);
                         parseResult.result = null;
                     }
@@ -64,12 +64,12 @@ public class SolrResponseParser extends XMLParser<SolrParseResult> {
         this.fieldName = fieldName;
 
         this.startElementHandlers.put("response/result/doc/str",
-                new StartElementHandler<SolrParseResult>() {
-                    public void handle(SolrParseResult parseResult, String uri, String localName, String qName, Attributes attributes) {
+                new StartElementHandler<SolrParseState>() {
+                    public void handle(SolrParseState parseResult, String uri, String localName, String qName, Attributes attributes) {
                         if (SolrResponseParser.this.fieldId.equals(attributes.getValue("name"))) {
-                            parseResult.fieldBeingCaptured = SolrParseResult.Field.ID;
+                            parseResult.fieldBeingCaptured = SolrParseState.Field.ID;
                         } else if(SolrResponseParser.this.fieldName.equals(attributes.getValue("name"))) {
-                            parseResult.fieldBeingCaptured = SolrParseResult.Field.NAME;
+                            parseResult.fieldBeingCaptured = SolrParseState.Field.NAME;
                         }
                         if(parseResult.fieldBeingCaptured != null) {
                             parseResult.captureChars = true;
@@ -79,8 +79,8 @@ public class SolrResponseParser extends XMLParser<SolrParseResult> {
     }
 
     @Override
-    public void createParseResult() {
-        parseResult = new SolrParseResult();
+    public SolrParseState createParseResult() {
+        return new SolrParseState();
     }
 
 }

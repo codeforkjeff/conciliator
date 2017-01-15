@@ -158,7 +158,7 @@ public class VIAF extends WebServiceDataSource {
         InputStream response = conn.getInputStream();
 
         SAXParser parser = spf.newSAXParser();
-        VIAFParser viafParser = new VIAFParser();
+        VIAFParser viafParser = new VIAFParser(findSource(query), query);
 
         long start = System.currentTimeMillis();
         parser.parse(response, viafParser);
@@ -171,22 +171,9 @@ public class VIAF extends WebServiceDataSource {
             log.error("Ignoring error from trying to close input stream and connection: " + ioe);
         }
 
-        List<Result> results = new ArrayList<Result>();
-        for (VIAFResult viafResult : viafParser.getResults()) {
-            /*
-            log.debug("Result=" + viafResult.getViafId());
-            log.debug("NameType=" + viafResult.getNameType().getViafCode());
-            for(NameEntry nameEntry : viafResult.getNameEntries()) {
-                log.debug("Name=" + nameEntry.getName());
-                log.debug("Sources=" + StringUtils.collectionToDelimitedString(nameEntry.getSources(), ","));
-            }
-            */
-
-            Source source = findSource(query);
-            results.add(source.formatResult(query, viafResult));
-        }
+        List<Result> results = viafParser.getResults();
         log.debug(String.format("Query: %s - parsing took %dms, got %d results",
-                query.getQuery(), parseTime, viafParser.getResults().size()));
+                query.getQuery(), parseTime, results.size()));
 
         return results;
     }

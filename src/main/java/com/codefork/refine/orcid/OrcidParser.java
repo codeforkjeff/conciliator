@@ -1,6 +1,6 @@
 package com.codefork.refine.orcid;
 
-import com.codefork.refine.parsers.ParseResult;
+import com.codefork.refine.parsers.ParseState;
 import com.codefork.refine.parsers.xml.EndElementHandler;
 import com.codefork.refine.parsers.xml.StartElementHandler;
 import com.codefork.refine.parsers.xml.XMLParser;
@@ -27,14 +27,14 @@ public class OrcidParser extends XMLParser {
 
         staticStartElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result",
                 new StartElementHandler() {
-                    public void handle(ParseResult parseResult, String uri, String localName, String qName, Attributes attributes) {
-                        parseResult.result = new Result();
-                        parseResult.result.setType(nameTypes);
+                    public void handle(ParseState parseState, String uri, String localName, String qName, Attributes attributes) {
+                        parseState.result = new Result();
+                        parseState.result.setType(nameTypes);
                     }
                 });
 
         StartElementHandler captureHandler = new StartElementHandler() {
-            public void handle(ParseResult parseResult, String uri, String localName, String qName, Attributes attributes) {
+            public void handle(ParseState parseResult, String uri, String localName, String qName, Attributes attributes) {
                 parseResult.captureChars = true;
             }
         };
@@ -50,49 +50,49 @@ public class OrcidParser extends XMLParser {
 
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result",
                 new EndElementHandler() {
-                    public void handle(ParseResult parseResult, String uri, String localName, String qName) {
-                        parseResult.results.add(parseResult.result);
-                        parseResult.result = null;
+                    public void handle(ParseState parseState, String uri, String localName, String qName) {
+                        parseState.results.add(parseState.result);
+                        parseState.result = null;
                     }
                 });
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result/relevancy-score",
                 new EndElementHandler() {
-                    public void handle(ParseResult parseResult, String uri, String localName, String qName) {
-                        parseResult.result.setScore(Double.valueOf(parseResult.buf.toString()));
-                        parseResult.buf = new StringBuilder();
-                        parseResult.captureChars = false;
+                    public void handle(ParseState parseState, String uri, String localName, String qName) {
+                        parseState.result.setScore(Double.valueOf(parseState.buf.toString()));
+                        parseState.buf = new StringBuilder();
+                        parseState.captureChars = false;
                     }
                 });
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result/orcid-profile/orcid-identifier/path",
                 new EndElementHandler() {
-                    public void handle(ParseResult parseResult, String uri, String localName, String qName) {
-                        parseResult.result.setId(parseResult.buf.toString());
-                        parseResult.buf = new StringBuilder();
-                        parseResult.captureChars = false;
+                    public void handle(ParseState parseState, String uri, String localName, String qName) {
+                        parseState.result.setId(parseState.buf.toString());
+                        parseState.buf = new StringBuilder();
+                        parseState.captureChars = false;
                     }
                 });
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result/orcid-profile/orcid-bio/personal-details/given-names",
                 new EndElementHandler() {
-                    public void handle(ParseResult parseResult, String uri, String localName, String qName) {
-                        parseResult.result.setName(parseResult.buf.toString());
-                        parseResult.buf = new StringBuilder();
-                        parseResult.captureChars = false;
+                    public void handle(ParseState parseState, String uri, String localName, String qName) {
+                        parseState.result.setName(parseState.buf.toString());
+                        parseState.buf = new StringBuilder();
+                        parseState.captureChars = false;
                     }
                 });
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result/orcid-profile/orcid-bio/personal-details/family-name",
                 new EndElementHandler() {
-                    public void handle(ParseResult parseResult, String uri, String localName, String qName) {
+                    public void handle(ParseState parseState, String uri, String localName, String qName) {
                         String nameSoFar = "";
-                        if(parseResult.result.getName() != null) {
-                            nameSoFar = parseResult.result.getName();
+                        if(parseState.result.getName() != null) {
+                            nameSoFar = parseState.result.getName();
                         }
                         String sep = "";
                         if(nameSoFar.length() > 0) {
                             sep = " ";
                         }
-                        parseResult.result.setName(nameSoFar + sep + parseResult.buf.toString());
-                        parseResult.buf = new StringBuilder();
-                        parseResult.captureChars = false;
+                        parseState.result.setName(nameSoFar + sep + parseState.buf.toString());
+                        parseState.buf = new StringBuilder();
+                        parseState.captureChars = false;
                     }
                 });
 

@@ -1,6 +1,6 @@
 package com.codefork.refine.parsers.xml;
 
-import com.codefork.refine.parsers.ParseResult;
+import com.codefork.refine.parsers.ParseState;
 import com.codefork.refine.resources.Result;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -14,25 +14,34 @@ import java.util.Stack;
 /**
  * SAX parser handler. We use SAX b/c it's faster than loading a whole DOM.
  */
-public abstract class XMLParser<R extends ParseResult> extends DefaultHandler {
+public abstract class XMLParser<R extends ParseState> extends DefaultHandler {
 
     protected Map<String, StartElementHandler<R>> startElementHandlers = new HashMap<String, StartElementHandler<R>>();
     protected Map<String, EndElementHandler<R>> endElementHandlers = new HashMap<String, EndElementHandler<R>>();
 
     public final Stack<String> path = new Stack<String>();
 
-    protected R parseResult;
+    protected R parseState;
 
     public XMLParser() {
-        createParseResult();
+        parseState = createParseResult();
     }
 
-    public void createParseResult() {
-        parseResult = (R) new ParseResult();
+    /**
+     * XMLParser subclasses should override this if they want to create their
+     * own ParseState subclasses.
+     * @return
+     */
+    public R createParseResult() {
+        return (R) new ParseState();
     }
 
     public List<Result> getResults() {
-        return parseResult.results;
+        return parseState.results;
+    }
+
+    public R getParseState() {
+        return parseState;
     }
 
     public String getPath() {
@@ -61,7 +70,7 @@ public abstract class XMLParser<R extends ParseResult> extends DefaultHandler {
 
         StartElementHandler handler = startElementHandlers.get(path);
         if(handler != null) {
-            handler.handle(parseResult, uri, localName, qName, attributes);
+            handler.handle(parseState, uri, localName, qName, attributes);
         }
     }
 
@@ -73,7 +82,7 @@ public abstract class XMLParser<R extends ParseResult> extends DefaultHandler {
 
         EndElementHandler handler = endElementHandlers.get(path);
         if(handler != null) {
-            handler.handle(parseResult, uri, localName, qName);
+            handler.handle(parseState, uri, localName, qName);
         }
 
         this.path.pop();
@@ -81,8 +90,8 @@ public abstract class XMLParser<R extends ParseResult> extends DefaultHandler {
 
     @Override
     public void characters(char ch[], int start, int length) throws SAXException {
-        if(parseResult.captureChars) {
-            parseResult.buf.append(ch, start, length);
+        if(parseState.captureChars) {
+            parseState.buf.append(ch, start, length);
         }
     }
 
