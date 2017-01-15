@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+  <lst name="responseHeader">
+    <int name="status">0</int>
+    <int name="QTime">31</int>
+    <lst name="params">
+      <str name="q">The Complete Adventures of Sherlock Holmes</str>
+      <str name="rows">3</str>
+      <str name="wt">xml</str>
+    </lst>
+  </lst>
+  <result name="response" numFound="35" start="0" maxScore="0.33383894">
+    <doc>
+      <str name="id">119390</str>
+      <arr name="language_facet">
+        <str>English</str>
+      </arr>
+      <str name="format">Book</str>
+      <arr name="material_type_display">
+        <str>2 v. (xviii, 1323 p.)</str>
+      </arr>
+      <str name="title_display">The complete Sherlock Holmes</str>
+      <str name="author_display">Doyle, Arthur Conan, Sir, 1859-1930.</str>
+      <arr name="published_display">
+        <str>New York</str>
+      </arr>
+      <arr name="pub_date">
+        <str>1954</str>
+      </arr>
+      <float name="score">0.33383894</float>
+    </doc>
+    <doc>
+      <str name="id">274753</str>
+      <arr name="language_facet">
+        <str>English</str>
+      </arr>
+      <str name="format">Book</str>
+      <arr name="material_type_display">
+        <str>248 p</str>
+      </arr>
+      <str name="title_display">The adventures of Sherlock Holmes</str>
+      <str name="author_display">Doyle, Arthur Conan, Sir, 1859-1930.</str>
+      <arr name="subject_topic_facet">
+        <str>Holmes, Sherlock (Fictitious character)</str>
+        <str>Detective and mystery stories, English</str>
+        <str>Private investigators</str>
+      </arr>
+      <arr name="subject_geo_facet">
+        <str>England</str>
+      </arr>
+      <arr name="published_display">
+        <str>New York</str>
+      </arr>
+      <arr name="pub_date">
+        <str>1975</str>
+      </arr>
+      <float name="score">0.26951128</float>
+    </doc>
+    <doc>
+      <str name="id">25950</str>
+      <arr name="language_facet">
+        <str>English</str>
+      </arr>
+      <str name="format">Book</str>
+      <arr name="isbn_t">
+        <str>9780891040231</str>
+        <str>0891040234</str>
+        <str>0891040234 :</str>
+      </arr>
+      <arr name="material_type_display">
+        <str>317 p</str>
+      </arr>
+      <str name="title_display">The adventures of Sherlock Holmes</str>
+      <str name="author_display">Doyle, Arthur Conan, Sir, 1859-1930.</str>
+      <arr name="subject_topic_facet">
+        <str>Detective and mystery stories, English</str>
+      </arr>
+      <arr name="published_display">
+        <str>New York</str>
+      </arr>
+      <arr name="pub_date">
+        <str>1892</str>
+      </arr>
+      <arr name="lc_callnum_display">
+        <str>PR4621 .A3 1975</str>
+      </arr>
+      <float name="score">0.2694855</float>
+    </doc>
+  </result>
+</response>
+

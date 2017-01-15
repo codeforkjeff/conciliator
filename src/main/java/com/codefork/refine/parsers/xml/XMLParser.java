@@ -24,7 +24,7 @@ public abstract class XMLParser<R extends ParseState> extends DefaultHandler {
     protected R parseState;
 
     public XMLParser() {
-        parseState = createParseResult();
+        parseState = createParseState();
     }
 
     /**
@@ -32,7 +32,7 @@ public abstract class XMLParser<R extends ParseState> extends DefaultHandler {
      * own ParseState subclasses.
      * @return
      */
-    public R createParseResult() {
+    public R createParseState() {
         return (R) new ParseState();
     }
 

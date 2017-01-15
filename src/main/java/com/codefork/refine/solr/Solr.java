@@ -2,7 +2,7 @@ package com.codefork.refine.solr;
 
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.datasource.WebServiceDataSource;
-import com.codefork.refine.orcid.OrcidMetaDataResponse;
+import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import org.apache.commons.logging.Log;
@@ -19,16 +19,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Data source for any Solr interface.
- * Config file should define properties as follows:
- *
- * datasource.solr=com.codefork.refine.solr.Solr
- * datasource.solr.name=Arbitrary Solr Instance
- * datasource.solr.url.query=http://localhost:8983/solr/blacklight-core/select?q=QUERY&rows=ROWS&wt=xml
- * datasource.solr.url.document=http://localhost:8983/solr/blacklight-core/get?id=ID
- * datasource.solr.field.name=name
+ * Data source for a Solr interface
  */
 public class Solr extends WebServiceDataSource {
+
+    public static final String PROP_URL_DOCUMENT = "url.document";
+    public static final String PROP_URL_QUERY = "url.query";
+    public static final String PROP_FIELD_ID = "field.id";
+    public static final String PROP_FIELD_NAME = "field.name";
+    public static final String PROP_NAMETYPE_ID = "nametype.id";
+    public static final String PROP_NAMETYPE_NAME = "nametype.name";
 
     Log log = LogFactory.getLog(Solr.class);
 
@@ -36,15 +36,13 @@ public class Solr extends WebServiceDataSource {
 
     @Override
     public ServiceMetaDataResponse createServiceMetaDataResponse(Map<String, String> extraParams) {
-        // TODO
-        // use url.document key
-        return new OrcidMetaDataResponse(getName());
+        return new SolrMetaDataResponse(getName(), getConfigProperties().getProperty(PROP_URL_DOCUMENT));
     }
 
     public String createURL(SearchQuery query) throws Exception {
-        String urlTemplate = getConfigProperties().getProperty("url.query");
-        return urlTemplate.replace("QUERY", UriUtils.encodeQueryParam(query.getQuery(), "UTF-8"))
-                .replace("ROWS", String.valueOf(query.getLimit()));
+        String urlTemplate = getConfigProperties().getProperty(PROP_URL_QUERY);
+        return urlTemplate.replace("{{QUERY}}", UriUtils.encodeQueryParam(query.getQuery(), "UTF-8"))
+                .replace("{{ROWS}}", String.valueOf(query.getLimit()));
     }
 
     @Override
@@ -56,12 +54,14 @@ public class Solr extends WebServiceDataSource {
         InputStream response = conn.getInputStream();
 
         SAXParser parser = spf.newSAXParser();
-        SolrResponseParser solrResponseParser = new SolrResponseParser(
-                getConfigProperties().getProperty("field.id"),
-                getConfigProperties().getProperty("field.name"));
+        SolrParser solrParser = new SolrParser(
+                getConfigProperties().getProperty(PROP_FIELD_ID),
+                getConfigProperties().getProperty(PROP_FIELD_NAME),
+                new NameType(getConfigProperties().getProperty(PROP_NAMETYPE_ID),
+                        getConfigProperties().getProperty(PROP_NAMETYPE_NAME)));
 
         long start = System.currentTimeMillis();
-        parser.parse(response, solrResponseParser);
+        parser.parse(response, solrParser);
         long parseTime = System.currentTimeMillis() - start;
 
         try {
@@ -72,8 +72,8 @@ public class Solr extends WebServiceDataSource {
         }
 
         log.debug(String.format("Query: %s - parsing took %dms, got %d results",
-                query.getQuery(), parseTime, solrResponseParser.getResults().size()));
+                query.getQuery(), parseTime, solrParser.getResults().size()));
 
-        return solrResponseParser.getResults();
+        return solrParser.getResults();
     }
 }

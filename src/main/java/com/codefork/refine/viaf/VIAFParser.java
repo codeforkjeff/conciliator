@@ -211,7 +211,7 @@ public class VIAFParser extends XMLParser<VIAFParseState> {
     }
 
     @Override
-    public VIAFParseState createParseResult() {
+    public VIAFParseState createParseState() {
         return new VIAFParseState();
     }
 
