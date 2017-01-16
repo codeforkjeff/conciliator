@@ -2,6 +2,7 @@ package com.codefork.refine.viaf;
 
 import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
 import org.junit.After;
@@ -19,7 +20,6 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 public class VIAFTest {
 
-    VIAFService viafService;
+    ConnectionFactory connectionFactory;
     Config config;
     VIAF viaf;
 
@@ -38,8 +38,6 @@ public class VIAFTest {
      */
     @Test
     public void testLiveSearch() throws Exception {
-        viafService = new VIAFService();
-
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
@@ -63,10 +61,10 @@ public class VIAFTest {
 
     @Test
     public void testSearchPersonalName() throws Exception {
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/wittgenstein.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -74,7 +72,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
 
         SearchQuery query = new SearchQuery("wittgenstein", 3, VIAFNameType.Person.asNameType(), "should");
         List<Result> results = viaf.searchCheckCache(query);
@@ -105,10 +103,10 @@ public class VIAFTest {
         // This is when you get when you choose "Reconcile against no particular type" in OpenRefine
 
         // http://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22John%20Steinbeck%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/steinbeck_no_type.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -116,7 +114,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
 
         SearchQuery query = new SearchQuery("steinbeck", 3, null, "should");
         List<Result> results = viaf.searchCheckCache(query);
@@ -146,10 +144,10 @@ public class VIAFTest {
         // Also chose "Reconcile against no particular type" for this one
 
         // https://viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22Vladimir%20Nabokov%22%20and%20local.sources%20%3D%20%22nsk%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/nabokov_nsk.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -157,7 +155,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
 
         Map<String, String> extraParams = new HashMap<String, String>();
         extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "NSK"); // NSK=Croatia
@@ -188,10 +186,10 @@ public class VIAFTest {
     @Test
     public void testSearchWithExactMatch() throws Exception {
         // http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -199,7 +197,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
 
         SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, VIAFNameType.Person.asNameType(), "should");
         List<Result> results = viaf.searchCheckCache(query);
@@ -228,10 +226,10 @@ public class VIAFTest {
     public void testSearchWithNoResults() throws Exception {
 
         // https://viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22ncjecerence%22%20and%20local.sources%20%3D%20%22nsk%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/nonsense.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -239,7 +237,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
 
         SearchQuery query = new SearchQuery("ncjecerence", 3, null, "should");
         List<Result> results = viaf.searchCheckCache(query);
@@ -250,10 +248,10 @@ public class VIAFTest {
     @Test
     public void testCache() throws Exception {
         // http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -261,7 +259,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
         viaf.setCacheEnabled(true);
         viaf.setCacheLifetime(1);
 
@@ -275,13 +273,13 @@ public class VIAFTest {
 
         assertEquals(3, results2.size());
 
-        verify(viafService, times(1)).doSearch(anyString(), anyInt());
+        verify(connectionFactory, times(1)).createConnection(anyString());
     }
 
     @Test
     public void testExpireCache() throws Exception {
         // http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         final Class testClass = getClass();
         doAnswer(new Answer<HttpURLConnection>() {
             @Override
@@ -290,14 +288,14 @@ public class VIAFTest {
                 when(conn.getInputStream()).thenReturn(testClass.getResourceAsStream("/shakespeare.xml"));
                 return conn;
             }
-        }).when(viafService).doSearch(anyString(), anyInt());
+        }).when(connectionFactory).createConnection(anyString());
 
         config = mock(Config.class);
         when(config.getProperties()).thenReturn(new Properties());
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
         viaf.setCacheEnabled(true);
         viaf.setCacheLifetime(1);
 
@@ -314,15 +312,15 @@ public class VIAFTest {
 
         assertEquals(3, results2.size());
 
-        verify(viafService, times(2)).doSearch(anyString(), anyInt());
+        verify(connectionFactory, times(2)).createConnection(anyString());
     }
 
     @Test
     public void testSearchProxyModeLC() throws Exception {
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -330,7 +328,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
 
         Map<String, String> extraParams = new HashMap<String, String>();
         extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "LC");
@@ -366,10 +364,10 @@ public class VIAFTest {
      */
     @Test
     public void testSearchProxyModeBNF() throws Exception {
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -377,7 +375,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
 
         Map<String, String> extraParams = new HashMap<String, String>();
         extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "BNF");
@@ -413,10 +411,10 @@ public class VIAFTest {
      */
     @Test
     public void testSearchProxyModeBNFMissingID() throws Exception {
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/alexandre.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -424,7 +422,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
 
         Map<String, String> extraParams = new HashMap<String, String>();
         extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "BNF");
@@ -462,10 +460,10 @@ public class VIAFTest {
      */
     @Test
     public void testSearchProxyModeDNB() throws Exception {
-        viafService = mock(VIAFService.class);
+        connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
         InputStream is = getClass().getResourceAsStream("/hegel.xml");
-        when(viafService.doSearch(anyString(), anyInt())).thenReturn(conn);
+        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
@@ -473,7 +471,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.init(config);
-        viaf.setViafService(viafService);
+        viaf.setConnectionFactory(connectionFactory);
 
         Map<String, String> extraParams = new HashMap<String, String>();
         extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "DNB");

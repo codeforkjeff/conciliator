@@ -32,6 +32,8 @@ public abstract class WebServiceDataSource extends DataSource {
 
     private ThreadPool threadPool = new ThreadPool();
 
+    private ConnectionFactory connectionFactory = new ConnectionFactory();
+
     public boolean isCacheEnabled() {
         return cacheEnabled;
     }
@@ -75,6 +77,15 @@ public abstract class WebServiceDataSource extends DataSource {
 
     public ThreadPool getThreadPool() {
         return threadPool;
+    }
+
+
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 
     /**

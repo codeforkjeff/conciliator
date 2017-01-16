@@ -49,7 +49,7 @@ public class Solr extends WebServiceDataSource {
     public List<Result> search(SearchQuery query) throws Exception {
         String url = createURL(query);
         log.debug("Making request to " + url);
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection conn = getConnectionFactory().createConnection(url);
 
         InputStream response = conn.getInputStream();
 

@@ -1,12 +1,14 @@
 package com.codefork.refine.controllers;
 
 import com.codefork.refine.Config;
+import com.codefork.refine.datasource.ConnectionFactory;
+import com.codefork.refine.orcid.Orcid;
+import com.codefork.refine.orcid.OrcidMetaDataResponse;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.viaf.VIAFProxyModeMetaDataResponse;
 import com.codefork.refine.viaf.VIAF;
-import com.codefork.refine.viaf.VIAFService;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,12 +64,26 @@ public class ReconcileControllerTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    public void testOrcidMetaData() throws Exception {
+        Config config = new Config();
+        ReconcileController rc = new ReconcileController(config);
+
+        HttpServletRequest request  = mock(HttpServletRequest.class);
+        when(request.getServletPath()).thenReturn("/reconcile/orcid");
+
+        OrcidMetaDataResponse response = (OrcidMetaDataResponse) rc.reconcile(request, null, null);
+
+        assertEquals(response.getName(), "ORCID");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     public void testSearch() throws Exception {
         // TODO: mock out ALL the dependencies (VIAF, Config) so we only exercise ReconcileController. I got lazy here.
 
         Config config = new Config();
 
-        VIAFService viafService = mock(VIAFService.class);
+        ConnectionFactory connectionFactory = mock(ConnectionFactory.class);
         final Class testClass = getClass();
         doAnswer(new Answer<HttpURLConnection>() {
             @Override
@@ -83,7 +100,7 @@ public class ReconcileControllerTest {
                 }
                 return null;
             }
-        }).when(viafService).doSearch(anyString(), anyInt());
+        }).when(connectionFactory).createConnection(anyString());
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
         ReconcileController rc = new ReconcileController(config);

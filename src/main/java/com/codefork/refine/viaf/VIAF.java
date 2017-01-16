@@ -11,6 +11,7 @@ import com.codefork.refine.viaf.sources.Source;
 import com.codefork.refine.viaf.sources.VIAFSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.web.util.UriUtils;
 import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,6 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,6 @@ public class VIAF extends WebServiceDataSource {
     private SAXParserFactory spf;
 
     Log log = LogFactory.getLog(VIAF.class);
-    private VIAFService viafService;
 
     private VIAFSource viafSource = null;
     private Map<String, NonVIAFSource> nonViafSources = new HashMap<String, NonVIAFSource>();
@@ -47,8 +46,6 @@ public class VIAF extends WebServiceDataSource {
     @Override
     public void init(Config config) {
         super.init(config);
-
-        setViafService(new VIAFService());
 
         spf = SAXParserFactory.newInstance();
 
@@ -62,14 +59,6 @@ public class VIAF extends WebServiceDataSource {
         setCacheLifetime(cacheLifetime);
         setCacheMaxSize(cacheMaxSize);
         setCacheEnabled(cacheEnabled);
-    }
-
-    public VIAFService getViafService() {
-        return viafService;
-    }
-
-    public void setViafService(VIAFService viafService) {
-        this.viafService = viafService;
     }
 
     /**
@@ -154,7 +143,11 @@ public class VIAF extends WebServiceDataSource {
      */
     @Override
     public List<Result> search(SearchQuery query) throws Exception {
-        HttpURLConnection conn = viafService.doSearch(createCqlQueryString(query), query.getLimit());
+        String cql = createCqlQueryString(query);
+        String url = String.format("http://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml",
+                UriUtils.encodeQueryParam(cql, "UTF-8"), query.getLimit());
+
+        HttpURLConnection conn = getConnectionFactory().createConnection(url);
         InputStream response = conn.getInputStream();
 
         SAXParser parser = spf.newSAXParser();
