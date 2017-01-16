@@ -30,7 +30,38 @@ public class Config {
         }
     }
 
+    public Config(Properties properties) {
+        this.properties = properties;
+    }
+
     public Properties getProperties() {
         return properties;
     }
+
+    /**
+     * Returns the properties relevant to a given data source name,
+     * with the datasource.NAME prefix stripped off.
+     *
+     * e.g.
+     * datasource.mysource.timeout=2000
+     *
+     * the Properties object returned will have key "timeout" with value "2000"
+     *
+     * @param name
+     * @return
+     */
+    public Properties getDataSourceProperties(String name) {
+        Properties props = new Properties();
+        for(String key : getProperties().stringPropertyNames()) {
+            String prefix = "datasource." + name;
+            if(key.startsWith(prefix)) {
+                String shortenedKey = key.substring(prefix.length()).replaceAll("^\\.+", "");
+                if(shortenedKey.length() > 0) {
+                    props.setProperty(shortenedKey, getProperties().getProperty(key));
+                }
+            }
+        }
+        return props;
+    }
+
 }

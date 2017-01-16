@@ -32,7 +32,7 @@ public class Orcid extends WebServiceDataSource {
         String url = String.format("http://pub.orcid.org/v1.2/search/orcid-bio/?rows=%d&q=", query.getLimit()) +
                 UriUtils.encodeQueryParam(query.getQuery(), "UTF-8");
         log.debug("Making request to " + url);
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection conn = getConnectionFactory().createConnection(url);
 
         InputStream response = conn.getInputStream();
 

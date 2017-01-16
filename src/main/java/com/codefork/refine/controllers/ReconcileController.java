@@ -98,6 +98,7 @@ public class ReconcileController {
                     if(name != null) {
                         dataSource.setName(name);
                     }
+                    dataSource.setConfigName(dataSourceName);
                     classNamesToDataSources.put(className, dataSource);
                 } catch(ClassNotFoundException e) {
                     log.error("ClassNotFoundException trying to instantiate object: " + className + " - " + e.toString());
@@ -130,17 +131,22 @@ public class ReconcileController {
             @RequestParam(value = "queries", required = false) String queries) {
         String path = request.getServletPath();
         String[] parts = path.split("/");
-        String dataSourceStr = parts[2];
+        if(parts.length >= 3) {
+            String dataSourceStr = parts[2];
 
-        DataSource dataSource = getDataSource(dataSourceStr);
-        if(dataSource == null) {
+            DataSource dataSource = getDataSource(dataSourceStr);
+            if(dataSource != null) {
+                Map<String, String> extraParams = dataSource.parseRequestToExtraParams(request);
+
+                return reconcile(dataSource, query, queries, extraParams);
+            } else {
+                return new ResponseEntity<String>(
+                        String.format(BODY_404, "data source '" + dataSourceStr + "' not defined"), HttpStatus.NOT_FOUND);
+            }
+        } else {
             return new ResponseEntity<String>(
-                    String.format(BODY_404, "data source '" + dataSourceStr + "' not defined"), HttpStatus.NOT_FOUND);
+                    String.format(BODY_404, "invalid URL path"), HttpStatus.NOT_FOUND);
         }
-
-        Map<String, String> extraParams = dataSource.parseRequestToExtraParams(request);
-
-        return reconcile(dataSource, query, queries, extraParams);
     }
 
     public Object reconcile(
@@ -225,6 +231,6 @@ public class ReconcileController {
                 return "[ERROR: Could not serialize object to JSON]";
             }            
         }
-    } 
-    
+    }
+
 }

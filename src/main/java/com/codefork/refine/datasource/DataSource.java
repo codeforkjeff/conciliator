@@ -8,6 +8,7 @@ import com.codefork.refine.resources.ServiceMetaDataResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * A reconciliation data source.
@@ -15,6 +16,7 @@ import java.util.Map;
 public abstract class DataSource {
 
     private String name = this.getClass().getSimpleName();
+    private String configName;
 
     private Config config;
 
@@ -26,12 +28,31 @@ public abstract class DataSource {
         return config;
     }
 
+    /**
+     * @return Properties object containing keys relevant to this
+     * datasource, with "datasource.name" prefix stripped away.
+     */
+    public Properties getConfigProperties() {
+        return getConfig().getDataSourceProperties(getConfigName());
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return name used in the config properties keys for this datasource
+     */
+    public String getConfigName() {
+        return configName;
+    }
+
+    public void setConfigName(String configName) {
+        this.configName = configName;
     }
 
     /**

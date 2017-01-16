@@ -1,5 +1,8 @@
 package com.codefork.refine.viaf;
 
+import com.codefork.refine.SearchQuery;
+import com.codefork.refine.resources.NameType;
+import com.codefork.refine.viaf.sources.VIAFSource;
 import org.junit.Test;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -78,12 +81,12 @@ public class VIAFParserTest {
     public void testParseNames() throws Exception {
         SAXParserFactory spf = SAXParserFactory.newInstance();
         SAXParser parser = spf.newSAXParser();
-        VIAFParser viafParser = new VIAFParser();
+        VIAFParser viafParser = new VIAFParser(new VIAFSource(), new SearchQuery("x", 3, new NameType("x", "x"), ""));
 
         InputStream is = getClass().getResourceAsStream("/steinbeck_no_type.xml");
         parser.parse(is, viafParser);
 
-        List<VIAFResult> results = viafParser.getResults();
+        List<VIAFResult> results = viafParser.getParseState().getViafResults();
 
         VIAFResult firstResult = results.get(0);
         VIAFResult secondResult = results.get(1);
@@ -147,7 +150,7 @@ public class VIAFParserTest {
         int n = 100;
         long start = System.currentTimeMillis();
         for(int i = 0; i < n; i++) {
-            VIAFParser viafParser = new VIAFParser();
+            VIAFParser viafParser = new VIAFParser(new VIAFSource(), new SearchQuery("x", 3, new NameType("x", "x"), ""));
             InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
             parser.parse(is, viafParser);
         }
