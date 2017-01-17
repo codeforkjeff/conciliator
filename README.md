@@ -25,6 +25,7 @@ General Features
 
   - [VIAF](http://viaf.org) - Virtual International Authority File
   - [ORCID](http://orcid.org) - digital identifiers for researchers
+  - Any [Apache Solr](https://lucene.apache.org/solr/) collection
   - more to come (if you can contribute, please submit pull requests!)
 
 * Good performance (uses threads; stable memory usage; caches results)
@@ -48,6 +49,13 @@ ORCID Data Source Features
 
 * It works!
 
+Solr Data Source Features
+-------------------------
+
+* Any Apache Solr collection can be used as a data source. See the
+  sample commented-out lines in the `conciliator.properties` file for
+  more details.
+
 Running Conciliator on Your Own Computer
 ----------------------------------------
 
@@ -61,7 +69,7 @@ build the .jar file using maven.
 Run this command:
 
 ```
-java -jar conciliator-1.0.3.jar
+java -jar conciliator-2.0.0.jar
 ```
 
 That's it! You should see some messages as the application starts
