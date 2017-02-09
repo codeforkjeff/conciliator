@@ -25,7 +25,7 @@ public abstract class WebServiceDataSource extends DataSource {
 
     public static final boolean DEFAULT_CACHE_ENABLED = false;
 
-    Log log = LogFactory.getLog(this.getClass().getSimpleName());
+    private Log log = LogFactory.getLog(this.getClass());
 
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
     private CacheManager cacheManager = new CacheManager(getName() + " Cache");
@@ -33,6 +33,10 @@ public abstract class WebServiceDataSource extends DataSource {
     private ThreadPool threadPool = new ThreadPool();
 
     private ConnectionFactory connectionFactory = new ConnectionFactory();
+
+    public Log getLog() {
+        return log;
+    }
 
     public boolean isCacheEnabled() {
         return cacheEnabled;

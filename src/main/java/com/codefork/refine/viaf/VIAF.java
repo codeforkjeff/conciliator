@@ -38,8 +38,6 @@ public class VIAF extends WebServiceDataSource {
 
     private SAXParserFactory spf;
 
-    Log log = LogFactory.getLog(VIAF.class);
-
     private VIAFSource viafSource = null;
     private Map<String, NonVIAFSource> nonViafSources = new HashMap<String, NonVIAFSource>();
 
@@ -161,11 +159,11 @@ public class VIAF extends WebServiceDataSource {
             response.close();
             conn.disconnect();
         } catch(IOException ioe) {
-            log.error("Ignoring error from trying to close input stream and connection: " + ioe);
+            getLog().error("Ignoring error from trying to close input stream and connection: " + ioe);
         }
 
         List<Result> results = viafParser.getResults();
-        log.debug(String.format("Query: %s - parsing took %dms, got %d results",
+        getLog().debug(String.format("Query: %s - parsing took %dms, got %d results",
                 query.getQuery(), parseTime, results.size()));
 
         return results;
