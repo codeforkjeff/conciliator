@@ -27,9 +27,7 @@ public class ThreadPool {
     private long lastTimePoolAdjusted = 0;
 
     public ThreadPool() {
-        // TODO: make thread pool size configurable
-        log.info("Starting thread pool, size = " + INITIAL_POOL_SIZE);
-        executor = new ThreadPoolExecutor(INITIAL_POOL_SIZE, INITIAL_POOL_SIZE, 0, TimeUnit.HOURS, new LinkedBlockingQueue<Runnable>());
+        start();
     }
 
     public ThreadPool(long waitPeriodBeforeShrinkingMs,
@@ -39,6 +37,14 @@ public class ThreadPool {
         this.waitPeriodBeforeShrinkingMs = waitPeriodBeforeShrinkingMs;
         this.waitPeriodBeforeGrowingMs = waitPeriodBeforeGrowingMs;
         this.waitPeriodBeforeResetMs = waitPeriodBeforeResetMs;
+    }
+
+    public void start() {
+        // TODO: make thread pool size configurable
+        log.info("Starting thread pool, size = " + INITIAL_POOL_SIZE);
+        if(executor == null || executor.isShutdown()) {
+            executor = new ThreadPoolExecutor(INITIAL_POOL_SIZE, INITIAL_POOL_SIZE, 0, TimeUnit.HOURS, new LinkedBlockingQueue<Runnable>());
+        }
     }
 
     /**
@@ -107,12 +113,14 @@ public class ThreadPool {
     }
 
     public void shutdown() {
-        log.info("Shutting down thread pool");
-        executor.shutdown();
-        try {
-            executor.awaitTermination(30, TimeUnit.SECONDS);
-        } catch(InterruptedException e) {
-            log.error("Executor was interrupted while awaiting termination: " + e);
+        if(!executor.isShutdown()) {
+            log.info("Shutting down thread pool");
+            executor.shutdown();
+            try {
+                executor.awaitTermination(30, TimeUnit.SECONDS);
+            } catch(InterruptedException e) {
+                log.error("Executor was interrupted while awaiting termination: " + e);
+            }
         }
     }
 

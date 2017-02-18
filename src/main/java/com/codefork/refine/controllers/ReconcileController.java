@@ -120,6 +120,12 @@ public class ReconcileController {
         return dataSourceMap.get(name);
     }
 
+    public void shutdownDataSources() {
+        for(DataSource dataSource: dataSourceMap.values()) {
+            dataSource.shutdown();
+        }
+    }
+
     /**
      * Entry point for all reconciliation code
      */

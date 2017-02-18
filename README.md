@@ -165,8 +165,11 @@ You can change run-time options by editing the
 TODO
 ----
 
-A few aspects of the Reconciliation Service API aren't implemented by
-this framework yet.
+- A few aspects of the Reconciliation Service API aren't implemented by
+  this framework yet.
+- Use dependency injection instead of singleton for the threadpool
+  shared by all VIAF instances. Might need to rework how data sources
+  get instantiated on-the-fly in ReconcileController.
 
 Resources
 ---------

@@ -30,7 +30,7 @@ public abstract class WebServiceDataSource extends DataSource {
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
     private CacheManager cacheManager = new CacheManager(getName() + " Cache");
 
-    private ThreadPool threadPool = new ThreadPool();
+    private ThreadPool threadPool = createThreadPool();
 
     private ConnectionFactory connectionFactory = new ConnectionFactory();
 
@@ -77,6 +77,10 @@ public abstract class WebServiceDataSource extends DataSource {
 
     public CacheManager getCacheManager() {
         return cacheManager;
+    }
+
+    public ThreadPool createThreadPool() {
+        return new ThreadPool();
     }
 
     public ThreadPool getThreadPool() {
