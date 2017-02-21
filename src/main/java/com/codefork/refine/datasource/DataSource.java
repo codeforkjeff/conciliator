@@ -24,6 +24,10 @@ public abstract class DataSource {
         this.config = config;
     }
 
+    public void shutdown() {
+        // no-op
+    }
+
     public Config getConfig() {
         return config;
     }

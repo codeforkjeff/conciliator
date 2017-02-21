@@ -3,6 +3,7 @@ package com.codefork.refine.viaf;
 import com.codefork.refine.Cache;
 import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.ThreadPool;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
@@ -57,6 +58,17 @@ public class VIAF extends WebServiceDataSource {
         setCacheLifetime(cacheLifetime);
         setCacheMaxSize(cacheMaxSize);
         setCacheEnabled(cacheEnabled);
+    }
+
+    /**
+     * All VIAF instances share a single threadpool
+     * @return
+     */
+    @Override
+    public ThreadPool createThreadPool() {
+        ThreadPool threadPool = VIAFThreadPool.getSingleton().getThreadPool();
+        threadPool.start();
+        return threadPool;
     }
 
     /**

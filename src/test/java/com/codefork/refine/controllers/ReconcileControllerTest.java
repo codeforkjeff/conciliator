@@ -9,6 +9,7 @@ import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.viaf.VIAFProxyModeMetaDataResponse;
 import com.codefork.refine.viaf.VIAF;
+import org.junit.After;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -33,13 +34,15 @@ import static org.mockito.Mockito.when;
 
 public class ReconcileControllerTest {
 
+    ReconcileController rc;
+
     @Test
     @SuppressWarnings("unchecked")
     public void testServiceMetaData() throws Exception {
         Config config = new Config();
         VIAF viaf = new VIAF();
         viaf.init(config);
-        ReconcileController rc = new ReconcileController(config);
+        rc = new ReconcileController(config);
         ServiceMetaDataResponse response = (ServiceMetaDataResponse) rc.reconcile(viaf, null, null, Collections.EMPTY_MAP);
         assertEquals(response.getName(), "VIAF");
         assertEquals(response.getView().getUrl(), "http://viaf.org/viaf/{{id}}");
@@ -51,7 +54,7 @@ public class ReconcileControllerTest {
         Config config = new Config();
         VIAF viaf = new VIAF();
         viaf.init(config);
-        ReconcileController rc = new ReconcileController(config);
+        rc = new ReconcileController(config);
 
         Map<String, String> extraParams = new HashMap<String, String>();
         extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "LC");
@@ -66,9 +69,9 @@ public class ReconcileControllerTest {
     @SuppressWarnings("unchecked")
     public void testOrcidMetaData() throws Exception {
         Config config = new Config();
-        ReconcileController rc = new ReconcileController(config);
+        rc = new ReconcileController(config);
 
-        HttpServletRequest request  = mock(HttpServletRequest.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getServletPath()).thenReturn("/reconcile/orcid");
 
         OrcidMetaDataResponse response = (OrcidMetaDataResponse) rc.reconcile(request, null, null);
@@ -93,7 +96,7 @@ public class ReconcileControllerTest {
                     HttpURLConnection conn = mock(HttpURLConnection.class);
                     when(conn.getInputStream()).thenReturn(testClass.getResourceAsStream("/shakespeare.xml"));
                     return conn;
-                } else if(arg1.contains("wittgenstein")) {
+                } else if (arg1.contains("wittgenstein")) {
                     HttpURLConnection conn = mock(HttpURLConnection.class);
                     when(conn.getInputStream()).thenReturn(testClass.getResourceAsStream("/wittgenstein.xml"));
                     return conn;
@@ -103,9 +106,9 @@ public class ReconcileControllerTest {
         }).when(connectionFactory).createConnection(anyString());
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
-        ReconcileController rc = new ReconcileController(config);
+        rc = new ReconcileController(config);
 
-        HttpServletRequest request  = mock(HttpServletRequest.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getServletPath()).thenReturn("/reconcile/viaf");
 
         Map<String, SearchResponse> results = (Map<String, SearchResponse>) rc.reconcile(request, null, json);
@@ -133,15 +136,20 @@ public class ReconcileControllerTest {
         assertEquals(result2.get(0).isMatch(), false);
     }
 
+    @Test
     public void testMissingDataSource() throws Exception {
         Config config = new Config();
-        ReconcileController rc = new ReconcileController(config);
+        rc = new ReconcileController(config);
 
-        HttpServletRequest request  = mock(HttpServletRequest.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getServletPath()).thenReturn("/reconcile/nonexistingdatasource");
 
         ResponseEntity response = (ResponseEntity) rc.reconcile(request, null, null);
         assertEquals(404, response.getStatusCode().value());
     }
 
+    @After
+    public void shutdownVIAF() {
+        rc.shutdownDataSources();
+    }
 }
