@@ -4,7 +4,7 @@
 
     <groupId>com.codefork.conciliator</groupId>
     <artifactId>conciliator</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <packaging>jar</packaging>
 
     <name>conciliator</name>
@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.3.RELEASE</version>
+        <version>1.4.4.RELEASE</version>
     </parent>
 
     <dependencies>
