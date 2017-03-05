@@ -41,9 +41,11 @@ public class ThreadPool {
 
     public void start() {
         // TODO: make thread pool size configurable
-        log.info("Starting thread pool, size = " + INITIAL_POOL_SIZE);
         if(executor == null || executor.isShutdown()) {
+            log.info("Starting thread pool, size = " + INITIAL_POOL_SIZE);
             executor = new ThreadPoolExecutor(INITIAL_POOL_SIZE, INITIAL_POOL_SIZE, 0, TimeUnit.HOURS, new LinkedBlockingQueue<Runnable>());
+        } else {
+            log.info("Thread pool already started, doing nothing.");
         }
     }
 
