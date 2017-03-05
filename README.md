@@ -69,7 +69,7 @@ build the .jar file using maven.
 Run this command:
 
 ```
-java -jar conciliator-2.1.0.jar
+java -jar conciliator-2.1.1.jar
 ```
 
 That's it! You should see some messages as the application starts
