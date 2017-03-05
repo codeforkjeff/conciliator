@@ -238,15 +238,15 @@ public abstract class WebServiceDataSource extends DataSource {
             Cache<String, List<Result>> cacheRef = getCacheManager().getCache();
 
             String key = query.getHashKey();
-            if (!cacheRef.containsKey(key)) {
-                List<Result> results = search(query);
+            List<Result> results = cacheRef.get(key);
+            if (results == null) {
+                results = search(query);
                 // only cache if search was successful
                 cacheRef.put(key, results);
-                return results;
             } else {
                 log.debug("Cache hit for: " + key);
-                return cacheRef.get(key);
             }
+            return results;
         }
 
         return search(query);

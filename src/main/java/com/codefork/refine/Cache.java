@@ -65,12 +65,12 @@ public class Cache<K, V> {
         cacheMap.put(key, value);
     }
     private void put(K key, V value, long timestamp) {
-        cacheMap.put(key, new CachedValue(value, timestamp));
+        cacheMap.put(key, new CachedValue<V>(value, timestamp));
     }
 
     public V get(K key) {
         if(containsKey(key)) {
-            return cacheMap.get(key).getValue();
+            return (V) cacheMap.get(key).getValue();
         }
         return null;
     }
@@ -121,24 +121,6 @@ public class Cache<K, V> {
 
     private ConcurrentHashMap<K, CachedValue> getMap() {
         return cacheMap;
-    }
-
-    public class CachedValue {
-        private V value;
-        private long timestamp;
-
-        public CachedValue(V value, long timestamp) {
-            this.value = value;
-            this.timestamp = timestamp;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        public long getTimestamp() {
-            return timestamp;
-        }
     }
 
     /**
