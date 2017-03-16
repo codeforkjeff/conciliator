@@ -128,7 +128,10 @@ public class VIAF extends WebServiceDataSource {
     public static String createCqlQueryString(SearchQuery searchQuery) {
         String cqlTemplate = "local.mainHeadingEl all \"%s\"";
         if(searchQuery.getNameType() != null) {
-            cqlTemplate = VIAFNameType.getById(searchQuery.getNameType().getId()).getCqlString();
+            VIAFNameType viafNameType = VIAFNameType.getById(searchQuery.getNameType().getId());
+            if (viafNameType != null) {
+                cqlTemplate = viafNameType.getCqlString();
+            }
         }
         String cql = String.format(cqlTemplate, searchQuery.getQuery());
 
