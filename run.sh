@@ -14,4 +14,4 @@
 # the JVM from having to dynamically allocate memory, which takes time.
 # -Xms128m -Xmx128m
 
-java -XX:+HeapDumpOnOutOfMemoryError -Xms128m -Xmx128m -Dlogging.level.com.codefork.refine=DEBUG -jar target/conciliator-2.1.1.jar
+java -XX:+HeapDumpOnOutOfMemoryError -Xms128m -Xmx128m -Dlogging.level.com.codefork.refine=DEBUG -jar target/conciliator-2.1.2.jar
