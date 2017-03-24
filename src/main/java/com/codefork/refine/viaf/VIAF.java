@@ -10,8 +10,6 @@ import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.viaf.sources.NonVIAFSource;
 import com.codefork.refine.viaf.sources.Source;
 import com.codefork.refine.viaf.sources.VIAFSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.web.util.UriUtils;
 import org.xml.sax.SAXException;
 
@@ -22,6 +20,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,15 +122,18 @@ public class VIAF extends WebServiceDataSource {
     }
 
     /**
-     * @return String used for the cql 'query' URL param passed to VIAF
+     * @return String used for the cql 'query' URL param passed to VIAF;
+     *  if nameType is present and invalid, returns null
      */
     public static String createCqlQueryString(SearchQuery searchQuery) {
+
         String cqlTemplate = "local.mainHeadingEl all \"%s\"";
         if(searchQuery.getNameType() != null) {
             VIAFNameType viafNameType = VIAFNameType.getById(searchQuery.getNameType().getId());
-            if (viafNameType != null) {
-                cqlTemplate = viafNameType.getCqlString();
+            if(viafNameType == null) {
+                return null;
             }
+            cqlTemplate = viafNameType.getCqlString();
         }
         String cql = String.format(cqlTemplate, searchQuery.getQuery());
 
@@ -157,6 +159,11 @@ public class VIAF extends WebServiceDataSource {
     @Override
     public List<Result> search(SearchQuery query) throws Exception {
         String cql = createCqlQueryString(query);
+
+        if(cql == null) {
+            return Collections.EMPTY_LIST;
+        }
+
         String url = String.format("http://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml",
                 UriUtils.encodeQueryParam(cql, "UTF-8"), query.getLimit());
 
