@@ -65,6 +65,9 @@ public class ReconcileController {
         props.put("datasource.orcid", "com.codefork.refine.orcid.Orcid");
         props.put("datasource.orcid.name", "ORCID");
 
+        props.put("datasource.openlibrary", "com.codefork.refine.openlibrary.OpenLibrary");
+        props.put("datasource.openlibrary.name", "OpenLibrary");
+
         props.putAll(config.getProperties());
 
         String prefix = "datasource.";

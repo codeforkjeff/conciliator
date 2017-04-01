@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -16,9 +18,6 @@ import java.util.Map;
  * There's not much documentation about the type_strict field:
  * when it's set, it's always "should" although the docs say there
  * are other possible values.
- *
- * TODO: there's a "properties" key not yet modeled here, which
- * could be useful for specifying per-name search parameters
  */
 public class SearchQuery {
 
@@ -26,6 +25,7 @@ public class SearchQuery {
     private int limit;
     private NameType nameType;
     private String typeStrict;
+    private Map<String, PropertyValue> properties;
     private Map<String, String> extraParams;
 
     /**
@@ -51,30 +51,67 @@ public class SearchQuery {
             typeStrict = queryStruct.path("type_strict").asText();
         }
 
+        Map<String, PropertyValue> properties = new HashMap<String, PropertyValue>();
+        if(!queryStruct.path("properties").isMissingNode()) {
+            Iterator<JsonNode> propObjects = queryStruct.path("properties").elements();
+            while(propObjects.hasNext()) {
+                JsonNode prop = propObjects.next();
+                String key = null;
+                if(!prop.path("p").isMissingNode()) {
+                    key = prop.path("p").asText();
+                } else if(!prop.path("pid").isMissingNode()) {
+                    key = prop.path("pid").asText();
+                }
+
+                JsonNode valNode = prop.path("v");
+                PropertyValue val = null;
+                if(!valNode.isMissingNode()) {
+                    if(valNode.isTextual()) {
+                        val = new PropertyValueString(valNode.asText());
+                    } else if(valNode.isNumber()) {
+                        val = new PropertyValueNumber(valNode.asLong());
+                    } else if(!valNode.path("id").isMissingNode()) {
+                        val = new PropertyValueId(valNode.path("id").asText());
+                    }
+                }
+
+                properties.put(key, val);
+            }
+        }
+
         SearchQuery searchQuery = new SearchQuery(
                 queryStruct.path("query").asText().trim(),
                 limit,
                 nameType,
                 typeStrict,
+                properties,
                 extraParams
         );
 
         return searchQuery;
     }
 
-    public SearchQuery(String query, int limit, NameType nameType, String typeStrict, Map<String, String> extraParams) {
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict,
+                       Map<String, PropertyValue> properties,
+                       Map<String, String> extraParams) {
         this.query = query;
         this.limit = limit;
         this.nameType = nameType;
         this.typeStrict = typeStrict;
+        this.properties = properties;
         this.extraParams = extraParams;
+    }
+
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict,
+                       Map<String, String> extraParams) {
+        this(query, limit, nameType, typeStrict, null, extraParams);
     }
 
     /**
      * Constructor setting proxyMode = false
      */
     public SearchQuery(String query, int limit, NameType nameType, String typeStrict) {
-        this(query, limit, nameType, typeStrict, Collections.EMPTY_MAP);
+        this(query, limit, nameType, typeStrict, null, Collections.EMPTY_MAP);
     }
 
     public String getQuery() {
@@ -107,6 +144,14 @@ public class SearchQuery {
 
     public void setTypeStrict(String typeStrict) {
         this.typeStrict = typeStrict;
+    }
+
+    public Map<String, PropertyValue> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, PropertyValue> properties) {
+        this.properties = properties;
     }
 
     public Map<String, String> getExtraParams() {
