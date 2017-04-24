@@ -25,6 +25,7 @@ General Features
 
   - [VIAF](http://viaf.org) - Virtual International Authority File
   - [ORCID](http://orcid.org) - digital identifiers for researchers
+  - [Open Library](http://openlibrary.org) - an open, editable library catalog
   - Any [Apache Solr](https://lucene.apache.org/solr/) collection
   - more to come (if you can contribute, please submit pull requests!)
 
@@ -48,6 +49,17 @@ ORCID Data Source Features
 --------------------------
 
 * It works!
+
+Open Library
+------------
+
+* Open Library has rate limits on its API, so requests are not run in a
+  threadpool. Expect it to be slow.
+
+* Support for including additional columns (useful for specifying
+  author(s), for example, to help narrow down searches for common book
+  titles). If no results are found, the code tries again with only the
+  original column.
 
 Solr Data Source Features
 -------------------------
@@ -113,6 +125,17 @@ Configuring OpenRefine
 
     ```
     http://localhost:8080/reconcile/orcid
+    ```
+
+    To use Open Library: (On the reconciliation screen, under the
+    "Also use relevant details from other columns" panel, you can
+    check the "Include?" box for columns to include in the query. Give
+    them any name in the "As Property" box. If no results are found
+    with these column values added to the query, the service will try
+    again with only the original selected column.)
+
+    ```
+    http://localhost:8080/reconcile/openlibrary
     ```
 
 4. Follow the instructions on the dialog box to start reconciling

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public class StringUtil {
 
@@ -100,6 +101,17 @@ public class StringUtil {
         catch (IOException ex) {
         }
         return out.toString();
+    }
+
+    public static String join(List<String> strings, String sep) {
+        StringBuilder buf = new StringBuilder();
+        for(String s: strings) {
+            if(buf.length() > 0) {
+                buf.append(sep);
+            }
+            buf.append(s);
+        }
+        return buf.toString();
     }
 
 }

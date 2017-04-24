@@ -16,6 +16,8 @@ public class ThreadPool {
 
     public static final int INITIAL_POOL_SIZE = 4;
 
+    private int initialPoolSize = INITIAL_POOL_SIZE;
+
     // shrink rapidly, but grow slowly
     private long waitPeriodBeforeShrinkingMs = 30000; // 30s
     private long waitPeriodBeforeGrowingMs = 600000; // 10 mins
@@ -30,20 +32,32 @@ public class ThreadPool {
         start();
     }
 
+    public ThreadPool(int initialSize) {
+        this.initialPoolSize = initialSize;
+        start();
+    }
+
     public ThreadPool(long waitPeriodBeforeShrinkingMs,
                       long waitPeriodBeforeGrowingMs,
                       long waitPeriodBeforeResetMs) {
-        this();
+        this(INITIAL_POOL_SIZE, waitPeriodBeforeShrinkingMs,
+                waitPeriodBeforeGrowingMs, waitPeriodBeforeResetMs);
+    }
+
+    public ThreadPool(int initialSize,
+                      long waitPeriodBeforeShrinkingMs,
+                      long waitPeriodBeforeGrowingMs,
+                      long waitPeriodBeforeResetMs) {
+        this(initialSize);
         this.waitPeriodBeforeShrinkingMs = waitPeriodBeforeShrinkingMs;
         this.waitPeriodBeforeGrowingMs = waitPeriodBeforeGrowingMs;
         this.waitPeriodBeforeResetMs = waitPeriodBeforeResetMs;
     }
 
     public void start() {
-        // TODO: make thread pool size configurable
         if(executor == null || executor.isShutdown()) {
-            log.info("Starting thread pool, size = " + INITIAL_POOL_SIZE);
-            executor = new ThreadPoolExecutor(INITIAL_POOL_SIZE, INITIAL_POOL_SIZE, 0, TimeUnit.HOURS, new LinkedBlockingQueue<Runnable>());
+            log.info("Starting thread pool, size = " + initialPoolSize);
+            executor = new ThreadPoolExecutor(initialPoolSize, initialPoolSize, 0, TimeUnit.HOURS, new LinkedBlockingQueue<Runnable>());
         } else {
             log.info("Thread pool already started, doing nothing.");
         }
