@@ -27,6 +27,8 @@ public class Solr extends WebServiceDataSource {
     public static final String PROP_URL_QUERY = "url.query";
     public static final String PROP_FIELD_ID = "field.id";
     public static final String PROP_FIELD_NAME = "field.name";
+    public static final String PROP_FIELD_NAME_MULTIVALUE_STRATEGY = "field.name.multivalue.strategy";
+    public static final String PROP_FIELD_NAME_MULTIVALUE_DELIMITER = "field.name.multivalue.delimiter";
     public static final String PROP_NAMETYPE_ID = "nametype.id";
     public static final String PROP_NAMETYPE_NAME = "nametype.name";
 
@@ -53,10 +55,19 @@ public class Solr extends WebServiceDataSource {
 
         InputStream response = conn.getInputStream();
 
+        MultiValueFieldStrategy multiValueFieldStrategy = MultiValueFieldStrategy.CONCAT;
+        if(MultiValueFieldStrategy.CONCAT.toString().toLowerCase().equals(getConfigProperties().getProperty(PROP_FIELD_NAME_MULTIVALUE_STRATEGY))) {
+            multiValueFieldStrategy = MultiValueFieldStrategy.CONCAT;
+        } else if(MultiValueFieldStrategy.FIRST.toString().toLowerCase().equals(getConfigProperties().getProperty(PROP_FIELD_NAME_MULTIVALUE_STRATEGY))) {
+            multiValueFieldStrategy = MultiValueFieldStrategy.FIRST;
+        }
+
         SAXParser parser = spf.newSAXParser();
         SolrParser solrParser = new SolrParser(
                 getConfigProperties().getProperty(PROP_FIELD_ID),
                 getConfigProperties().getProperty(PROP_FIELD_NAME),
+                multiValueFieldStrategy,
+                getConfigProperties().getProperty(PROP_FIELD_NAME_MULTIVALUE_DELIMITER, ", "),
                 new NameType(getConfigProperties().getProperty(PROP_NAMETYPE_ID),
                         getConfigProperties().getProperty(PROP_NAMETYPE_NAME)));
 

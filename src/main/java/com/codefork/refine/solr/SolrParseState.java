@@ -12,6 +12,8 @@ public class SolrParseState extends ParseState {
 
     Field fieldBeingCaptured;
 
+    List<String> multipleValues = new ArrayList<String>();
+
     // we don't yet support multiple name types for Solr records
     // so this is the list we use for every result.
     List<NameType> nameTypes = new ArrayList<NameType>();
