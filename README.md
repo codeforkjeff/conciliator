@@ -1,6 +1,5 @@
 
-conciliator
-===========
+# conciliator
 
 conciliator is a growing collection of
 [OpenRefine](http://openrefine.org) reconciliation services, as well
@@ -10,16 +9,14 @@ the entity represented by that text.
 
 This project supercedes [refine_viaf](https://github.com/codeforkjeff/refine_viaf).
 
-Public Server
--------------
+## Public Server
 
 If your needs are low and you can't or don't want to run this software
 yourself, you can use the public server at
 <http://refine.codefork.com/>. Visit that address for more
 instructions.
 
-General Features
-----------------
+## General Features
 
 * Out of the box support for the following data sources:
 
@@ -33,8 +30,9 @@ General Features
 
 * Super easy to run (works on Linux, Mac, Windows)
 
-VIAF Data Source Features
--------------------------
+## Data Source Features
+
+### VIAF
 
 * Support for the following types of names provided by VIAF: Corporate
   Names, Geographic Names, Personal Names, Works, Expressions
@@ -45,13 +43,11 @@ VIAF Data Source Features
   WKP. Links are BROKEN for BNC, BNF, DBC, and NUKAT. For all other
   sources, the links will take you to the VIAF page.)
 
-ORCID Data Source Features
---------------------------
+### ORCID
 
 * It works!
 
-Open Library
-------------
+### Open Library
 
 * Open Library has rate limits on its API, so requests are not run in a
   threadpool. Expect it to be slow.
@@ -61,15 +57,13 @@ Open Library
   titles). If no results are found, the code tries again with only the
   original column.
 
-Solr Data Source Features
--------------------------
+### Solr
 
 * Any Apache Solr collection can be used as a data source. See the
   sample commented-out lines in the `conciliator.properties` file for
   more details.
 
-Running Conciliator on Your Own Computer
-----------------------------------------
+## Running Conciliator on Your Own Computer
 
 Install Java 1.7 or greater if you don't already have it.
 
@@ -88,8 +82,7 @@ That's it! You should see some messages as the application starts
 up. Now you're ready to configure OpenRefine to use the service. When
 you're done with it, hit Ctrl-C to quit the application.
 
-Configuring OpenRefine
-----------------------
+## Configuring OpenRefine
 
 1. In OpenRefine, chose a column of names you want to reconcile, and
    select "Reconcile" and "Start Reconciling..." in the column
@@ -141,8 +134,7 @@ Configuring OpenRefine
 4. Follow the instructions on the dialog box to start reconciling
    names.
 
-Creating Your Own Data Source
------------------------------
+## Creating Your Own Data Source
 
 1. Clone this repository to get the source code.
 
@@ -169,8 +161,7 @@ Creating Your Own Data Source
    http://localhost:8080/reconcile/new_source
    ```
 
-Advanced Usage
---------------
+## Advanced Usage
 
 To build from the source code, install maven and type:
 
@@ -185,8 +176,7 @@ if you want to enable logging for debugging purposes, take a look at
 You can change run-time options by editing the
 `conciliator.properties` file.
 
-TODO
-----
+## TODO
 
 - A few aspects of the Reconciliation Service API aren't implemented by
   this framework yet.
@@ -194,8 +184,7 @@ TODO
   shared by all VIAF instances. Might need to rework how data sources
   get instantiated on-the-fly in ReconcileController.
 
-Resources
----------
+## Resources
 
 Specification for the Reconciliation Service API:
 
@@ -206,15 +195,13 @@ This code drew inspiration from these other projects:
 * https://github.com/rdmpage/phyloinformatics
 * https://github.com/mikejs/reconcile-demo/
 
-Do you use this thing??
------------------------
+## Do you use this thing??
 
 If so, please take a few seconds to leave a comment on
 [this page](http://codefork.com/blog/index.php/2016/10/24/announcing-conciliator/). Hearing
 from users really motivates me to continue improving this project.
 
-License
--------
+## License
 
 This code is distributed under a GNU General Public License. See the
 file LICENSE for details.
