@@ -7,13 +7,7 @@ import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
 import org.xml.sax.Attributes;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class SolrParser extends XMLParser<SolrParseState> {
-
-    private final Map<String, StartElementHandler<SolrParseState>> staticStartElementHandlers = new HashMap<String, StartElementHandler<SolrParseState>>();
-    private final Map<String, EndElementHandler<SolrParseState>> staticEndElementHandlers  = new HashMap<String, EndElementHandler<SolrParseState>>();
 
     private String fieldId;
     private String fieldName;
@@ -27,15 +21,13 @@ public class SolrParser extends XMLParser<SolrParseState> {
      */
     public SolrParser(String fieldId, String fieldName, final MultiValueFieldStrategy multiValueFieldStrategy, String multiValueFieldDelimiter, NameType nameType) {
         super();
-        this.startElementHandlers = staticStartElementHandlers;
-        this.endElementHandlers = staticEndElementHandlers;
         this.fieldId = fieldId;
         this.fieldName = fieldName;
         this.multiValueFieldStrategy = multiValueFieldStrategy;
         this.multiValueFieldDelimiter = multiValueFieldDelimiter;
         this.getParseState().nameTypes.add(nameType);
 
-        this.startElementHandlers.put("response/result/doc/arr",
+        startElementHandlers.put("response/result/doc/arr",
                 new StartElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName, Attributes attributes) {
                         if (SolrParser.this.fieldId.equals(attributes.getValue("name"))) {
@@ -46,7 +38,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     }
         });
 
-        this.startElementHandlers.put("response/result/doc/arr/str",
+        startElementHandlers.put("response/result/doc/arr/str",
                 new StartElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName, Attributes attributes) {
                         if(parseState.fieldBeingCaptured != null) {
@@ -55,7 +47,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     }
         });
 
-        this.startElementHandlers.put("response/result/doc/str",
+        startElementHandlers.put("response/result/doc/str",
                 new StartElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName, Attributes attributes) {
                         if (SolrParser.this.fieldId.equals(attributes.getValue("name"))) {
@@ -69,7 +61,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     }
                 });
 
-        this.startElementHandlers.put("response/result/doc/float",
+        startElementHandlers.put("response/result/doc/float",
                 new StartElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName, Attributes attributes) {
                         if ("score".equals(attributes.getValue("name"))) {
@@ -78,7 +70,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     }
                 });
 
-        staticStartElementHandlers.put("response/result/doc",
+        startElementHandlers.put("response/result/doc",
                 new StartElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName, Attributes attributes) {
                         parseState.result = new Result();
@@ -86,7 +78,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     }
                 });
 
-        staticEndElementHandlers.put("response/result/doc/arr",
+        endElementHandlers.put("response/result/doc/arr",
                 new EndElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName) {
                         if (SolrParseState.Field.NAME.equals(parseState.fieldBeingCaptured)) {
@@ -110,7 +102,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     }
                 });
 
-        staticEndElementHandlers.put("response/result/doc/arr/str",
+        endElementHandlers.put("response/result/doc/arr/str",
                 new EndElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName) {
                         String s = parseState.buf.toString();
@@ -122,7 +114,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     }
                 });
 
-        staticEndElementHandlers.put("response/result/doc/str",
+        endElementHandlers.put("response/result/doc/str",
                 new EndElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName) {
                         String s = parseState.buf.toString();
@@ -137,7 +129,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     }
                 });
 
-        staticEndElementHandlers.put("response/result/doc/float",
+        endElementHandlers.put("response/result/doc/float",
                 new EndElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName) {
                         String s = parseState.buf.toString();
@@ -147,7 +139,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     }
                 });
 
-        staticEndElementHandlers.put("response/result/doc",
+        endElementHandlers.put("response/result/doc",
                 new EndElementHandler<SolrParseState>() {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName) {
                         parseState.results.add(parseState.result);
