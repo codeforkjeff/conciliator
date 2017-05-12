@@ -23,6 +23,7 @@ public class Config {
     public Config() {
         if(new File(CONFIG_FILENAME).exists()) {
             try {
+                log.info("Loading configuration from " + CONFIG_FILENAME);
                 properties.load(new FileInputStream(CONFIG_FILENAME));
             } catch (IOException ex) {
                 log.error("Error reading config file, skipping it: " + ex);
