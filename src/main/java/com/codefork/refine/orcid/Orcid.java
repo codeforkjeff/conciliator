@@ -1,5 +1,6 @@
 package com.codefork.refine.orcid;
 
+import com.codefork.refine.PropertyValue;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.Result;
@@ -22,6 +23,25 @@ public class Orcid extends WebServiceDataSource {
 
     private SAXParserFactory spf = SAXParserFactory.newInstance();
 
+    private static String createQueryString(SearchQuery query) {
+        StringBuffer buf = new StringBuffer();
+        buf.append(query.getQuery());
+        for(Map.Entry<String, PropertyValue> prop : query.getProperties().entrySet()) {
+            buf.append(" ");
+            buf.append(prop.getKey());
+            buf.append(":");
+            String val = prop.getValue().asString();
+            if(val.contains(" ")) {
+                buf.append("\"");
+                buf.append(val);
+                buf.append("\"");
+            } else {
+                buf.append(val);
+            }
+        }
+        return buf.toString();
+    }
+
     @Override
     public ServiceMetaDataResponse createServiceMetaDataResponse(Map<String, String> extraParams) {
         return new OrcidMetaDataResponse(getName());
@@ -29,8 +49,11 @@ public class Orcid extends WebServiceDataSource {
 
     @Override
     public List<Result> search(SearchQuery query) throws Exception {
+
+        String q = createQueryString(query);
+
         String url = String.format("http://pub.orcid.org/v1.2/search/orcid-bio/?rows=%d&q=", query.getLimit()) +
-                UriUtils.encodeQueryParam(query.getQuery(), "UTF-8");
+                UriUtils.encodeQueryParam(q, "UTF-8");
         log.debug("Making request to " + url);
         HttpURLConnection conn = getConnectionFactory().createConnection(url);
 

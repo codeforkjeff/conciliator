@@ -45,7 +45,19 @@ instructions.
 
 ### ORCID
 
-* It works!
+* Currently uses the v1.2 API, which is due to be phased out sometime in 2017.
+  Note that the v2.0 API does not offer detailed search results; a separate query
+  must be made for each ORCID within the results in order to retrieve the person's name,
+  which isn't feasible, especially given rate limits.
+
+* Properties are supported as a way to do fielded searches using Solr syntax.
+  For lists of valid field names to use in the "As Property" box, see the section titled
+  "Fielded search for specific elements" on [this page](https://members.orcid.org/api/archive/tutorial-searching-data-using-api),
+  and the list of identifier fields on the
+  [Supported Work Identifiers](https://members.orcid.org/api/resources/supported-work-identifiers) page.
+
+  For example, if you have a column containing Scopus EIDs, you can select the "Include?" checkbox
+  for it and enter "eid" in the "As Property" box on the reconciliation screen.
 
 ### Open Library
 
@@ -81,6 +93,10 @@ java -jar conciliator-2.3.0.jar
 That's it! You should see some messages as the application starts
 up. Now you're ready to configure OpenRefine to use the service. When
 you're done with it, hit Ctrl-C to quit the application.
+
+If a file named `conciliator.properties` exists in the current
+directory, conciliator will use the options found in it. See the
+sample file in this repository.
 
 ## Configuring OpenRefine
 

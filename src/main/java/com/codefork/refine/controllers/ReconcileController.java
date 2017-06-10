@@ -113,10 +113,14 @@ public class ReconcileController {
             }
 
             if(dataSource != null) {
-                log.info(String.format("Registered data source '%s' (%s)", dataSourceName, className));
-                dataSourceMap.put(dataSourceName, dataSource);
+                registerDataSource(dataSourceName, dataSource);
             }
         }
+    }
+
+    public void registerDataSource(String dataSourceName, DataSource dataSource) {
+        log.info(String.format("Registered data source '%s' (%s)", dataSourceName, dataSource.getClass().toString()));
+        dataSourceMap.put(dataSourceName, dataSource);
     }
 
     public DataSource getDataSource(String name) {
