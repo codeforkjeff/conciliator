@@ -105,11 +105,17 @@ public class ReconcileControllerTest {
             }
         }).when(connectionFactory).createConnection(anyString());
 
-        String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
+        VIAF viaf = new VIAF();
+        viaf.init(config);
+        viaf.setConnectionFactory(connectionFactory);
+
         rc = new ReconcileController(config);
+        rc.registerDataSource("viaf", viaf);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getServletPath()).thenReturn("/reconcile/viaf");
+
+        String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
         Map<String, SearchResponse> results = (Map<String, SearchResponse>) rc.reconcile(request, null, json);
 
