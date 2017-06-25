@@ -141,7 +141,7 @@ public class VIAFParserTest {
         int maxTime = 50; // milliseconds
         // travis ci can be a bit pokey
         if("true".equals(System.getenv("TRAVIS"))) {
-            maxTime = 75;
+            maxTime = 100;
         }
 
         SAXParserFactory spf = SAXParserFactory.newInstance();
