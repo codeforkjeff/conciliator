@@ -3,8 +3,9 @@ package com.codefork.refine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,15 +19,20 @@ public class Cache<K, V> {
     public static final int DEFAULT_LIFETIME = 60 * 30; // 30 mins
     public static final int DEFAULT_MAXSIZE = 10000;
 
-    Log log = LogFactory.getLog(Cache.class);
+    private final Log log = LogFactory.getLog(Cache.class);
 
     private int lifetime = DEFAULT_LIFETIME; // in seconds
     private int maxSize = DEFAULT_MAXSIZE;
-    private ConcurrentHashMap<K, CachedValue> cacheMap = new ConcurrentHashMap<K, CachedValue>();
-    private String name;
+    private final ConcurrentHashMap<K, CachedValue<K, V>> cacheMap;
+    // maintain a list of values in the order they were added to the cache.
+    // this allows us to expire caches quickly.
+    private final List<CachedValue<K, V>> orderedValues;
+    private final String name;
 
     public Cache(String name) {
         this.name = name;
+        this.cacheMap = new ConcurrentHashMap<K, CachedValue<K, V>>();
+        this.orderedValues = Collections.synchronizedList(new LinkedList<CachedValue<K, V>>());
     }
 
     public String getName() {
@@ -57,20 +63,22 @@ public class Cache<K, V> {
         return cacheMap.containsKey(key);
     }
 
+    private void put(K key, CachedValue value) {
+        cacheMap.put(key, value);
+        orderedValues.add(value);
+    }
+
+    private void put(K key, V value, long timestamp) {
+        put(key, new CachedValue<K, V>(key, value, timestamp));
+    }
+
     public void put(K key, V value) {
         put(key, value, System.currentTimeMillis());
     }
 
-    public void put(K key, CachedValue value) {
-        cacheMap.put(key, value);
-    }
-    private void put(K key, V value, long timestamp) {
-        cacheMap.put(key, new CachedValue<V>(value, timestamp));
-    }
-
     public V get(K key) {
         if(containsKey(key)) {
-            return (V) cacheMap.get(key).getValue();
+            return cacheMap.get(key).getValue();
         }
         return null;
     }
@@ -80,36 +88,38 @@ public class Cache<K, V> {
      * and discarding entries if we're over the maxSize limit.
      */
     public Cache<K, V> expireCache() {
+        long now = System.currentTimeMillis();
+
+        // strategy here is to selectively copy what we need from cache;
+        // this is faster than copying everything and then removing expired and over-max items,
+        // since, under the hood, there is no "fast bulk copy" for the data structures we use
+
         Cache<K, V> newCache = new Cache<K, V>(getName());
         newCache.setLifetime(getLifetime());
         newCache.setMaxSize(getMaxSize());
 
-        long now = System.currentTimeMillis();
+        int total = cacheMap.size();
         int count = 0;
         int expiredCount = 0;
         int overageCount = 0;
 
-        // processing keys in descending timestamp order makes
-        // it easier to break out of the copy loop when we hit maxSize
-        final ConcurrentHashMap<K, CachedValue> oldMap = getMap();
-        K[] sorted = (K[]) oldMap.keySet().toArray();
-        Arrays.sort(sorted, new ReverseTimestampComparator());
-        int total = oldMap.size();
-
         // loop through keys, newest first
-        for(K key : sorted) {
-            // we don't need to continue if we encounter an expired entry
-            // or if we exceed maxSize
-            if(now - oldMap.get(key).getTimestamp() >= getLifetime() * 1000) {
+        // use toArray() instead of descendingIterator() b/c latter is not thread safe
+        // and will throw ConcurrentModificationExceptions.
+        Object[] array = orderedValues.toArray();
+        boolean keepGoing = true;
+        for(int i = array.length - 1; i >= 0 && keepGoing; i--) {
+            CachedValue<K, V> value = (CachedValue<K, V>) array[i];
+            if(now - value.getTimestamp() >= getLifetime() * 1000) {
                 expiredCount = total - count;
-                break;
+                keepGoing = false;
             } else if(count >= maxSize) {
                 overageCount = total - maxSize;
-                break;
+                keepGoing = false;
             } else {
-                newCache.put(key, oldMap.get(key));
-            }
-            count++;
+                newCache.put(value.getKey(), value);
+                count++;
+           }
         }
 
         int remaining = total - expiredCount - overageCount;
@@ -119,26 +129,8 @@ public class Cache<K, V> {
         return newCache;
     }
 
-    private ConcurrentHashMap<K, CachedValue> getMap() {
+    private ConcurrentHashMap<K, CachedValue<K, V>> getMap() {
         return cacheMap;
-    }
-
-    /**
-     * Reverse sorts a collection of keys by their cache entry timestamp.
-     */
-    public class ReverseTimestampComparator implements Comparator<K> {
-        @Override
-        public int compare(K o1, K o2) {
-            long ts1 = getMap().get(o1).getTimestamp();
-            long ts2 = getMap().get(o2).getTimestamp();
-            // reverse order sort
-            if(ts1 < ts2) {
-                return 1;
-            } else if(ts1 == ts2) {
-                return 0;
-            }
-            return -1;
-        }
     }
 
 }

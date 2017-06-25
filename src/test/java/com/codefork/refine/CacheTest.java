@@ -2,6 +2,10 @@ package com.codefork.refine;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -34,6 +38,40 @@ public class CacheTest {
         assertFalse(newCache.containsKey("hi"));
         assertNull(newCache.get("hi"));
         assertEquals(0, newCache.getCount());
+    }
+
+    @Test
+    public void testExpireLargeCache() throws Exception {
+        Cache<String, String> cache = new Cache<String, String>("test cache");
+        cache.setMaxSize(4000);
+        cache.setLifetime(3);
+
+        // create some test data
+        List<String> ids = new ArrayList<String>();
+        for(int i = 0; i < 10000; i++) {
+            ids.add(UUID.randomUUID().toString());
+        }
+
+        // populate the Cache in 2 phases, with a pause
+        for(int i = 0; i < 5000; i++) {
+            String id = ids.get(i);
+            cache.put(id, id);
+        }
+        Thread.sleep(3500);
+        for(int i = 5000; i < 10000; i++) {
+            String id = ids.get(i);
+            cache.put(id, id);
+        }
+
+        assertEquals(10000, cache.getCount());
+
+        Cache<String, String> newCache = cache.expireCache();
+
+        assertEquals(4000, newCache.getCount());
+
+        for(int i = 6000; i < 10000; i++) {
+            assertTrue(newCache.containsKey(ids.get(i)));
+        }
     }
 
     @Test
