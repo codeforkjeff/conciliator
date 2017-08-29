@@ -1,6 +1,30 @@
 
 # conciliator
 
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+
+## Table of Contents
+
+- [Public Server](#public-server)
+- [General Features](#general-features)
+- [Data Source Features](#data-source-features)
+    - [VIAF](#viaf)
+    - [ORCID](#orcid)
+    - [Open Library](#open-library)
+    - [Solr](#solr)
+- [Running Conciliator on Your Own Computer](#running-conciliator-on-your-own-computer)
+- [Docker Image](#docker-image)
+- [Configuring OpenRefine](#configuring-openrefine)
+- [Creating Your Own Data Source](#creating-your-own-data-source)
+- [Advanced Usage](#advanced-usage)
+- [TODO](#todo)
+- [Resources](#resources)
+- [Do you use this thing??](#do-you-use-this-thing)
+- [License](#license)
+
+<!-- markdown-toc end -->
+
+
 conciliator is a growing collection of
 [OpenRefine](http://openrefine.org) reconciliation services, as well
 as a Java framework for creating them. A reconciliation service tries
@@ -97,6 +121,12 @@ you're done with it, hit Ctrl-C to quit the application.
 If a file named `conciliator.properties` exists in the current
 directory, conciliator will use the options found in it. See the
 sample file in this repository.
+
+## Docker Image
+
+A docker image created by [tobinski](https://github.com/tobinski) is available here:
+
+<https://hub.docker.com/r/tobinski/docker-codefork-conciliator/>
 
 ## Configuring OpenRefine
 
