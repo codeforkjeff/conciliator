@@ -1,6 +1,14 @@
 
 # conciliator
 
+conciliator is a growing collection of
+[OpenRefine](http://openrefine.org) reconciliation services, as well
+as a Java framework for creating them. A reconciliation service tries
+to match variant text (usually names of things) to standard IDs for
+the entity represented by that text.
+
+This project supercedes [refine_viaf](https://github.com/codeforkjeff/refine_viaf).
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 
 ## Table of Contents
@@ -23,15 +31,6 @@
 - [License](#license)
 
 <!-- markdown-toc end -->
-
-
-conciliator is a growing collection of
-[OpenRefine](http://openrefine.org) reconciliation services, as well
-as a Java framework for creating them. A reconciliation service tries
-to match variant text (usually names of things) to standard IDs for
-the entity represented by that text.
-
-This project supercedes [refine_viaf](https://github.com/codeforkjeff/refine_viaf).
 
 ## Public Server
 
