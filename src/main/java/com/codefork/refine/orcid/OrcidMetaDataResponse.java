@@ -2,10 +2,12 @@ package com.codefork.refine.orcid;
 
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrcidMetaDataResponse extends ServiceMetaDataResponse {
 
     private final static String IDENTIFIER_SPACE = "http://xmlns.com/foaf/0.1/";

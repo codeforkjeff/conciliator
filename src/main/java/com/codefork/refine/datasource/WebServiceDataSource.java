@@ -2,9 +2,12 @@ package com.codefork.refine.datasource;
 
 import com.codefork.refine.Cache;
 import com.codefork.refine.CacheManager;
+import com.codefork.refine.ExtensionQuery;
+import com.codefork.refine.PropertyValueIdAndSettings;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchResult;
 import com.codefork.refine.ThreadPool;
+import com.codefork.refine.resources.ExtensionResult;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import org.apache.commons.logging.Log;
@@ -263,4 +266,15 @@ public abstract class WebServiceDataSource extends DataSource {
      */
     public abstract List<Result> search(SearchQuery query) throws Exception;
 
+    public List<ExtensionResult> extend(ExtensionQuery query) {
+        List<ExtensionResult> results = new ArrayList<ExtensionResult>();
+        for(String id : query.getIds()) {
+            results.add(extend(id, query.getProperties()));
+        }
+        return results;
+    }
+
+    public ExtensionResult extend(String id, List<PropertyValueIdAndSettings> idsAndSettings) {
+        return null;
+    }
 }

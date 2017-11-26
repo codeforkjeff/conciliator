@@ -1,10 +1,13 @@
 package com.codefork.refine.resources;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.List;
 
 /**
  * Metadata about this reconciliation service
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class ServiceMetaDataResponse {
 
     public static class View {
@@ -60,6 +63,50 @@ public abstract class ServiceMetaDataResponse {
         }
     }
 
+    public class Extend {
+        private ProposeProperties proposeProperties;
+
+        public Extend(ProposeProperties proposeProperties) {
+            this.proposeProperties = proposeProperties;
+        }
+
+        public ProposeProperties getProposeProperties() {
+            return proposeProperties;
+        }
+
+        public void setProposeProperties(ProposeProperties proposeProperties) {
+            this.proposeProperties = proposeProperties;
+        }
+
+        //getPropertySettings)()
+    }
+
+    public class ProposeProperties {
+        private String serviceUrl;
+        private String servicePath;
+
+        public ProposeProperties(String serviceUrl, String servicePath) {
+            this.serviceUrl = serviceUrl;
+            this.servicePath = servicePath;
+        }
+
+        public String getServiceUrl() {
+            return serviceUrl;
+        }
+
+        public void setServiceUrl(String serviceUrl) {
+            this.serviceUrl = serviceUrl;
+        }
+
+        public String getServicePath() {
+            return servicePath;
+        }
+
+        public void setServicePath(String servicePath) {
+            this.servicePath = servicePath;
+        }
+    }
+
     private String name = "";
 
     public String getName() {
@@ -77,5 +124,9 @@ public abstract class ServiceMetaDataResponse {
     public abstract View getView();
 
     public abstract List<NameType> getDefaultTypes();
+
+    public Extend getExtend() {
+        return null;
+    }
 
 }
