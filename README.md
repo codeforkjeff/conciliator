@@ -82,6 +82,12 @@ instructions.
   For example, if you have a column containing Scopus EIDs, you can select the "Include?" checkbox
   for it and enter "eid" in the "As Property" box on the reconciliation screen.
 
+* By default, queries are keyword searches on the entire ORCID bios,
+  which can return odd results sometimes. The "smartnames" mode (see
+  the instructions below) splits up names and searches on the
+  given-names and family-name fields specifically; if there are no
+  results, it falls back to a keyword search.
+
 ### Open Library
 
 * Open Library has rate limits on its API, so requests are not run in a
@@ -163,6 +169,12 @@ A docker image created by [tobinski](https://github.com/tobinski) is available h
 
     ```
     http://localhost:8080/reconcile/orcid
+    ```
+
+    To use ORCID with "smartnames" mode when reconciliing names:
+
+    ```
+    http://localhost:8080/reconcile/orcid/smartnames
     ```
 
     To use Open Library: (On the reconciliation screen, under the
