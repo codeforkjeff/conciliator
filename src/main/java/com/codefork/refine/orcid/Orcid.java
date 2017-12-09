@@ -87,14 +87,39 @@ public class Orcid extends WebServiceDataSource {
         return extraParams;
     }
 
+    /**
+     * Parse name into given name, family name parts. returns null if name is too complicated to be
+     * parsed.
+     * @param name
+     * @return
+     */
+    public static String[] parseName(String name) {
+        int numCommas = name.length() - name.replace(",", "").length();
+        if(numCommas == 1) {
+            String[] namePieces = name.split(",");
+            if(namePieces.length == 2) {
+                return new String[]{
+                        namePieces[1].trim(),
+                        namePieces[0].trim()
+                };
+            }
+        } else {
+            String[] namePieces = name.split("\\s+");
+            if(namePieces.length == 2) {
+                return namePieces;
+            }
+        }
+        return null;
+    }
+
     @Override
     public List<Result> search(SearchQuery query) throws Exception {
         List<Result> results = Collections.emptyList();
 
         if(MODE_SMART_NAMES.equals(query.getExtraParams().get(EXTRA_PARAM_MODE_FROM_PATH))) {
             String name = query.getQuery();
-            String[] namePieces = name.split("\\s+");
-            if(namePieces.length == 2) {
+            String[] namePieces = parseName(name);
+            if(namePieces != null) {
                 results = searchSmartNames(query, namePieces[0], namePieces[1]);
             }
         }
