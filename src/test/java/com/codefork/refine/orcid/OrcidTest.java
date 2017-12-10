@@ -2,6 +2,7 @@ package com.codefork.refine.orcid;
 
 import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
@@ -51,7 +52,8 @@ public class OrcidTest {
 
         Orcid orcid = new Orcid();
         orcid.setConfig(config);
-        orcid.init();
+        orcid.setConnectionFactory(new ConnectionFactory());
+            orcid.init();
 
         String json = "{\"q0\":{\"query\": \"stephen hawking\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -76,6 +78,7 @@ public class OrcidTest {
 
         Orcid orcid = new Orcid();
         orcid.setConfig(config);
+        orcid.setConnectionFactory(new ConnectionFactory());
         orcid.init();
 
         String json = "{\"q0\":{\"query\": \"Igor Ozerov\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";

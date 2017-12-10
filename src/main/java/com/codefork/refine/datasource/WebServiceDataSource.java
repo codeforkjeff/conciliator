@@ -10,6 +10,7 @@ import com.codefork.refine.ThreadPool;
 import com.codefork.refine.resources.ExtensionResult;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,8 @@ public abstract class WebServiceDataSource extends DataSource {
 
     private ThreadPool threadPool = createThreadPool();
 
-    private ConnectionFactory connectionFactory = new ConnectionFactory();
+    @Autowired
+    private ConnectionFactory connectionFactory;
 
     public boolean isCacheEnabled() {
         return cacheEnabled;

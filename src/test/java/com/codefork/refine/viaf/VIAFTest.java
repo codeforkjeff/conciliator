@@ -56,6 +56,7 @@ public class VIAFTest {
 
         viaf = new VIAF();
         viaf.setConfig(config);
+        viaf.setConnectionFactory(new ConnectionFactory());
         viaf.init();
 
         SearchQuery query = new SearchQuery("shakespeare", 3, null, "should");
