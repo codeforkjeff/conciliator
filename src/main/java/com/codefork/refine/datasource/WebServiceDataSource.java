@@ -10,8 +10,6 @@ import com.codefork.refine.ThreadPool;
 import com.codefork.refine.resources.ExtensionResult;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,18 +26,12 @@ public abstract class WebServiceDataSource extends DataSource {
 
     public static final boolean DEFAULT_CACHE_ENABLED = false;
 
-    private Log log = LogFactory.getLog(this.getClass());
-
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
     private CacheManager cacheManager = new CacheManager(getName() + " Cache");
 
     private ThreadPool threadPool = createThreadPool();
 
     private ConnectionFactory connectionFactory = new ConnectionFactory();
-
-    public Log getLog() {
-        return log;
-    }
 
     public boolean isCacheEnabled() {
         return cacheEnabled;

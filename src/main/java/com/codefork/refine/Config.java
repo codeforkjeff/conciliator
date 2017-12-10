@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,9 +22,16 @@ public class Config {
     private Properties properties = new Properties();
 
     public Config() {
+        properties.put("datasource.orcid.name", "ORCID");
+        properties.put("datasource.openlibrary.name", "OpenLibrary");
+    }
+
+    @PostConstruct
+    public void loadFromFile() {
         if(new File(CONFIG_FILENAME).exists()) {
             try {
                 log.info("Loading configuration from " + CONFIG_FILENAME);
+                properties = new Properties();
                 properties.load(new FileInputStream(CONFIG_FILENAME));
             } catch (IOException ex) {
                 log.error("Error reading config file, skipping it: " + ex);
@@ -31,8 +39,8 @@ public class Config {
         }
     }
 
-    public Config(Properties properties) {
-        this.properties = properties;
+    public void merge(Properties properties) {
+        this.properties.putAll(properties);
     }
 
     public Properties getProperties() {

@@ -1,6 +1,5 @@
 package com.codefork.refine.viaf;
 
-import com.codefork.refine.Config;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.viaf.sources.NonVIAFSource;
 

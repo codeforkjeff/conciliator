@@ -5,6 +5,8 @@ import com.codefork.refine.SearchQuery;
 import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
+import com.codefork.refine.resources.SearchResponse;
+import com.codefork.refine.resources.ServiceMetaDataResponse;
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -12,7 +14,6 @@ import org.mockito.stubbing.Answer;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -33,16 +34,29 @@ public class VIAFTest {
     Config config;
     VIAF viaf;
 
+    @Test
+    public void testServiceMetadata() throws Exception {
+        Config config = new Config();
+        VIAF viaf = new VIAF();
+        viaf.setConfig(config);
+        viaf.init();
+
+        ServiceMetaDataResponse response = viaf.serviceMetaData();
+        assertEquals(response.getName(), "VIAF");
+        assertEquals(response.getView().getUrl(), "http://viaf.org/viaf/{{id}}");
+    }
+
     /**
      * Simple test for parsing live VIAF XML
      */
     @Test
     public void testLiveSearch() throws Exception {
         config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
+        when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
 
         viaf = new VIAF();
-        viaf.init(config);
+        viaf.setConfig(config);
+        viaf.init();
 
         SearchQuery query = new SearchQuery("shakespeare", 3, null, "should");
         List<Result> results = viaf.searchCheckCache(query);
@@ -60,6 +74,61 @@ public class VIAFTest {
     }
 
     @Test
+    public void testReconcileRequest() throws Exception {
+        Config config = new Config();
+
+        ConnectionFactory connectionFactory = mock(ConnectionFactory.class);
+        final Class testClass = getClass();
+        doAnswer(new Answer<HttpURLConnection>() {
+            @Override
+            public HttpURLConnection answer(InvocationOnMock invocation) throws Exception {
+                String arg1 = (String) invocation.getArguments()[0];
+                if (arg1.contains("shakespeare")) {
+                    HttpURLConnection conn = mock(HttpURLConnection.class);
+                    when(conn.getInputStream()).thenReturn(testClass.getResourceAsStream("/shakespeare.xml"));
+                    return conn;
+                } else if (arg1.contains("wittgenstein")) {
+                    HttpURLConnection conn = mock(HttpURLConnection.class);
+                    when(conn.getInputStream()).thenReturn(testClass.getResourceAsStream("/wittgenstein.xml"));
+                    return conn;
+                }
+                return null;
+            }
+        }).when(connectionFactory).createConnection(anyString());
+
+        VIAF viaf = new VIAF();
+        viaf.setConfig(config);
+        viaf.init();
+        viaf.setConnectionFactory(connectionFactory);
+
+        String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
+
+        Map<String, SearchResponse> results = viaf.queryMultiple(json);
+
+        assertEquals(results.size(), 2);
+
+        SearchResponse response = results.get("q0");
+        List<Result> result = response.getResult();
+        assertEquals(result.size(), 3);
+        assertEquals(result.get(0).getId(), "96994048");
+        assertEquals(result.get(0).getName(), "Shakespeare, William, 1564-1616.");
+        assertEquals(result.get(0).getType().get(0).getId(), "/people/person");
+        assertEquals(result.get(0).getType().get(0).getName(), "Person");
+        assertEquals(String.valueOf(result.get(0).getScore()), "0.3125");
+        assertEquals(result.get(0).isMatch(), false);
+
+        SearchResponse response2 = results.get("q1");
+        List<Result> result2 = response2.getResult();
+        assertEquals(result2.size(), 3);
+        assertEquals(result2.get(0).getId(), "24609378");
+        assertEquals(result2.get(0).getName(), "Wittgenstein, Ludwig, 1889-1951");
+        assertEquals(result2.get(0).getType().get(0).getId(), "/people/person");
+        assertEquals(result2.get(0).getType().get(0).getName(), "Person");
+        assertEquals(String.valueOf(result2.get(0).getScore()), "0.3548387096774194");
+        assertEquals(result2.get(0).isMatch(), false);
+    }
+
+    @Test
     public void testSearchPersonalName() throws Exception {
         connectionFactory = mock(ConnectionFactory.class);
         HttpURLConnection conn = mock(HttpURLConnection.class);
@@ -68,10 +137,11 @@ public class VIAFTest {
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
+        when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
 
         viaf = new VIAF();
-        viaf.init(config);
+        viaf.setConfig(config);
+        viaf.init();
         viaf.setConnectionFactory(connectionFactory);
 
         SearchQuery query = new SearchQuery("wittgenstein", 3, VIAFNameType.Person.asNameType(), "should");
@@ -110,10 +180,11 @@ public class VIAFTest {
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
+        when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
 
         viaf = new VIAF();
-        viaf.init(config);
+        viaf.setConfig(config);
+        viaf.init();
         viaf.setConnectionFactory(connectionFactory);
 
         SearchQuery query = new SearchQuery("steinbeck", 3, null, "should");
@@ -151,16 +222,15 @@ public class VIAFTest {
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
+        when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
 
         viaf = new VIAF();
-        viaf.init(config);
+        viaf.setConfig(config);
+        viaf.init();
         viaf.setConnectionFactory(connectionFactory);
 
-        Map<String, String> extraParams = new HashMap<String, String>();
-        extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "NSK"); // NSK=Croatia
-
-        SearchQuery query = new SearchQuery("nabokov", 3, null, "should", extraParams);
+        SearchQuery query = new SearchQuery("nabokov", 3, null, "should");
+        query.setViafSource("NSK");
         List<Result> results = viaf.searchCheckCache(query);
 
         assertEquals(3, results.size());
@@ -193,10 +263,11 @@ public class VIAFTest {
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
+        when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
 
         viaf = new VIAF();
-        viaf.init(config);
+        viaf.setConfig(config);
+        viaf.init();
         viaf.setConnectionFactory(connectionFactory);
 
         SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, VIAFNameType.Person.asNameType(), "should");
@@ -233,10 +304,11 @@ public class VIAFTest {
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
+        when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
 
         viaf = new VIAF();
-        viaf.init(config);
+        viaf.setConfig(config);
+        viaf.init();
         viaf.setConnectionFactory(connectionFactory);
 
         SearchQuery query = new SearchQuery("ncjecerence", 3, null, "should");
@@ -255,10 +327,11 @@ public class VIAFTest {
         when(conn.getInputStream()).thenReturn(is);
 
         config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
+        when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
 
         viaf = new VIAF();
-        viaf.init(config);
+        viaf.setConfig(config);
+        viaf.init();
         viaf.setConnectionFactory(connectionFactory);
         viaf.setCacheEnabled(true);
         viaf.setCacheLifetime(1);
@@ -291,10 +364,11 @@ public class VIAFTest {
         }).when(connectionFactory).createConnection(anyString());
 
         config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
+        when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
 
         viaf = new VIAF();
-        viaf.init(config);
+        viaf.setConfig(config);
+        viaf.init();
         viaf.setConnectionFactory(connectionFactory);
         viaf.setCacheEnabled(true);
         viaf.setCacheLifetime(1);
@@ -313,193 +387,6 @@ public class VIAFTest {
         assertEquals(3, results2.size());
 
         verify(connectionFactory, times(2)).createConnection(anyString());
-    }
-
-    @Test
-    public void testSearchProxyModeLC() throws Exception {
-        connectionFactory = mock(ConnectionFactory.class);
-        HttpURLConnection conn = mock(HttpURLConnection.class);
-        InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
-        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
-        when(conn.getInputStream()).thenReturn(is);
-
-        config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
-
-        viaf = new VIAF();
-        viaf.init(config);
-        viaf.setConnectionFactory(connectionFactory);
-
-        Map<String, String> extraParams = new HashMap<String, String>();
-        extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "LC");
-        extraParams.put(VIAF.EXTRA_PARAM_PROXY_MODE, "true");
-
-        SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, VIAFNameType.Person.asNameType(), "should", extraParams);
-
-        List<Result> results = viaf.searchCheckCache(query);
-
-        assertEquals(3, results.size());
-        Result result1 = results.get(0);
-        assertEquals("Shakespeare, William, 1564-1616.", result1.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result1.getType().get(0));
-        assertEquals("n78095332", result1.getId());
-        assertTrue(result1.isMatch());
-
-        Result result2 = results.get(1);
-        assertEquals("Zamenhof, L. L. (Ludwik Lazar), 1859-1917", result2.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result2.getType().get(0));
-        assertEquals("no90015706", result2.getId());
-        assertFalse(result2.isMatch());
-
-        Result result3 = results.get(2);
-        assertEquals("Tieck, Ludwig, 1773-1853", result3.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result3.getType().get(0));
-        assertEquals("n78096841", result3.getId());
-        assertFalse(result3.isMatch());
-    }
-
-    /**
-     * VIAF gives a URL for the BNF source record ID. this test
-     * checks that we use the ID parsed out of the "sid" XML element instead.
-     */
-    @Test
-    public void testSearchProxyModeBNF() throws Exception {
-        connectionFactory = mock(ConnectionFactory.class);
-        HttpURLConnection conn = mock(HttpURLConnection.class);
-        InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
-        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
-        when(conn.getInputStream()).thenReturn(is);
-
-        config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
-
-        viaf = new VIAF();
-        viaf.init(config);
-        viaf.setConnectionFactory(connectionFactory);
-
-        Map<String, String> extraParams = new HashMap<String, String>();
-        extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "BNF");
-        extraParams.put(VIAF.EXTRA_PARAM_PROXY_MODE, "true");
-
-        SearchQuery query = new SearchQuery("Shakespeare, William, 1564-1616.", 3, VIAFNameType.Person.asNameType(), "should", extraParams);
-
-        List<Result> results = viaf.searchCheckCache(query);
-
-        assertEquals(3, results.size());
-        Result result1 = results.get(0);
-        assertEquals("Shakespeare, William, 1564-1616.", result1.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result1.getType().get(0));
-        assertEquals("11924607", result1.getId());
-        assertTrue(result1.isMatch());
-
-        Result result2 = results.get(1);
-        assertEquals("Zamenhof, Lejzer Ludwik, 1859-1917", result2.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result2.getType().get(0));
-        assertEquals("12115775", result2.getId());
-        assertFalse(result2.isMatch());
-
-        Result result3 = results.get(2);
-        assertEquals("Tieck, Ludwig, 1773-1853", result3.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result3.getType().get(0));
-        assertEquals("11926644", result3.getId());
-        assertFalse(result3.isMatch());
-    }
-
-    /**
-     * Test case for XML missing an ID in ../mainHeadings/data/sources
-     * but having an ID under ../VIAFCluster/sources.
-     */
-    @Test
-    public void testSearchProxyModeBNFMissingID() throws Exception {
-        connectionFactory = mock(ConnectionFactory.class);
-        HttpURLConnection conn = mock(HttpURLConnection.class);
-        InputStream is = getClass().getResourceAsStream("/alexandre.xml");
-        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
-        when(conn.getInputStream()).thenReturn(is);
-
-        config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
-
-        viaf = new VIAF();
-        viaf.init(config);
-        viaf.setConnectionFactory(connectionFactory);
-
-        Map<String, String> extraParams = new HashMap<String, String>();
-        extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "BNF");
-        extraParams.put(VIAF.EXTRA_PARAM_PROXY_MODE, "true");
-
-        SearchQuery query = new SearchQuery("Jean-François Alexandre 1804 1874", 3, VIAFNameType.Person.asNameType(), "should", extraParams);
-
-        List<Result> results = viaf.searchCheckCache(query);
-
-        assertEquals(3, results.size());
-
-        Result result1 = results.get(0);
-        assertEquals("Arago, Jacques, 1790-1855", result1.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result1.getType().get(0));
-        assertEquals("12265696", result1.getId());
-        assertFalse(result1.isMatch());
-
-        Result result2 = results.get(1);
-        assertEquals("Blanc, François 166.-1742", result2.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result2.getType().get(0));
-        assertEquals("10343440", result2.getId());
-        assertFalse(result2.isMatch());
-
-        // this entry in XML is missing an ID ../mainHeadings/data/sources
-        Result result3 = results.get(2);
-        assertEquals("Alexandre, Jean-François 1804-1874", result3.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result3.getType().get(0));
-        assertEquals("10341017", result3.getId());
-        assertFalse(result3.isMatch());
-    }
-
-    /**
-     * Test case for URL in source ID mapping, which formatResult() should treat
-     * as special case
-     */
-    @Test
-    public void testSearchProxyModeDNB() throws Exception {
-        connectionFactory = mock(ConnectionFactory.class);
-        HttpURLConnection conn = mock(HttpURLConnection.class);
-        InputStream is = getClass().getResourceAsStream("/hegel.xml");
-        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
-        when(conn.getInputStream()).thenReturn(is);
-
-        config = mock(Config.class);
-        when(config.getProperties()).thenReturn(new Properties());
-
-        viaf = new VIAF();
-        viaf.init(config);
-        viaf.setConnectionFactory(connectionFactory);
-
-        Map<String, String> extraParams = new HashMap<String, String>();
-        extraParams.put(VIAF.EXTRA_PARAM_SOURCE_FROM_PATH, "DNB");
-        extraParams.put(VIAF.EXTRA_PARAM_PROXY_MODE, "true");
-
-        SearchQuery query = new SearchQuery("hegel", 3, VIAFNameType.Person.asNameType(), "should", extraParams);
-
-        List<Result> results = viaf.searchCheckCache(query);
-
-        assertEquals(3, results.size());
-
-        Result result1 = results.get(0);
-        assertEquals("Hegel, Georg Wilhelm Friedrich, 1770-1831", result1.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result1.getType().get(0));
-        assertEquals("118547739", result1.getId());
-        assertFalse(result1.isMatch());
-
-        Result result2 = results.get(1);
-        assertEquals("Friedrich, Carl J. 1901-1984", result2.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result2.getType().get(0));
-        assertEquals("118535870", result2.getId());
-        assertFalse(result2.isMatch());
-
-        Result result3 = results.get(2);
-        assertEquals("Bosanquet, Bernard, 1848-1923", result3.getName());
-        assertEquals(VIAFNameType.Person.asNameType(), result3.getType().get(0));
-        assertEquals("118659391", result3.getId());
-        assertFalse(result3.isMatch());
     }
 
     @After

@@ -10,14 +10,17 @@ import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+@Controller
+@RequestMapping("/reconcile/openlibrary")
 public class OpenLibrary extends WebServiceDataSource {
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -30,7 +33,7 @@ public class OpenLibrary extends WebServiceDataSource {
     }
 
     @Override
-    public ServiceMetaDataResponse createServiceMetaDataResponse(Map<String, String> extraParams) {
+    public ServiceMetaDataResponse createServiceMetaDataResponse() {
         return new OpenLibraryMetaDataResponse(getName());
     }
 

@@ -72,8 +72,8 @@ public class CacheManager {
      * each time they need a reference to it within a code block.
      * @return
      */
-    public Cache getCache() {
-        Cache c;
+    public Cache<String, List<Result>> getCache() {
+        Cache<String, List<Result>> c;
         synchronized(cacheLock) {
             c = cache;
         }

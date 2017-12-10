@@ -45,4 +45,12 @@ public class VIAFMetaDataResponse extends ServiceMetaDataResponse {
     public List<NameType> getDefaultTypes() {
         return DEFAULT_TYPES;
     }
+
+    @Override
+    public Extend getExtend() {
+        return new Extend(
+                new ProposeProperties("http://localhost:8080/reconcile/viaf",
+                        "/propose_properties"));
+    }
+
 }

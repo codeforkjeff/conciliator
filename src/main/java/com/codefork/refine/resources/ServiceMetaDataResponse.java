@@ -1,6 +1,7 @@
 package com.codefork.refine.resources;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -63,7 +64,9 @@ public abstract class ServiceMetaDataResponse {
         }
     }
 
-    public class Extend {
+    public static class Extend {
+
+        @JsonProperty("propose_properties")
         private ProposeProperties proposeProperties;
 
         public Extend(ProposeProperties proposeProperties) {
@@ -81,8 +84,11 @@ public abstract class ServiceMetaDataResponse {
         //getPropertySettings)()
     }
 
-    public class ProposeProperties {
+    public static class ProposeProperties {
+        @JsonProperty("service_url")
         private String serviceUrl;
+
+        @JsonProperty("service_path")
         private String servicePath;
 
         public ProposeProperties(String serviceUrl, String servicePath) {
@@ -124,6 +130,10 @@ public abstract class ServiceMetaDataResponse {
     public abstract View getView();
 
     public abstract List<NameType> getDefaultTypes();
+
+    public Preview getPreview() {
+        return null;
+    }
 
     public Extend getExtend() {
         return null;

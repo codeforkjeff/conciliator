@@ -4,7 +4,6 @@ import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.resources.Result;
-import com.codefork.refine.viaf.VIAF;
 import com.codefork.refine.viaf.VIAFNameType;
 import org.junit.Test;
 
@@ -46,7 +45,8 @@ public class SolrTest {
         solr = new Solr();
         solr.setConfigName("solr");
         solr.setConnectionFactory(connectionFactory);
-        solr.init(config);
+        solr.setConfig(config);
+        solr.init();
 
         SearchQuery query = new SearchQuery("The Complete Adventures of Sherlock Holmes", 3, VIAFNameType.Book.asNameType(), "should");
         List<Result> results = solr.searchCheckCache(query);

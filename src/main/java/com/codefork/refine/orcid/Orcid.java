@@ -2,32 +2,54 @@ package com.codefork.refine.orcid;
 
 import com.codefork.refine.PropertyValue;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.SearchQueryFactory;
 import com.codefork.refine.datasource.WebServiceDataSource;
+import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Controller
+@RequestMapping("/reconcile/orcid")
 public class Orcid extends WebServiceDataSource {
-    public static String EXTRA_PARAM_MODE_FROM_PATH = "mode";
-    public static String MODE_SMART_NAMES = "smartnames";
 
     Log log = LogFactory.getLog(Orcid.class);
 
     private SAXParserFactory spf = SAXParserFactory.newInstance();
+
+    @RequestMapping(value = "/smartnames")
+    @ResponseBody
+    public Object smartNamesServiceMetaData() {
+        return new OrcidMetaDataResponse(getName() + " - Smart Names Mode");
+    }
+
+    @RequestMapping(value = "/smartnames", params = "query")
+    @ResponseBody
+    public Object smartNamesQuerySingle(@RequestParam(value = "query") String query) {
+        return querySingle(query, new SmartNamesModeSearchQueryFactory());
+    }
+
+    @RequestMapping(value = "/smartnames", params = "queries")
+    @ResponseBody
+    public Object smartNamesQueryMultiple(@RequestParam(value = "queries") String queries) {
+        return queryMultiple(queries, new SmartNamesModeSearchQueryFactory());
+    }
 
     private static String createQueryString(SearchQuery query) {
         StringBuffer buf = new StringBuffer();
@@ -66,25 +88,8 @@ public class Orcid extends WebServiceDataSource {
     }
 
     @Override
-    public ServiceMetaDataResponse createServiceMetaDataResponse(Map<String, String> extraParams) {
-        if(MODE_SMART_NAMES.equals(extraParams.get(EXTRA_PARAM_MODE_FROM_PATH))) {
-            return new OrcidMetaDataResponse(getName() + " - Smart Names Mode");
-        }
+    public ServiceMetaDataResponse createServiceMetaDataResponse() {
         return new OrcidMetaDataResponse(getName());
-    }
-
-    @Override
-    public Map<String, String> parseRequestToExtraParams(HttpServletRequest request) {
-        String[] parts = request.getServletPath().split("/");
-        String dataSourceStr = parts[2];
-        String mode = null;
-        if (parts.length > 3) {
-            mode = parts[3];
-        }
-
-        Map<String, String> extraParams = new HashMap<String, String>();
-        extraParams.put(EXTRA_PARAM_MODE_FROM_PATH, mode);
-        return extraParams;
     }
 
     /**
@@ -116,7 +121,7 @@ public class Orcid extends WebServiceDataSource {
     public List<Result> search(SearchQuery query) throws Exception {
         List<Result> results = Collections.emptyList();
 
-        if(MODE_SMART_NAMES.equals(query.getExtraParams().get(EXTRA_PARAM_MODE_FROM_PATH))) {
+        if(query.isOrcidSmartNamesMode()) {
             String name = query.getQuery();
             String[] namePieces = parseName(name);
             if(namePieces != null) {
@@ -172,4 +177,22 @@ public class Orcid extends WebServiceDataSource {
 
         return orcidParser.getResults();
     }
+
+    private static class SmartNamesModeSearchQueryFactory implements SearchQueryFactory {
+
+        @Override
+        public SearchQuery createSearchQuery(JsonNode queryStruct) {
+            SearchQuery searchQuery = new SearchQuery(queryStruct);
+            searchQuery.setOrcidSmartNamesMode(true);
+            return searchQuery;
+        }
+
+        @Override
+        public SearchQuery createSearchQuery(String query, int limit, NameType nameType, String typeStrict) {
+            SearchQuery searchQuery = new SearchQuery(query, limit, nameType, typeStrict);
+            searchQuery.setOrcidSmartNamesMode(true);
+            return searchQuery;
+        }
+    }
+
 }
