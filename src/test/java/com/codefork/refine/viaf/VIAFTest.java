@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
@@ -41,7 +42,10 @@ public class VIAFTest {
         viaf.setConfig(config);
         viaf.init();
 
-        ServiceMetaDataResponse response = viaf.serviceMetaData();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURL()).thenReturn(new StringBuffer("http://test"));
+
+        ServiceMetaDataResponse response = viaf.serviceMetaData(request);
         assertEquals(response.getName(), "VIAF");
         assertEquals(response.getView().getUrl(), "http://viaf.org/viaf/{{id}}");
     }

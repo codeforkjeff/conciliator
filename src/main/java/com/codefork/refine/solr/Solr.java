@@ -39,7 +39,7 @@ public class Solr extends WebServiceDataSource {
     private SAXParserFactory spf = SAXParserFactory.newInstance();
 
     @Override
-    public ServiceMetaDataResponse createServiceMetaDataResponse() {
+    public ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl) {
         return new SolrMetaDataResponse(getName(), getConfigProperties().getProperty(PROP_URL_DOCUMENT));
     }
 

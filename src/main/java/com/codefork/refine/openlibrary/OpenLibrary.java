@@ -33,7 +33,7 @@ public class OpenLibrary extends WebServiceDataSource {
     }
 
     @Override
-    public ServiceMetaDataResponse createServiceMetaDataResponse() {
+    public ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl) {
         return new OpenLibraryMetaDataResponse(getName());
     }
 

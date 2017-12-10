@@ -7,6 +7,7 @@ import com.codefork.refine.resources.Result;
 import org.junit.After;
 import org.junit.Test;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
@@ -32,7 +33,10 @@ public class VIAFProxyTest {
         viaf.setConfig(config);
         viaf.init();
 
-        VIAFProxyModeMetaDataResponse response = viaf.proxyModeServiceMetaData("LC");
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURL()).thenReturn(new StringBuffer("http://test"));
+
+        VIAFProxyModeMetaDataResponse response = viaf.proxyModeServiceMetaData(request, "LC");
         assertEquals(response.getName(), "LC (by way of VIAF)");
         assertEquals(response.getView().getUrl(), "http://id.loc.gov/authorities/names/{{id}}");
     }

@@ -1,7 +1,10 @@
 package com.codefork.refine.viaf;
 
+import com.codefork.refine.resources.Extend;
 import com.codefork.refine.resources.NameType;
+import com.codefork.refine.resources.ProposeProperties;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.codefork.refine.resources.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,38 +22,18 @@ public class VIAFMetaDataResponse extends ServiceMetaDataResponse {
         }
     }
 
-    public VIAFMetaDataResponse(String baseServiceName, String source) {
+    public VIAFMetaDataResponse(String baseServiceName, String source, String baseUrl) {
         setName(baseServiceName);
         if(source != null) {
             setName(getName() + " - " + source);
         }
-    }
-
-    @Override
-    public String getIdentifierSpace() {
-        return IDENTIFIER_SPACE;
-    }
-
-    @Override
-    public String getSchemaSpace() {
-        return SCHEMA_SPACE;
-    }
-
-    @Override
-    public View getView() {
-        return VIEW;
-    }
-
-    @Override
-    public List<NameType> getDefaultTypes() {
-        return DEFAULT_TYPES;
-    }
-
-    @Override
-    public Extend getExtend() {
-        return new Extend(
-                new ProposeProperties("http://localhost:8080/reconcile/viaf",
-                        "/propose_properties"));
+        setIdentifierSpace(IDENTIFIER_SPACE);
+        setSchemaSpace(SCHEMA_SPACE);
+        setView(VIEW);
+        setDefaultTypes(DEFAULT_TYPES);
+        setExtend(new Extend(
+                new ProposeProperties(baseUrl,
+                        "/propose_properties")));
     }
 
 }

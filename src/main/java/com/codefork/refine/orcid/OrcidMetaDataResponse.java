@@ -2,6 +2,7 @@ package com.codefork.refine.orcid;
 
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.codefork.refine.resources.View;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
@@ -21,25 +22,10 @@ public class OrcidMetaDataResponse extends ServiceMetaDataResponse {
 
     public OrcidMetaDataResponse(String serviceName) {
         setName(serviceName);
+        setIdentifierSpace(IDENTIFIER_SPACE);
+        setSchemaSpace(SCHEMA_SPACE);
+        setView(VIEW);
+        setDefaultTypes(DEFAULT_TYPES);
     }
 
-    @Override
-    public String getIdentifierSpace() {
-        return IDENTIFIER_SPACE;
-    }
-
-    @Override
-    public String getSchemaSpace() {
-        return SCHEMA_SPACE;
-    }
-
-    @Override
-    public View getView() {
-        return VIEW;
-    }
-
-    @Override
-    public List<NameType> getDefaultTypes() {
-        return DEFAULT_TYPES;
-    }
 }

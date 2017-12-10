@@ -101,8 +101,8 @@ public abstract class VIAFBase extends WebServiceDataSource {
     }
 
     @Override
-    public ServiceMetaDataResponse createServiceMetaDataResponse() {
-        return new VIAFMetaDataResponse("VIAF", null);
+    public ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl) {
+        return new VIAFMetaDataResponse("VIAF", null, baseUrl);
     }
 
     /**

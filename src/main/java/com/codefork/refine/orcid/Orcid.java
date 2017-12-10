@@ -89,7 +89,7 @@ public class Orcid extends WebServiceDataSource {
     }
 
     @Override
-    public ServiceMetaDataResponse createServiceMetaDataResponse() {
+    public ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl) {
         return new OrcidMetaDataResponse(getName());
     }
 

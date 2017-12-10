@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -22,8 +23,11 @@ public class VIAFProxy extends VIAFBase {
 
     @RequestMapping(value = "/{source}")
     @ResponseBody
-    public VIAFProxyModeMetaDataResponse proxyModeServiceMetaData(@PathVariable String source) {
-        return new VIAFProxyModeMetaDataResponse(findNonViafSource(source));
+    public VIAFProxyModeMetaDataResponse proxyModeServiceMetaData(
+            HttpServletRequest request,
+            @PathVariable String source) {
+        String baseUrl = request.getRequestURL().toString();
+        return new VIAFProxyModeMetaDataResponse(findNonViafSource(source), baseUrl);
     }
 
     @RequestMapping(value = "/{source}", params = "query")

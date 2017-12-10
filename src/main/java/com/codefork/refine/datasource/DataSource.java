@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -117,7 +118,7 @@ public abstract class DataSource {
      * Returns the service metadata that OpenRefine uses on its first request
      * to the service.
      */
-    protected abstract ServiceMetaDataResponse createServiceMetaDataResponse();
+    protected abstract ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl);
 
     public SearchQueryFactory getSearchQueryFactory() {
         return defaultSearchQueryFactory;
@@ -125,8 +126,8 @@ public abstract class DataSource {
 
     @RequestMapping(value = { "", "/" })
     @ResponseBody
-    public ServiceMetaDataResponse serviceMetaData() {
-        return createServiceMetaDataResponse();
+    public ServiceMetaDataResponse serviceMetaData(HttpServletRequest request) {
+        return createServiceMetaDataResponse(request.getRequestURL().toString());
     }
 
     @RequestMapping(value = { "", "/" }, params = "query")

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -22,8 +23,11 @@ public class VIAF extends VIAFBase {
 
     @RequestMapping(value = "/{source}")
     @ResponseBody
-    public VIAFMetaDataResponse sourceSpecificServiceMetaData(@PathVariable String source) {
-        return new VIAFMetaDataResponse("VIAF", source);
+    public VIAFMetaDataResponse sourceSpecificServiceMetaData(
+            HttpServletRequest request,
+            @PathVariable String source) {
+        String baseUrl = request.getRequestURL().toString();
+        return new VIAFMetaDataResponse("VIAF", source, baseUrl);
     }
 
     @RequestMapping(value = "/{source}", params = "query")

@@ -2,6 +2,7 @@ package com.codefork.refine.solr;
 
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.codefork.refine.resources.View;
 import com.codefork.refine.viaf.VIAFNameType;
 
 import java.util.ArrayList;
@@ -25,26 +26,10 @@ public class SolrMetaDataResponse extends ServiceMetaDataResponse {
 
     public SolrMetaDataResponse(String serviceName, String viewUrl) {
         setName(serviceName);
-        view = new View(viewUrl);
+        setIdentifierSpace(IDENTIFIER_SPACE);
+        setSchemaSpace(SCHEMA_SPACE);
+        setDefaultTypes(DEFAULT_TYPES);
+        setView(new View(viewUrl));
     }
 
-    @Override
-    public String getIdentifierSpace() {
-        return IDENTIFIER_SPACE;
-    }
-
-    @Override
-    public String getSchemaSpace() {
-        return SCHEMA_SPACE;
-    }
-
-    @Override
-    public View getView() {
-        return view;
-    }
-
-    @Override
-    public List<NameType> getDefaultTypes() {
-        return DEFAULT_TYPES;
-    }
 }

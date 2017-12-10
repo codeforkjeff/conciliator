@@ -10,6 +10,7 @@ import com.codefork.refine.viaf.VIAF;
 import com.codefork.refine.viaf.VIAFNameType;
 import org.junit.Test;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -30,7 +31,10 @@ public class OrcidTest {
         orcid.setConfig(config);
         orcid.init();
 
-        ServiceMetaDataResponse response = orcid.serviceMetaData();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURL()).thenReturn(new StringBuffer("http://test"));
+
+        ServiceMetaDataResponse response = orcid.serviceMetaData(request);
         assertEquals(response.getName(), "ORCID");
     }
 

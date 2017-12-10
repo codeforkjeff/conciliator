@@ -1,7 +1,6 @@
 package com.codefork.refine.resources;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -11,109 +10,13 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class ServiceMetaDataResponse {
 
-    public static class View {
-        private String url;
-
-        public View(String url) {
-            this.url = url;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-    
-    }
-
-    public static class Preview {
-        private String url;
-        private int width;
-        private int height;
-
-        public Preview(String url, int width, int height) {
-            this.url = url;
-            this.width = width;
-            this.height = height;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public int getWidth() {
-            return width;
-        }
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-    }
-
-    public static class Extend {
-
-        @JsonProperty("propose_properties")
-        private ProposeProperties proposeProperties;
-
-        public Extend(ProposeProperties proposeProperties) {
-            this.proposeProperties = proposeProperties;
-        }
-
-        public ProposeProperties getProposeProperties() {
-            return proposeProperties;
-        }
-
-        public void setProposeProperties(ProposeProperties proposeProperties) {
-            this.proposeProperties = proposeProperties;
-        }
-
-        //getPropertySettings)()
-    }
-
-    public static class ProposeProperties {
-        @JsonProperty("service_url")
-        private String serviceUrl;
-
-        @JsonProperty("service_path")
-        private String servicePath;
-
-        public ProposeProperties(String serviceUrl, String servicePath) {
-            this.serviceUrl = serviceUrl;
-            this.servicePath = servicePath;
-        }
-
-        public String getServiceUrl() {
-            return serviceUrl;
-        }
-
-        public void setServiceUrl(String serviceUrl) {
-            this.serviceUrl = serviceUrl;
-        }
-
-        public String getServicePath() {
-            return servicePath;
-        }
-
-        public void setServicePath(String servicePath) {
-            this.servicePath = servicePath;
-        }
-    }
-
-    private String name = "";
+    private String name;
+    private String identifierSpace;
+    private String schemaSpace;
+    private View view;
+    private List<NameType> defaultTypes;
+    private Preview preview;
+    private Extend extend;
 
     public String getName() {
         return name;
@@ -123,20 +26,52 @@ public abstract class ServiceMetaDataResponse {
         this.name = name;
     }
 
-    public abstract String getIdentifierSpace();
+    public String getIdentifierSpace() {
+        return identifierSpace;
+    }
 
-    public abstract String getSchemaSpace();
+    public void setIdentifierSpace(String identifierSpace) {
+        this.identifierSpace = identifierSpace;
+    }
 
-    public abstract View getView();
+    public String getSchemaSpace() {
+        return schemaSpace;
+    }
 
-    public abstract List<NameType> getDefaultTypes();
+    public void setSchemaSpace(String schemaSpace) {
+        this.schemaSpace = schemaSpace;
+    }
+
+    public View getView() {
+        return view;
+    }
+
+    public void setView(View view) {
+        this.view = view;
+    }
+
+    public List<NameType> getDefaultTypes() {
+        return defaultTypes;
+    }
+
+    public void setDefaultTypes(List<NameType> defaultTypes) {
+        this.defaultTypes = defaultTypes;
+    }
 
     public Preview getPreview() {
-        return null;
+        return preview;
+    }
+
+    public void setPreview(Preview preview) {
+        this.preview = preview;
     }
 
     public Extend getExtend() {
-        return null;
+        return extend;
+    }
+
+    public void setExtend(Extend extend) {
+        this.extend = extend;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.codefork.refine.viaf;
 
-import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.codefork.refine.resources.View;
 import com.codefork.refine.viaf.sources.NonVIAFSource;
 
 /**
@@ -12,14 +12,14 @@ public class VIAFProxyModeMetaDataResponse extends VIAFMetaDataResponse {
 
     private String url;
 
-    public VIAFProxyModeMetaDataResponse(NonVIAFSource nonVIAFSource) {
-        super(nonVIAFSource.getCode() + " (by way of VIAF)", null);
+    public VIAFProxyModeMetaDataResponse(NonVIAFSource nonVIAFSource, String baseUrl) {
+        super(nonVIAFSource.getCode() + " (by way of VIAF)", null, baseUrl);
         this.url = nonVIAFSource.getServiceURLTemplate();
     }
 
     @Override
-    public ServiceMetaDataResponse.View getView() {
-        return new ServiceMetaDataResponse.View(url);
+    public View getView() {
+        return new View(url);
     }
 
 }

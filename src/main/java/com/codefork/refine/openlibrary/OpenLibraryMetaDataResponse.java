@@ -2,6 +2,7 @@ package com.codefork.refine.openlibrary;
 
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.codefork.refine.resources.View;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
@@ -21,26 +22,10 @@ public class OpenLibraryMetaDataResponse extends ServiceMetaDataResponse {
 
     public OpenLibraryMetaDataResponse(String baseServiceName) {
         setName(baseServiceName);
-    }
-
-    @Override
-    public String getIdentifierSpace() {
-        return IDENTIFIER_SPACE;
-    }
-
-    @Override
-    public String getSchemaSpace() {
-        return SCHEMA_SPACE;
-    }
-
-    @Override
-    public View getView() {
-        return VIEW;
-    }
-
-    @Override
-    public List<NameType> getDefaultTypes() {
-        return DEFAULT_TYPES;
+        setIdentifierSpace(IDENTIFIER_SPACE);
+        setSchemaSpace(SCHEMA_SPACE);
+        setView(VIEW);
+        setDefaultTypes(DEFAULT_TYPES);
     }
 
 }
