@@ -6,6 +6,7 @@ import com.codefork.refine.SearchQueryFactory;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
+import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.logging.Log;
@@ -35,19 +36,19 @@ public class Orcid extends WebServiceDataSource {
 
     @RequestMapping(value = "/smartnames")
     @ResponseBody
-    public Object smartNamesServiceMetaData() {
+    public OrcidMetaDataResponse smartNamesServiceMetaData() {
         return new OrcidMetaDataResponse(getName() + " - Smart Names Mode");
     }
 
     @RequestMapping(value = "/smartnames", params = "query")
     @ResponseBody
-    public Object smartNamesQuerySingle(@RequestParam(value = "query") String query) {
+    public SearchResponse smartNamesQuerySingle(@RequestParam(value = "query") String query) {
         return querySingle(query, new SmartNamesModeSearchQueryFactory());
     }
 
     @RequestMapping(value = "/smartnames", params = "queries")
     @ResponseBody
-    public Object smartNamesQueryMultiple(@RequestParam(value = "queries") String queries) {
+    public Map<String, SearchResponse> smartNamesQueryMultiple(@RequestParam(value = "queries") String queries) {
         return queryMultiple(queries, new SmartNamesModeSearchQueryFactory());
     }
 
