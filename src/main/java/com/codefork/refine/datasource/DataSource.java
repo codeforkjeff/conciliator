@@ -2,8 +2,11 @@ package com.codefork.refine.datasource;
 
 import com.codefork.refine.Cache;
 import com.codefork.refine.Config;
+import com.codefork.refine.ExtensionQuery;
+import com.codefork.refine.PropertyValueIdAndSettings;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchQueryFactory;
+import com.codefork.refine.resources.ExtensionResult;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
@@ -21,8 +24,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -194,6 +199,26 @@ public abstract class DataSource {
         } catch (IOException ioe) {
             log.error("Got IO error processing JSON: " + ioe.toString());
         }
+        return null;
+    }
+
+    // Data Extension API
+    // https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+    @RequestMapping(value = { "", "/" }, params = "extend")
+    public List<ExtensionResult> extend(@RequestParam(value = "extend") String extend) {
+        // A lot TODO here...
+        return null;
+    }
+
+    public List<ExtensionResult> extend(ExtensionQuery query) {
+        List<ExtensionResult> results = new ArrayList<ExtensionResult>();
+        for(String id : query.getIds()) {
+            results.add(extend(id, query.getProperties()));
+        }
+        return results;
+    }
+
+    public ExtensionResult extend(String id, List<PropertyValueIdAndSettings> idsAndSettings) {
         return null;
     }
 

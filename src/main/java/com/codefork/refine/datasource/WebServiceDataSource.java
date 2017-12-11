@@ -260,15 +260,4 @@ public abstract class WebServiceDataSource extends DataSource {
      */
     public abstract List<Result> search(SearchQuery query) throws Exception;
 
-    public List<ExtensionResult> extend(ExtensionQuery query) {
-        List<ExtensionResult> results = new ArrayList<ExtensionResult>();
-        for(String id : query.getIds()) {
-            results.add(extend(id, query.getProperties()));
-        }
-        return results;
-    }
-
-    public ExtensionResult extend(String id, List<PropertyValueIdAndSettings> idsAndSettings) {
-        return null;
-    }
 }
