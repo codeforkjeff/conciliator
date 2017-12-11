@@ -29,6 +29,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+// TODO: break this up into VIAFLiveTest and VIAFNonLiveTest
+// (some of this code has been moved already)
 public class VIAFTest {
 
     ConnectionFactory connectionFactory;
