@@ -7,6 +7,7 @@ import com.codefork.refine.PropertyValueIdAndSettings;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchResult;
 import com.codefork.refine.ThreadPool;
+import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.resources.ExtensionResult;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
@@ -30,10 +31,19 @@ public abstract class WebServiceDataSource extends DataSource {
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
     private CacheManager cacheManager = new CacheManager(getName() + " Cache");
 
-    private ThreadPool threadPool = createThreadPool();
+    @Autowired
+    private ThreadPoolFactory threadPoolFactory;
+
+    private ThreadPool threadPool;
 
     @Autowired
     private ConnectionFactory connectionFactory;
+
+    @Override
+    public void init() {
+        super.init();
+        this.threadPool = createThreadPool();
+    }
 
     public boolean isCacheEnabled() {
         return cacheEnabled;
@@ -76,8 +86,12 @@ public abstract class WebServiceDataSource extends DataSource {
         return cacheManager;
     }
 
-    public ThreadPool createThreadPool() {
-        return new ThreadPool();
+    protected ThreadPoolFactory getThreadPoolFactory() {
+        return threadPoolFactory;
+    }
+
+    protected ThreadPool createThreadPool() {
+        return threadPoolFactory.createThreadPool();
     }
 
     public ThreadPool getThreadPool() {
@@ -98,10 +112,11 @@ public abstract class WebServiceDataSource extends DataSource {
      * and the thread pool.
      */
     public void shutdown() {
+        super.shutdown();
         if(isCacheEnabled()) {
             getCacheManager().stopExpireThread();
         }
-        getThreadPool().shutdown();
+        getThreadPoolFactory().releaseThreadPool(getThreadPool());
     }
 
     /**

@@ -3,6 +3,9 @@ package com.codefork.refine;
 import com.codefork.refine.datasource.SearchTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -88,7 +91,7 @@ public class ThreadPool {
         return executor.getCorePoolSize();
     }
 
-    private void setPoolSize(int newSize) {
+    public void setPoolSize(int newSize) {
         executor.setCorePoolSize(newSize);
         executor.setMaximumPoolSize(newSize);
     }

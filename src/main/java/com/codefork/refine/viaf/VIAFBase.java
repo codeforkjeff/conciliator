@@ -67,10 +67,8 @@ public abstract class VIAFBase extends WebServiceDataSource {
      * @return
      */
     @Override
-    public ThreadPool createThreadPool() {
-        ThreadPool threadPool = VIAFThreadPool.getSingleton().getThreadPool();
-        threadPool.start();
-        return threadPool;
+    protected ThreadPool createThreadPool() {
+        return getThreadPoolFactory().getSharedThreadPool("viaf");
     }
 
     /**

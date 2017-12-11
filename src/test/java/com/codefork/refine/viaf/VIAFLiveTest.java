@@ -2,6 +2,7 @@ package com.codefork.refine.viaf;
 
 import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.resources.Result;
 import org.junit.Test;
@@ -27,6 +28,11 @@ public class VIAFLiveTest {
         @Bean
         ConnectionFactory connectionFactory() {
             return new ConnectionFactory();
+        }
+
+        @Bean
+        public ThreadPoolFactory threadPoolFactory() {
+            return new ThreadPoolFactory();
         }
 
         @Bean

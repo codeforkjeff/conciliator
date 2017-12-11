@@ -27,9 +27,10 @@ public class OpenLibrary extends WebServiceDataSource {
     private static final NameType bookType = new NameType("/book/book", "Book");
 
     @Override
-    public ThreadPool createThreadPool() {
+    public void init() {
+        super.init();
         // openlibrary seems to enforce non-simultaneous queries
-        return new ThreadPool(1);
+        getThreadPool().setPoolSize(1);
     }
 
     @Override

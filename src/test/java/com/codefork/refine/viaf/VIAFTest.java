@@ -2,6 +2,7 @@ package com.codefork.refine.viaf;
 
 import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.resources.Result;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -51,6 +52,11 @@ public class VIAFTest {
             Config config = mock(Config.class);
             when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
             return config;
+        }
+
+        @Bean
+        public ThreadPoolFactory threadPoolFactory() {
+            return new ThreadPoolFactory();
         }
     }
 
