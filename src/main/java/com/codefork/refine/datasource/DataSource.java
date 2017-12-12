@@ -5,6 +5,8 @@ import com.codefork.refine.ExtensionQuery;
 import com.codefork.refine.PropertyValueIdAndSettings;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchQueryFactory;
+import com.codefork.refine.resources.CellList;
+import com.codefork.refine.resources.ExtensionResponse;
 import com.codefork.refine.resources.ExtensionResult;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.SearchResponse;
@@ -83,7 +85,7 @@ public abstract class DataSource {
 
     @ExceptionHandler(ServiceNotImplementedException.class)
     public ResponseEntity serviceNotImplemented(ServiceNotImplementedException ex, HttpServletRequest request) {
-        return new ResponseEntity<String>(ex.getMessage(), HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_IMPLEMENTED);
     }
 
     public Log getLog() {
@@ -163,7 +165,7 @@ public abstract class DataSource {
                 searchQuery = searchQueryFactory.createSearchQuery(query, 3, null, "should");
             }
 
-            Map<String, SearchQuery> queriesMap = new HashMap<String, SearchQuery>();
+            Map<String, SearchQuery> queriesMap = new HashMap<>();
             queriesMap.put("q0", searchQuery);
 
             Map<String, SearchResponse> resultsMap = search(queriesMap);
@@ -188,7 +190,7 @@ public abstract class DataSource {
         try {
             JsonNode root = mapper.readTree(queries);
 
-            Map<String, SearchQuery> queriesMap = new HashMap<String, SearchQuery>();
+            Map<String, SearchQuery> queriesMap = new HashMap<>();
 
             for(Iterator<Map.Entry<String, JsonNode>> iter = root.fields(); iter.hasNext(); ) {
                 Map.Entry<String, JsonNode> fieldEntry = iter.next();
@@ -216,23 +218,35 @@ public abstract class DataSource {
     // Data Extension API
     // https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
     @RequestMapping(value = { "", "/" }, params = "extend")
-    public List<ExtensionResult> extend(@RequestParam(value = "extend") String extend)
+    @ResponseBody
+    public ExtensionResponse extend(@RequestParam(value = "extend") String extend)
             throws ServiceNotImplementedException {
+        // TODO: convert json to ExtensionQuery
+        return extend(new ExtensionQuery(new ArrayList<>(),
+                new ArrayList<>()));
+    }
+
+    public ExtensionResponse extend(ExtensionQuery query) throws ServiceNotImplementedException {
+        Map<String, CellList> rows = new HashMap<>();
+        for(String id : query.getIds()) {
+            rows.put(id, extend(id, query.getProperties()));
+        }
+        ExtensionResponse<String> response = new ExtensionResponse<>();
+        response.setRows(rows);
+        return response;
+    }
+
+    /**
+     * Subclasses should override and implement.
+     * @param id record id
+     * @param idsAndSettings list of property IDs and their settings, to be fetched
+     * @return a list of cells for the passed-in properties
+     * @throws ServiceNotImplementedException
+     */
+    public CellList extend(String id, List<PropertyValueIdAndSettings> idsAndSettings) throws ServiceNotImplementedException {
         throw new ServiceNotImplementedException(
                 String.format("extend service not implemented for %s data source",
                         getName()));
-    }
-
-    public List<ExtensionResult> extend(ExtensionQuery query) {
-        List<ExtensionResult> results = new ArrayList<ExtensionResult>();
-        for(String id : query.getIds()) {
-            results.add(extend(id, query.getProperties()));
-        }
-        return results;
-    }
-
-    public ExtensionResult extend(String id, List<PropertyValueIdAndSettings> idsAndSettings) {
-        return null;
     }
 
     @RequestMapping(value = { PATH_SUGGEST_ENTITY })
