@@ -106,7 +106,7 @@ instructions.
 
 ## Running Conciliator on Your Own Computer
 
-Install Java 1.7 or greater if you don't already have it.
+Install Java 1.8 or greater if you don't already have it.
 
 Download the .jar file for the
 [latest release](https://github.com/codeforkjeff/conciliator/releases). Alternatively,
