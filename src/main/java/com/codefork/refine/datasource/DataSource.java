@@ -1,6 +1,5 @@
 package com.codefork.refine.datasource;
 
-import com.codefork.refine.Cache;
 import com.codefork.refine.Config;
 import com.codefork.refine.ExtensionQuery;
 import com.codefork.refine.PropertyValueIdAndSettings;
@@ -16,6 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,6 +37,10 @@ import java.util.Properties;
  * A super-generic reconciliation data source.
  */
 public abstract class DataSource {
+
+    public static final String PATH_SUGGEST_TYPE = "/suggest/type";
+    public static final String PATH_SUGGEST_PROPERTY = "/suggest/property";
+    public static final String PATH_SUGGEST_ENTITY = "/suggest/entity";
 
     protected Log log = LogFactory.getLog(this.getClass());
 
@@ -73,6 +79,11 @@ public abstract class DataSource {
     @PreDestroy
     public void shutdown() {
         // no-op
+    }
+
+    @ExceptionHandler(ServiceNotImplementedException.class)
+    public ResponseEntity serviceNotImplemented(ServiceNotImplementedException ex, HttpServletRequest request) {
+        return new ResponseEntity<String>(ex.getMessage(), HttpStatus.NOT_IMPLEMENTED);
     }
 
     public Log getLog() {
@@ -205,9 +216,11 @@ public abstract class DataSource {
     // Data Extension API
     // https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
     @RequestMapping(value = { "", "/" }, params = "extend")
-    public List<ExtensionResult> extend(@RequestParam(value = "extend") String extend) {
-        // A lot TODO here...
-        return null;
+    public List<ExtensionResult> extend(@RequestParam(value = "extend") String extend)
+            throws ServiceNotImplementedException {
+        throw new ServiceNotImplementedException(
+                String.format("extend service not implemented for %s data source",
+                        getName()));
     }
 
     public List<ExtensionResult> extend(ExtensionQuery query) {
@@ -222,12 +235,30 @@ public abstract class DataSource {
         return null;
     }
 
-    @RequestMapping(value = { "/suggest" })
+    @RequestMapping(value = { PATH_SUGGEST_ENTITY })
     @ResponseBody
-    public Object suggest() {
-        // TODO
-        return "in suggest";
+    public Object suggestEntity() throws ServiceNotImplementedException {
+        throw new ServiceNotImplementedException(
+                String.format("suggest entity service not implemented for %s data source",
+                        getName()));
     }
+
+    @RequestMapping(value = { PATH_SUGGEST_PROPERTY })
+    @ResponseBody
+    public Object suggestProperty() throws ServiceNotImplementedException {
+        throw new ServiceNotImplementedException(
+                String.format("suggest property service not implemented for %s data source",
+                        getName()));
+    }
+
+    @RequestMapping(value = { PATH_SUGGEST_TYPE })
+    @ResponseBody
+    public Object suggestType() throws ServiceNotImplementedException {
+        throw new ServiceNotImplementedException(
+                String.format("suggest type service not implemented for %s data source",
+                        getName()));
+    }
+
 
     /**
      * Overrides toString() to provide JSON representation of an object on-demand.
