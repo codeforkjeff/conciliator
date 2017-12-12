@@ -147,7 +147,7 @@ public abstract class WebServiceDataSource extends DataSource {
     public Map<String, SearchResponse> search(Map<String, SearchQuery> queryEntries) {
         long start = System.currentTimeMillis();
 
-        Map<String, SearchResponse> allResults = new HashMap<String, SearchResponse>();
+        Map<String, SearchResponse> allResults = new HashMap<>();
 
         Map<String, SearchResult> results = searchUsingThreadPool(queryEntries);
 
@@ -162,7 +162,7 @@ public abstract class WebServiceDataSource extends DataSource {
         }
 
         // figure out which queries need to be done again
-        Map<String, SearchQuery> secondTries = new HashMap<String, SearchQuery>();
+        Map<String, SearchQuery> secondTries = new HashMap<>();
         for(Map.Entry<String, SearchQuery> queryEntry : queryEntries.entrySet()) {
             String indexKey = queryEntry.getKey();
             if(!results.containsKey(indexKey)) {
@@ -194,7 +194,7 @@ public abstract class WebServiceDataSource extends DataSource {
             if(searchResult.isSuccessful()) {
                 allResults.put(indexKey, new SearchResponse(searchResult.getResults()));
             } else {
-                allResults.put(indexKey, new SearchResponse(new ArrayList<Result>()));
+                allResults.put(indexKey, new SearchResponse(new ArrayList<>()));
             }
         }
 
@@ -211,15 +211,15 @@ public abstract class WebServiceDataSource extends DataSource {
      * @return
      */
     private Map<String, SearchResult> searchUsingThreadPool(Map<String, SearchQuery> queryEntries) {
-        Map<String, SearchResult> results = new HashMap<String, SearchResult>();
+        Map<String, SearchResult> results = new HashMap<>();
 
-        List<SearchTask> tasks = new ArrayList<SearchTask>();
+        List<SearchTask> tasks = new ArrayList<>();
         for (Map.Entry<String, SearchQuery> queryEntry : queryEntries.entrySet()) {
             SearchTask task = createSearchTask(queryEntry.getKey(), queryEntry.getValue());
             tasks.add(task);
         }
 
-        List<Future<SearchResult>> futures = new ArrayList<Future<SearchResult>>();
+        List<Future<SearchResult>> futures = new ArrayList<>();
         for (SearchTask task : tasks) {
             futures.add(getThreadPool().submit(task));
         }

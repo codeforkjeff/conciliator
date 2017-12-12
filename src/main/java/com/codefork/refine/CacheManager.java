@@ -24,7 +24,7 @@ public class CacheManager {
 
     public CacheManager(String name) {
         this.name = name;
-        this.cache = new Cache<String, List<Result>>(getName());
+        this.cache = new Cache<>(getName());
     }
 
     public String getName() {

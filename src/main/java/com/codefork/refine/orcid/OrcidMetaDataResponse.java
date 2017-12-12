@@ -14,7 +14,7 @@ public class OrcidMetaDataResponse extends ServiceMetaDataResponse {
     private final static String IDENTIFIER_SPACE = "http://xmlns.com/foaf/0.1/";
     private final static View VIEW = new View("https://orcid.org/{{id}}");
     private final static String SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
-    private final static List<NameType> DEFAULT_TYPES = new ArrayList<NameType>();
+    private final static List<NameType> DEFAULT_TYPES = new ArrayList<>();
 
     static {
         DEFAULT_TYPES.add(new NameType("/people/person", "Person"));

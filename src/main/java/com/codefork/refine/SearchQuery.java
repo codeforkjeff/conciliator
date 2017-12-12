@@ -64,7 +64,7 @@ public class SearchQuery {
             typeStrict = queryStruct.path("type_strict").asText();
         }
 
-        Map<String, PropertyValue> properties = new HashMap<String, PropertyValue>();
+        Map<String, PropertyValue> properties = new HashMap<>();
         if(!queryStruct.path("properties").isMissingNode()) {
             Iterator<JsonNode> propObjects = queryStruct.path("properties").elements();
             while(propObjects.hasNext()) {

@@ -14,7 +14,7 @@ public class OpenLibraryMetaDataResponse extends ServiceMetaDataResponse {
     private final static String IDENTIFIER_SPACE = "http://rdf.freebase.com/ns/user/hangy/viaf";
     private final static View VIEW = new View("https://openlibrary.org{{id}}");
     private final static String SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
-    private final static List<NameType> DEFAULT_TYPES = new ArrayList<NameType>();
+    private final static List<NameType> DEFAULT_TYPES = new ArrayList<>();
 
     static {
         DEFAULT_TYPES.add(new NameType("/book/book", "Book"));

@@ -39,7 +39,7 @@ public class OpenLibrary extends WebServiceDataSource {
     }
 
     public String createQuery(SearchQuery query, boolean includeProperties) {
-        List<String> propValues = new ArrayList<String>();
+        List<String> propValues = new ArrayList<>();
         for(PropertyValue val : query.getProperties().values()) {
             propValues.add(val.asString());
         }
@@ -56,7 +56,7 @@ public class OpenLibrary extends WebServiceDataSource {
 
     @Override
     public List<Result> search(SearchQuery query) throws Exception {
-        List<Result> results = new ArrayList<Result>();
+        List<Result> results = new ArrayList<>();
         int tries = 0;
 
         // try twice, first with properties; if no results, try just the main search value

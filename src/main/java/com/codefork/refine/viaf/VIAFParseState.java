@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class VIAFParseState extends ParseState {
 
-    public final List<VIAFResult> viafResults = new ArrayList<VIAFResult>();
+    public final List<VIAFResult> viafResults = new ArrayList<>();
     public VIAFResult viafResult = null;
 
     public List<NameEntry> nameEntries = null;

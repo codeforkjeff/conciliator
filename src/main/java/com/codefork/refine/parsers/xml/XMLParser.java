@@ -16,10 +16,10 @@ import java.util.Stack;
  */
 public abstract class XMLParser<R extends ParseState> extends DefaultHandler {
 
-    protected Map<String, StartElementHandler<R>> startElementHandlers = new HashMap<String, StartElementHandler<R>>();
-    protected Map<String, EndElementHandler<R>> endElementHandlers = new HashMap<String, EndElementHandler<R>>();
+    protected Map<String, StartElementHandler<R>> startElementHandlers = new HashMap<>();
+    protected Map<String, EndElementHandler<R>> endElementHandlers = new HashMap<>();
 
-    public final Stack<String> path = new Stack<String>();
+    public final Stack<String> path = new Stack<>();
 
     protected R parseState;
 

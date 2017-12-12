@@ -16,8 +16,8 @@ import java.util.Map;
  */
 public class VIAFParser extends XMLParser<VIAFParseState> {
 
-    private static final Map<String, StartElementHandler<VIAFParseState>> staticStartElementHandlers = new HashMap<String, StartElementHandler<VIAFParseState>>();
-    private static final Map<String, EndElementHandler<VIAFParseState>> staticEndElementHandlers = new HashMap<String, EndElementHandler<VIAFParseState>>();
+    private static final Map<String, StartElementHandler<VIAFParseState>> staticStartElementHandlers = new HashMap<>();
+    private static final Map<String, EndElementHandler<VIAFParseState>> staticEndElementHandlers = new HashMap<>();
 
     static {
         staticStartElementHandlers.put("searchRetrieveResponse/records/record",
@@ -29,13 +29,13 @@ public class VIAFParser extends XMLParser<VIAFParseState> {
         staticStartElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/sources",
                 new StartElementHandler<VIAFParseState>() {
                     public void handle(VIAFParseState parseState, String uri, String localName, String qName, Attributes attributes) {
-                        parseState.sourceIdMappings = new HashMap<String, String>();
+                        parseState.sourceIdMappings = new HashMap<>();
                     }
                 });
         staticStartElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings",
                 new StartElementHandler<VIAFParseState>() {
                     public void handle(VIAFParseState parseState, String uri, String localName, String qName, Attributes attributes) {
-                        parseState.nameEntries = new ArrayList<NameEntry>();
+                        parseState.nameEntries = new ArrayList<>();
                     }
                 });
         staticStartElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data",
@@ -47,7 +47,7 @@ public class VIAFParser extends XMLParser<VIAFParseState> {
         staticStartElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/mainHeadings/data/sources",
                 new StartElementHandler<VIAFParseState>() {
                     public void handle(VIAFParseState parseState, String uri, String localName, String qName, Attributes attributes) {
-                        parseState.nameSources = new ArrayList<NameSource>();
+                        parseState.nameSources = new ArrayList<>();
                     }
                 });
         staticStartElementHandlers.put("searchRetrieveResponse/records/record/recordData/VIAFCluster/sources/source",

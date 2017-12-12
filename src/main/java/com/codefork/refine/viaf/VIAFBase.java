@@ -40,7 +40,7 @@ public abstract class VIAFBase extends WebServiceDataSource {
     private SAXParserFactory spf;
 
     private VIAFSource viafSource = null;
-    private Map<String, NonVIAFSource> nonViafSources = new HashMap<String, NonVIAFSource>();
+    private Map<String, NonVIAFSource> nonViafSources = new HashMap<>();
 
     @Override
     public void init() {

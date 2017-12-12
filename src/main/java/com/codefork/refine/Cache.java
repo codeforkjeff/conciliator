@@ -31,7 +31,7 @@ public class Cache<K, V> {
 
     public Cache(String name) {
         this.name = name;
-        this.cacheMap = new ConcurrentHashMap<K, CachedValue<K, V>>();
+        this.cacheMap = new ConcurrentHashMap<>();
         this.orderedValues = Collections.synchronizedList(new LinkedList<CachedValue<K, V>>());
     }
 
@@ -69,7 +69,7 @@ public class Cache<K, V> {
     }
 
     private void put(K key, V value, long timestamp) {
-        put(key, new CachedValue<K, V>(key, value, timestamp));
+        put(key, new CachedValue<>(key, value, timestamp));
     }
 
     public void put(K key, V value) {
@@ -94,7 +94,7 @@ public class Cache<K, V> {
         // this is faster than copying everything and then removing expired and over-max items,
         // since, under the hood, there is no "fast bulk copy" for the data structures we use
 
-        Cache<K, V> newCache = new Cache<K, V>(getName());
+        Cache<K, V> newCache = new Cache<>(getName());
         newCache.setLifetime(getLifetime());
         newCache.setMaxSize(getMaxSize());
 

@@ -8,7 +8,7 @@ import java.util.Map;
 @Service
 public class ThreadPoolFactory {
 
-    private Map<String, ThreadPool> sharedThreadPools = new HashMap<String, ThreadPool>();
+    private Map<String, ThreadPool> sharedThreadPools = new HashMap<>();
 
     public ThreadPool createThreadPool() {
         return new ThreadPool();

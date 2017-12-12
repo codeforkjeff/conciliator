@@ -18,11 +18,11 @@ import java.util.Map;
  */
 public class OrcidParser extends XMLParser<ParseState> {
 
-    private final static Map<String, StartElementHandler<ParseState>> staticStartElementHandlers = new HashMap<String, StartElementHandler<ParseState>>();
-    private final static Map<String, EndElementHandler<ParseState>> staticEndElementHandlers  = new HashMap<String, EndElementHandler<ParseState>>();
+    private final static Map<String, StartElementHandler<ParseState>> staticStartElementHandlers = new HashMap<>();
+    private final static Map<String, EndElementHandler<ParseState>> staticEndElementHandlers  = new HashMap<>();
 
     static {
-        final List<NameType> nameTypes = new ArrayList<NameType>();
+        final List<NameType> nameTypes = new ArrayList<>();
         nameTypes.add(new NameType("/people/person", "Person"));
 
         staticStartElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result",

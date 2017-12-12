@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class NonVIAFSource extends Source {
 
-    private static final Map<String, String> urls = new HashMap<String, String>();
+    private static final Map<String, String> urls = new HashMap<>();
 
     static {
         urls.put("BNE", "http://catalogo.bne.es/uhtbin/authoritybrowse.cgi?action=display&authority_id={{id}}");

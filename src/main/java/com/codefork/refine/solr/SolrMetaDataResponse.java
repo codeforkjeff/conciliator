@@ -12,7 +12,7 @@ public class SolrMetaDataResponse extends ServiceMetaDataResponse {
 
     private final static String IDENTIFIER_SPACE = "http://rdf.freebase.com/ns/user/hangy/viaf";
     private final static String SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
-    private final static List<NameType> DEFAULT_TYPES = new ArrayList<NameType>();
+    private final static List<NameType> DEFAULT_TYPES = new ArrayList<>();
 
     private View view;
 
