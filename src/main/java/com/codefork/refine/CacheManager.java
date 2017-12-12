@@ -17,7 +17,7 @@ public class CacheManager {
     Log log = LogFactory.getLog(CacheManager.class);
 
     private Cache<String, List<Result>> cache;
-    private Object cacheLock = new Object();
+    private final Object cacheLock = new Object();
     private CacheExpire cacheExpire;
     private Thread thread;
     private String name;

@@ -1,12 +1,8 @@
 package com.codefork.refine.solr;
 
 import com.codefork.refine.Config;
-import com.codefork.refine.SearchQuery;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
-import com.codefork.refine.resources.Result;
-import com.codefork.refine.viaf.VIAF;
-import com.codefork.refine.viaf.VIAFNameType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -22,11 +18,9 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.List;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

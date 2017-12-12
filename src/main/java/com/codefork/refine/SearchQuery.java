@@ -164,8 +164,7 @@ public class SearchQuery {
     }
 
     public String getHashKey() {
-        StringBuilder buf = new StringBuilder();
-        buf.append((query != null ? query : "") + "|" +
+        String buf = ((query != null ? query : "") + "|" +
                 limit + "|" +
                 (nameType != null ? nameType.getId() : "") + "|" +
                 (typeStrict != null ? typeStrict : "") + "|" +
@@ -173,7 +172,7 @@ public class SearchQuery {
                 String.valueOf(isViafProxyMode) + "|" +
                 String.valueOf(isOrcidSmartNamesMode));
 
-        return buf.toString();
+        return buf;
     }
 
 }

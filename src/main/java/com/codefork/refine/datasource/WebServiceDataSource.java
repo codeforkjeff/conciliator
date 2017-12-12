@@ -2,13 +2,10 @@ package com.codefork.refine.datasource;
 
 import com.codefork.refine.Cache;
 import com.codefork.refine.CacheManager;
-import com.codefork.refine.ExtensionQuery;
-import com.codefork.refine.PropertyValueIdAndSettings;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchResult;
 import com.codefork.refine.ThreadPool;
 import com.codefork.refine.ThreadPoolFactory;
-import com.codefork.refine.resources.ExtensionResult;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;

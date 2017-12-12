@@ -53,7 +53,7 @@ public class Orcid extends WebServiceDataSource {
     }
 
     private static String createQueryString(SearchQuery query) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(query.getQuery());
         String fields = createSearchFieldsQueryString(query);
         if(fields.length() > 0) {
@@ -67,7 +67,7 @@ public class Orcid extends WebServiceDataSource {
      * creates Solr-style "field:value" query string from properties in SearchQuery
      */
     private static String createSearchFieldsQueryString(SearchQuery query) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         boolean first = true;
         for(Map.Entry<String, PropertyValue> prop : query.getProperties().entrySet()) {
             if(!first) {

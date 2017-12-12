@@ -7,7 +7,6 @@ import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchQueryFactory;
 import com.codefork.refine.resources.CellList;
 import com.codefork.refine.resources.ExtensionResponse;
-import com.codefork.refine.resources.ExtensionResult;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;

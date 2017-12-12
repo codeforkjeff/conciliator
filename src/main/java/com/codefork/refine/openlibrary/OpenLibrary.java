@@ -3,7 +3,6 @@ package com.codefork.refine.openlibrary;
 import com.codefork.refine.PropertyValue;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.StringUtil;
-import com.codefork.refine.ThreadPool;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
@@ -63,8 +62,7 @@ public class OpenLibrary extends WebServiceDataSource {
         while(results.size() == 0 && tries < 2) {
             String q = createQuery(query, tries == 0);
 
-            String url = String.format("https://openlibrary.org/search.json?q=", query.getLimit()) +
-                    UriUtils.encodeQueryParam(q, "UTF-8");
+            String url = "https://openlibrary.org/search.json?q=" + UriUtils.encodeQueryParam(q, "UTF-8");
             getLog().debug("Making request to " + url);
 
             JsonNode root = mapper.readTree(new URL(url));

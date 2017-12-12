@@ -10,7 +10,7 @@ public class SearchResult {
 
     public enum ErrorType {
         UNKNOWN, TOO_MANY_REQUESTS
-    };
+    }
 
     private String key;
     private List<Result> results;
