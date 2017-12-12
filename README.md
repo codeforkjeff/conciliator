@@ -195,22 +195,20 @@ A docker image created by [tobinski](https://github.com/tobinski) is available h
 
 1. Clone this repository to get the source code.
 
-2. Create a class for your data source that extends
-   `com.codefork.refine.datasource.WebServiceDataSource`. Implement
-   the abstract methods as required. Write a test or two if you like.
+2. Create a class for your data source that extends `DataSource` for
+   very bare-bones functionality, or `WebServiceDataSource` if you are
+   making requests to another web service. See the other data sources
+   for some template code. Remember especially to change the
+   @RequestMapping on the class to a unique path for your data source,
+   such as `/reconcile/new_source`.
 
-3. Create a class for the service metadata response, extending
-   `com.codefork.refine.resources.ServiceMetaDataResponse`
+   Implement the abstract methods as required. Write a test or two if
+   you like.
 
-4. Register your new data source class in the `conciliator.properties`
-   file by adding the following lines:
+3. Set some default properties in `Config` if your data source has any
+   settings you want to be configurable.
 
-   ```
-   datasource.new_source=com.company.MyDataSource
-   datasource.new_source.name=My DataSource
-   ```
-
-5. Build a new .jar by running `mvn package`. Run the .jar file as in
+4. Build a new .jar by running `mvn package`. Run the .jar file as in
    the instructions above, and you should be able to access the service
    for your new data source at:
 
