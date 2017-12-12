@@ -143,7 +143,7 @@ public abstract class VIAFBase extends WebServiceDataSource {
         String cql = createCqlQueryString(query);
 
         if(cql == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         String url = String.format("http://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml",

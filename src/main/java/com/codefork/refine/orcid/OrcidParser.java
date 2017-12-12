@@ -16,24 +16,24 @@ import java.util.Map;
 /**
  * SAX parser handler. We use SAX b/c it's faster than loading a whole DOM.
  */
-public class OrcidParser extends XMLParser {
+public class OrcidParser extends XMLParser<ParseState> {
 
-    private final static Map<String, StartElementHandler> staticStartElementHandlers = new HashMap<String, StartElementHandler>();
-    private final static Map<String, EndElementHandler> staticEndElementHandlers  = new HashMap<String, EndElementHandler>();
+    private final static Map<String, StartElementHandler<ParseState>> staticStartElementHandlers = new HashMap<String, StartElementHandler<ParseState>>();
+    private final static Map<String, EndElementHandler<ParseState>> staticEndElementHandlers  = new HashMap<String, EndElementHandler<ParseState>>();
 
     static {
         final List<NameType> nameTypes = new ArrayList<NameType>();
         nameTypes.add(new NameType("/people/person", "Person"));
 
         staticStartElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result",
-                new StartElementHandler() {
+                new StartElementHandler<ParseState>() {
                     public void handle(ParseState parseState, String uri, String localName, String qName, Attributes attributes) {
                         parseState.result = new Result();
                         parseState.result.setType(nameTypes);
                     }
                 });
 
-        StartElementHandler captureHandler = new StartElementHandler() {
+        StartElementHandler<ParseState> captureHandler = new StartElementHandler<ParseState>() {
             public void handle(ParseState parseResult, String uri, String localName, String qName, Attributes attributes) {
                 parseResult.captureChars = true;
             }
@@ -49,14 +49,14 @@ public class OrcidParser extends XMLParser {
                 captureHandler);
 
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result",
-                new EndElementHandler() {
+                new EndElementHandler<ParseState>() {
                     public void handle(ParseState parseState, String uri, String localName, String qName) {
                         parseState.results.add(parseState.result);
                         parseState.result = null;
                     }
                 });
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result/relevancy-score",
-                new EndElementHandler() {
+                new EndElementHandler<ParseState>() {
                     public void handle(ParseState parseState, String uri, String localName, String qName) {
                         parseState.result.setScore(Double.valueOf(parseState.buf.toString()));
                         parseState.buf = new StringBuilder();
@@ -64,7 +64,7 @@ public class OrcidParser extends XMLParser {
                     }
                 });
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result/orcid-profile/orcid-identifier/path",
-                new EndElementHandler() {
+                new EndElementHandler<ParseState>() {
                     public void handle(ParseState parseState, String uri, String localName, String qName) {
                         parseState.result.setId(parseState.buf.toString());
                         parseState.buf = new StringBuilder();
@@ -72,7 +72,7 @@ public class OrcidParser extends XMLParser {
                     }
                 });
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result/orcid-profile/orcid-bio/personal-details/given-names",
-                new EndElementHandler() {
+                new EndElementHandler<ParseState>() {
                     public void handle(ParseState parseState, String uri, String localName, String qName) {
                         parseState.result.setName(parseState.buf.toString());
                         parseState.buf = new StringBuilder();
@@ -80,7 +80,7 @@ public class OrcidParser extends XMLParser {
                     }
                 });
         staticEndElementHandlers.put("orcid-message/orcid-search-results/orcid-search-result/orcid-profile/orcid-bio/personal-details/family-name",
-                new EndElementHandler() {
+                new EndElementHandler<ParseState>() {
                     public void handle(ParseState parseState, String uri, String localName, String qName) {
                         String nameSoFar = "";
                         if(parseState.result.getName() != null) {
@@ -102,6 +102,11 @@ public class OrcidParser extends XMLParser {
         super();
         this.startElementHandlers = staticStartElementHandlers;
         this.endElementHandlers = staticEndElementHandlers;
+    }
+
+    @Override
+    public ParseState createParseState() {
+        return new ParseState();
     }
 
 }

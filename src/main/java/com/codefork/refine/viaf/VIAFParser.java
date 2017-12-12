@@ -58,7 +58,7 @@ public class VIAFParser extends XMLParser<VIAFParseState> {
                     }
                 });
 
-        StartElementHandler captureHandler = new StartElementHandler<VIAFParseState>() {
+        StartElementHandler<VIAFParseState> captureHandler = new StartElementHandler<VIAFParseState>() {
             public void handle(VIAFParseState parseState, String uri, String localName, String qName, Attributes attributes) {
                 parseState.captureChars = true;
             }

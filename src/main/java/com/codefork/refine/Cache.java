@@ -63,7 +63,7 @@ public class Cache<K, V> {
         return cacheMap.containsKey(key);
     }
 
-    private void put(K key, CachedValue value) {
+    private void put(K key, CachedValue<K, V> value) {
         cacheMap.put(key, value);
         orderedValues.add(value);
     }
@@ -109,6 +109,7 @@ public class Cache<K, V> {
         Object[] array = orderedValues.toArray();
         boolean keepGoing = true;
         for(int i = array.length - 1; i >= 0 && keepGoing; i--) {
+            @SuppressWarnings (value="unchecked")
             CachedValue<K, V> value = (CachedValue<K, V>) array[i];
             if(now - value.getTimestamp() >= getLifetime() * 1000) {
                 expiredCount = total - count;
