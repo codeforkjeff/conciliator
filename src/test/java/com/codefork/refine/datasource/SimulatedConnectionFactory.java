@@ -13,8 +13,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Simulates HTTP connections, returning connection objects whose input streams
- * are from stored disk files.
+ * Simulates HTTP connections, returning mock connection objects
+ * that return input stream objects for stored disk files.
  */
 public class SimulatedConnectionFactory implements ConnectionFactory {
 
@@ -49,7 +49,7 @@ public class SimulatedConnectionFactory implements ConnectionFactory {
                 "/nabokov_nsk.xml");
         urlsToFiles.put(
                 "http://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22ncjecerence%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
-                "/nonsense.html");
+                "/nonsense.xml");
         urlsToFiles.put(
                 "http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22shakespeare%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/shakespeare.xml");
@@ -83,9 +83,16 @@ public class SimulatedConnectionFactory implements ConnectionFactory {
     public HttpURLConnection createConnection(String url) throws IOException {
         log.info("Simulating request for " + url);
         if(urlsToFiles.containsKey(url)) {
+            String resource = urlsToFiles.get(url);
             HttpURLConnection conn = mock(HttpURLConnection.class);
-            InputStream is = getClass().getResourceAsStream(urlsToFiles.get(url));
-            when(conn.getInputStream()).thenReturn(is);
+            InputStream is = getClass().getResourceAsStream(resource);
+            if(is != null) {
+                when(conn.getInputStream()).thenReturn(is);
+            } else {
+                String msg = "Resource file not found: " + resource;
+                log.error(msg);
+                throw new IOException(msg);
+            }
             return conn;
         } else {
             String msg = "No test resource file found for URL: " + url;
