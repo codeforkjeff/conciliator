@@ -1,0 +1,61 @@
+{
+ "start": 0,
+ "num_found": 1,
+ "numFound": 1,
+ "docs": [
+  {
+   "title_suggest": "Through the Arc of the Rainforest",
+   "publisher": [
+    "Little, Brown"
+   ],
+   "isbn": [
+    "9780356203225",
+    "0356203220"
+   ],
+   "has_fulltext": false,
+   "id_librarything": [
+    "305050"
+   ],
+   "edition_count": 1,
+   "edition_key": [
+    "OL10688959M"
+   ],
+   "last_modified_i": 1282016804,
+   "title": "Through the Arc of the Rainforest",
+   "author_name": [
+    "K.Tei Yamashita"
+   ],
+   "seed": [
+    "/books/OL10688959M",
+    "/works/OL9467604W",
+    "/authors/OL3486435A"
+   ],
+   "first_publish_year": 1991,
+   "publish_year": [
+    1991
+   ],
+   "key": "/works/OL9467604W",
+   "text": [
+    "OL10688959M",
+    "9780356203225",
+    "0356203220",
+    "K.Tei Yamashita",
+    "OL3486435A",
+    "Through the Arc of the Rainforest",
+    "/works/OL9467604W",
+    "Little, Brown"
+   ],
+   "id_goodreads": [
+    "730618"
+   ],
+   "publish_date": [
+    "November 14, 1991"
+   ],
+   "author_key": [
+    "OL3486435A"
+   ],
+   "type": "work",
+   "ebook_count_i": 0
+  }
+ ]
+}

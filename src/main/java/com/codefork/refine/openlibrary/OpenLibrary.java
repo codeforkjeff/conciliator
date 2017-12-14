@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriUtils;
 
-import java.net.URL;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -65,7 +65,9 @@ public class OpenLibrary extends WebServiceDataSource {
             String url = "https://openlibrary.org/search.json?q=" + UriUtils.encodeQueryParam(q, "UTF-8");
             getLog().debug("Making request to " + url);
 
-            JsonNode root = mapper.readTree(new URL(url));
+            HttpURLConnection conn = getConnectionFactory().createConnection(url);
+
+            JsonNode root = mapper.readTree(conn.getInputStream());
             JsonNode docs = root.get("docs");
             if(docs.isArray()) {
                 Iterator<JsonNode> iter = docs.iterator();

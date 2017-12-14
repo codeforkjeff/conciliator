@@ -27,6 +27,10 @@ public class SimulatedConnectionFactory implements ConnectionFactory {
         // and update test expectations accordingly
 
         urlsToFiles.put(
+                "https://openlibrary.org/search.json?q=through%20the%20arc%20of%20the%20rainforest",
+                "/openlibrary_rainforest.xml");
+
+        urlsToFiles.put(
                 "http://pub.orcid.org/v1.2/search/orcid-bio/?rows=3&q=stephen%20hawking",
                 "/orcid_stephen_hawking.xml");
         urlsToFiles.put(
