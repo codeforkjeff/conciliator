@@ -1,8 +1,6 @@
 package com.codefork.refine.viaf;
 
-import com.codefork.refine.resources.Extend;
 import com.codefork.refine.resources.NameType;
-import com.codefork.refine.resources.ProposeProperties;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.resources.View;
 
@@ -31,9 +29,9 @@ public class VIAFMetaDataResponse extends ServiceMetaDataResponse {
         setSchemaSpace(SCHEMA_SPACE);
         setView(VIEW);
         setDefaultTypes(DEFAULT_TYPES);
-        setExtend(new Extend(
-                new ProposeProperties(baseUrl,
-                        "/propose_properties")));
+//        setExtend(new Extend(
+//                new ProposeProperties(baseUrl,
+//                        "/propose_properties")));
     }
 
 }
