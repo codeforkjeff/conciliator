@@ -2,7 +2,7 @@ package com.codefork.refine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Application configuration
  */
-@Service
+@Component
 public class Config {
 
     private static final String CONFIG_FILENAME = "conciliator.properties";

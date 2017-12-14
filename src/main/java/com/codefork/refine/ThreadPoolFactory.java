@@ -1,11 +1,11 @@
 package com.codefork.refine;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
+@Component
 public class ThreadPoolFactory {
 
     private Map<String, ThreadPool> sharedThreadPools = new HashMap<>();
