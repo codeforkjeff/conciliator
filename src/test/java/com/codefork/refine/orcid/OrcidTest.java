@@ -3,6 +3,7 @@ package com.codefork.refine.orcid;
 import com.codefork.refine.Config;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
+import com.codefork.refine.datasource.SimulatedConnectionFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class OrcidTest {
     static class TestConfig {
         @Bean
         public ConnectionFactory connectionFactory() {
-            return new ConnectionFactory();
+            return new SimulatedConnectionFactory();
         }
 
         // we can't use MockBean b/c the PostConstruct hook in VIAF uses config

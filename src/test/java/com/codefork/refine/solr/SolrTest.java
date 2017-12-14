@@ -3,6 +3,7 @@ package com.codefork.refine.solr;
 import com.codefork.refine.Config;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
+import com.codefork.refine.datasource.SimulatedConnectionFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -10,18 +11,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,6 +29,10 @@ public class SolrTest {
 
     @TestConfiguration
     static class TestConfig {
+        @Bean
+        public ConnectionFactory connectionFactory() {
+            return new SimulatedConnectionFactory();
+        }
 
         // we can't use MockBean b/c the PostConstruct hook in VIAF uses config
         // before we get a chance to put matchers on it in this test code.
@@ -56,21 +57,11 @@ public class SolrTest {
         }
     }
 
-    @MockBean
-    ConnectionFactory connectionFactory;
-
-    @Autowired
-    Solr solr;
-
     @Autowired
     MockMvc mvc;
 
     @Test
     public void testSearchPersonalName() throws Exception {
-        HttpURLConnection conn = mock(HttpURLConnection.class);
-        InputStream is = getClass().getResourceAsStream("/solr_results.xml");
-        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
-        when(conn.getInputStream()).thenReturn(is);
 
         String json = "{\"q0\":{\"query\": \"The Complete Adventures of Sherlock Holmes\",\"type\":\"/book/book\",\"type_strict\":\"should\"}}";
 

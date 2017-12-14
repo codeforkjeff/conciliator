@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orcid-message xmlns="http://www.orcid.org/ns/orcid">
+    <message-version>1.2</message-version>
+    <orcid-search-results num-found="7270">
+        <orcid-search-result>
+            <relevancy-score>0.99698985</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0002-9079-593X</uri>
+                    <path>0000-0002-9079-593X</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Stephen</given-names>
+                        <family-name visibility="public">Hawking</family-name>
+                    </personal-details>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.5981939</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0002-5081-5887</uri>
+                    <path>0000-0002-5081-5887</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Edinson</given-names>
+                        <family-name visibility="public">Cueto</family-name>
+                    </personal-details>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.5639826</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://orcid.org/0000-0002-4166-6322</uri>
+                    <path>0000-0002-4166-6322</path>
+                    <host>orcid.org</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Mikhail</given-names>
+                        <family-name visibility="public">Soloshenko</family-name>
+                    </personal-details>
+                    <keywords visibility="public">
+                        <keyword>Effect of Soloshenko-Yanchilin, gravitation, time, teleportation, quantum theory, Albert Einstein, Hafele-Keating, gravity, Stephen Hawking</keyword>
+                    </keywords>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+    </orcid-search-results>
+</orcid-message>

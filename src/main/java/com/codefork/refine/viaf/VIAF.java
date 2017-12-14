@@ -21,6 +21,10 @@ import java.util.Map;
 @RequestMapping("/reconcile/viaf")
 public class VIAF extends VIAFBase {
 
+    // These /reconcile/viaf/{source} mappings are gross; it would be better to handle
+    // separate controller in a separate controller, but we can't subclass VIAF b/c
+    // we need the RequestMappings to go to new methods containing the additional source arg.
+
     @RequestMapping(value = "/{source}")
     @ResponseBody
     public VIAFMetaDataResponse sourceSpecificServiceMetaData(

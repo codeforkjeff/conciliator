@@ -3,6 +3,7 @@ package com.codefork.refine.viaf;
 import com.codefork.refine.Config;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
+import com.codefork.refine.datasource.SimulatedConnectionFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -10,20 +11,16 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -48,13 +45,12 @@ public class VIAFProxyTest {
         public ThreadPoolFactory threadPoolFactory() {
             return new ThreadPoolFactory();
         }
+
+        @Bean
+        ConnectionFactory connectionFactory() {
+            return new SimulatedConnectionFactory();
+        }
     }
-
-    @MockBean
-    ConnectionFactory connectionFactory;
-
-    @Autowired
-    VIAFProxy viafProxy;
 
     @Autowired
     MockMvc mvc;
@@ -73,11 +69,6 @@ public class VIAFProxyTest {
 
     @Test
     public void testSearchProxyModeLC() throws Exception {
-        HttpURLConnection conn = mock(HttpURLConnection.class);
-        InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
-        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
-        when(conn.getInputStream()).thenReturn(is);
-
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viafproxy/LC").param("queries", json)).andReturn();
@@ -97,15 +88,15 @@ public class VIAFProxyTest {
         assertTrue(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
-        assertEquals("Zamenhof, L. L. (Ludwik Lazar), 1859-1917", result2.get("name").asText());
+        assertEquals("Pasternak, Boris Leonidovich, 1890-1960.", result2.get("name").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
-        assertEquals("no90015706", result2.get("id").asText());
+        assertEquals("n79018438", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
-        assertEquals("Tieck, Ludwig, 1773-1853", result3.get("name").asText());
+        assertEquals("Hauptmann, Gerhart, 1862-1946.", result3.get("name").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
-        assertEquals("n78096841", result3.get("id").asText());
+        assertEquals("n80076391", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
     }
 
@@ -115,10 +106,6 @@ public class VIAFProxyTest {
      */
     @Test
     public void testSearchProxyModeBNF() throws Exception {
-        HttpURLConnection conn = mock(HttpURLConnection.class);
-        InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
-        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
-        when(conn.getInputStream()).thenReturn(is);
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -139,15 +126,15 @@ public class VIAFProxyTest {
         assertTrue(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
-        assertEquals("Zamenhof, Lejzer Ludwik, 1859-1917", result2.get("name").asText());
+        assertEquals("Pasternak, Boris Leonidovič, 1890-1960", result2.get("name").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
-        assertEquals("12115775", result2.get("id").asText());
+        assertEquals("11918737", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
-        assertEquals("Tieck, Ludwig, 1773-1853", result3.get("name").asText());
+        assertEquals("Hauptmann, Gerhart, 1862-1946.", result3.get("name").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
-        assertEquals("11926644", result3.get("id").asText());
+        assertEquals("12026662", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
     }
 
@@ -157,11 +144,6 @@ public class VIAFProxyTest {
      */
     @Test
     public void testSearchProxyModeBNFMissingID() throws Exception {
-        HttpURLConnection conn = mock(HttpURLConnection.class);
-        InputStream is = getClass().getResourceAsStream("/alexandre.xml");
-        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
-        when(conn.getInputStream()).thenReturn(is);
-
         String json = "{\"q0\":{\"query\": \"Jean-François Alexandre 1804 1874\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viafproxy/BNF").param("queries", json)).andReturn();
@@ -200,11 +182,6 @@ public class VIAFProxyTest {
      */
     @Test
     public void testSearchProxyModeDNB() throws Exception {
-        HttpURLConnection conn = mock(HttpURLConnection.class);
-        InputStream is = getClass().getResourceAsStream("/hegel.xml");
-        when(connectionFactory.createConnection(anyString())).thenReturn(conn);
-        when(conn.getInputStream()).thenReturn(is);
-
         String json = "{\"q0\":{\"query\": \"hegel\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viafproxy/DNB").param("queries", json)).andReturn();
@@ -218,7 +195,7 @@ public class VIAFProxyTest {
         assertEquals(3, results.size());
 
         JsonNode result1 = results.get(0);
-        assertEquals("Hegel, Georg Wilhelm Friedrich, 1770-1831", result1.get("name").asText());
+        assertEquals("Hegel, Georg Wilhelm Friedrich, 1770-1831.", result1.get("name").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
         assertEquals("118547739", result1.get("id").asText());
         assertFalse(result1.get("match").asBoolean());
@@ -230,9 +207,9 @@ public class VIAFProxyTest {
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
-        assertEquals("Bosanquet, Bernard, 1848-1923", result3.get("name").asText());
+        assertEquals("Koyré, Alexandre, 1892-1964", result3.get("name").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
-        assertEquals("118659391", result3.get("id").asText());
+        assertEquals("118777890", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
     }
 
