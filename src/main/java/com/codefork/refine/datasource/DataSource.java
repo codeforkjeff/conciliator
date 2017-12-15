@@ -42,6 +42,7 @@ public abstract class DataSource {
     public static final String PATH_SUGGEST_TYPE = "/suggest/type";
     public static final String PATH_SUGGEST_PROPERTY = "/suggest/property";
     public static final String PATH_SUGGEST_ENTITY = "/suggest/entity";
+    public static final String PATH_PREVIEW = "/preview";
 
     protected Log log = LogFactory.getLog(this.getClass());
 
@@ -245,6 +246,18 @@ public abstract class DataSource {
     public CellList extend(String id, List<PropertyValueIdAndSettings> idsAndSettings) throws ServiceNotImplementedException {
         throw new ServiceNotImplementedException(
                 String.format("extend service not implemented for %s data source",
+                        getName()));
+    }
+
+    /**
+     * returns HTML
+     * @return
+     * @throws ServiceNotImplementedException
+     */
+    @RequestMapping(value = { PATH_PREVIEW }, params = "id")
+    public Object preview() throws ServiceNotImplementedException {
+        throw new ServiceNotImplementedException(
+                String.format("Preview API not implemented for %s data source",
                         getName()));
     }
 
