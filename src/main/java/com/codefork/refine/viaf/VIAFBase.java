@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * VIAF data source base class. This is the "basic" service without
@@ -32,10 +31,6 @@ import java.util.Properties;
  */
 public abstract class VIAFBase extends WebServiceDataSource {
 
-    public static final String PROP_CACHE_ENABLED = "cache.enabled";
-    public static final String PROP_CACHE_LIFETIME = "cache.lifetime";
-    public static final String PROP_CACHE_MAXSIZE = "cache.max_size";
-
     private SAXParserFactory spf;
 
     private VIAFSource viafSource = null;
@@ -45,23 +40,9 @@ public abstract class VIAFBase extends WebServiceDataSource {
     public void init() {
         super.init();
 
+        setCacheEnabled(true);
+
         spf = SAXParserFactory.newInstance();
-
-        Properties props = getConfigProperties();
-
-        int DEFAULT_LIFETIME = 100;
-        int DEFAULT_MAXSIZE = 100;
-
-        boolean cacheEnabled = Boolean.valueOf(
-                props.getProperty(PROP_CACHE_ENABLED, "true"));
-        int cacheLifetime = Integer.valueOf(
-                props.getProperty(PROP_CACHE_LIFETIME, String.valueOf(DEFAULT_LIFETIME)));
-        int cacheMaxSize = Integer.valueOf(
-                props.getProperty(PROP_CACHE_MAXSIZE, String.valueOf(DEFAULT_MAXSIZE)));
-
-        setCacheLifetime(cacheLifetime);
-        setCacheMaxSize(cacheMaxSize);
-        setCacheEnabled(cacheEnabled);
     }
 
     /**

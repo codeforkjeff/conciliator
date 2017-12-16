@@ -1,5 +1,7 @@
 package com.codefork.refine.controllers;
 
+import com.codefork.refine.Application;
+import com.codefork.refine.Config;
 import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.datasource.SimulatedConnectionFactory;
 import com.codefork.refine.viaf.VIAF;
@@ -12,10 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 public class VIAFControllerTest {
+    public static final int TTL_SECONDS = 1;
 
     @TestConfiguration
     static class TestConfig {
@@ -33,7 +39,20 @@ public class VIAFControllerTest {
         ConnectionFactory connectionFactory() {
             return new SimulatedConnectionFactory();
         }
+
+        @Bean
+        public Config config() {
+            Properties props = new Properties();
+            props.setProperty(Config.PROP_CACHE_TTL, String.valueOf(TTL_SECONDS));
+
+            Config config = new Config();
+            config.merge(props);
+            return config;
+        }
     }
+
+    @Autowired
+    CacheManager cacheManager;
 
     @Autowired
     VIAF viaf;
@@ -306,7 +325,8 @@ public class VIAFControllerTest {
     @Test
     public void testCache() throws Exception {
 
-        viaf.setCacheLifetime(1);
+        SimulatedConnectionFactory cf = (SimulatedConnectionFactory) viaf.getConnectionFactory();
+        int numCallsAtStart = cf.getNumCallsToCreateConnection();
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -325,14 +345,14 @@ public class VIAFControllerTest {
                 .get("q0").get("result");
         assertEquals(3, results2.size());
 
-        // TODO
-        //verify(connectionFactory, times(1)).createConnection(anyString());
+        assertEquals(1, cf.getNumCallsToCreateConnection() - numCallsAtStart);
     }
 
     @Test
     public void testExpireCache() throws Exception {
 
-        viaf.setCacheLifetime(1);
+        SimulatedConnectionFactory cf = (SimulatedConnectionFactory) viaf.getConnectionFactory();
+        int numCallsAtStart = cf.getNumCallsToCreateConnection();
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -343,8 +363,8 @@ public class VIAFControllerTest {
                 .get("q0").get("result");
         assertEquals(3, results.size());
 
-        Thread.sleep(1100);
-        // TODO: expire cache
+        // sleep past the TTL
+        Thread.sleep((TTL_SECONDS + 1) * 1000);
 
         mvcResult = mvc.perform(get("/reconcile/viaf").param("queries", json)).andReturn();
         assertEquals(3, results.size());
@@ -354,13 +374,11 @@ public class VIAFControllerTest {
                 .get("q0").get("result");
         assertEquals(3, results2.size());
 
-        // TODO: how to verify this?
-        //verify(connectionFactory, times(2)).createConnection(anyString());
+        assertEquals(2, cf.getNumCallsToCreateConnection() - numCallsAtStart);
     }
 
     @After
     public void cleanup() throws Exception {
-        // sleep to give the cache a chance to expire
-        Thread.sleep(1000);
+        cacheManager.getCache(Application.CACHE_DEFAULT).clear();
     }
 }

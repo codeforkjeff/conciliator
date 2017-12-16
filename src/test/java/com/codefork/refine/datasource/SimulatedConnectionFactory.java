@@ -79,8 +79,11 @@ public class SimulatedConnectionFactory implements ConnectionFactory {
                 "/wittgenstein_personalnames.xml");
     }
 
+    int numCalls = 0;
+
     @Override
     public HttpURLConnection createConnection(String url) throws IOException {
+        numCalls++;
         log.info("Simulating request for " + url);
         if(urlsToFiles.containsKey(url)) {
             String resource = urlsToFiles.get(url);
@@ -99,6 +102,10 @@ public class SimulatedConnectionFactory implements ConnectionFactory {
             log.error(msg);
             throw new IOException(msg);
         }
+    }
+
+    public int getNumCallsToCreateConnection() {
+        return numCalls;
     }
 
 }

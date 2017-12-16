@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,18 +15,26 @@ import java.util.Properties;
 @Component
 public class Config {
 
+    public static final String PROP_CACHE_ENABLED = "cache.enabled";
+    public static final String PROP_CACHE_TTL = "cache.ttl";
+    public static final String PROP_CACHE_SIZE = "cache.size";
+
     private static final String CONFIG_FILENAME = "conciliator.properties";
 
     private Log log = LogFactory.getLog(Config.class);
     private Properties properties = new Properties();
 
     public Config() {
+        properties.put(PROP_CACHE_ENABLED, "true");
+        properties.put(PROP_CACHE_TTL, "3600");
+        properties.put(PROP_CACHE_SIZE, "0.5");
+
         properties.put("datasource.orcid.name", "ORCID");
         properties.put("datasource.orcidsmartnames.name", "ORCID - Smart Names Mode");
         properties.put("datasource.openlibrary.name", "OpenLibrary");
+        loadFromFile();
     }
 
-    @PostConstruct
     public void loadFromFile() {
         if(new File(CONFIG_FILENAME).exists()) {
             try {

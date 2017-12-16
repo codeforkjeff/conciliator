@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+/**
+ * Doesn't inherit from DataSourceController or implement API interfaces
+ * because of the additional source param. Ugh.
+ */
 @Controller
 @RequestMapping("/reconcile/viafproxy/{source}")
 public class VIAFProxyController {

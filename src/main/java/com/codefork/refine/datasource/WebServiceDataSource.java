@@ -1,7 +1,7 @@
 package com.codefork.refine.datasource;
 
-import com.codefork.refine.Cache;
-import com.codefork.refine.CacheManager;
+import com.codefork.refine.Application;
+import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchResult;
 import com.codefork.refine.ThreadPool;
@@ -9,11 +9,14 @@ import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -26,7 +29,9 @@ public abstract class WebServiceDataSource extends DataSource {
     public static final boolean DEFAULT_CACHE_ENABLED = false;
 
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
-    private CacheManager cacheManager = new CacheManager(getName() + " Cache");
+
+    @Autowired
+    private CacheManager cacheManager;
 
     @Autowired
     private ThreadPoolFactory threadPoolFactory;
@@ -40,7 +45,12 @@ public abstract class WebServiceDataSource extends DataSource {
     public void init() {
         super.init();
         this.threadPool = createThreadPool();
-    }
+
+        Properties props = getConfig().getProperties();
+        if(props.containsKey(Config.PROP_CACHE_ENABLED)) {
+            setCacheEnabled(Boolean.valueOf(props.getProperty(Config.PROP_CACHE_ENABLED)));
+        }
+   }
 
     public boolean isCacheEnabled() {
         return cacheEnabled;
@@ -52,31 +62,6 @@ public abstract class WebServiceDataSource extends DataSource {
      */
     public void setCacheEnabled(boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
-        if(isCacheEnabled()) {
-            cacheManager.startExpireThread();
-        } else {
-            cacheManager.stopExpireThread();
-        }
-    }
-
-    public void setCacheMaxSize(int maxSize) {
-        cacheManager.getCache().setMaxSize(maxSize);
-    }
-
-    public int getCacheMaxSize() {
-        return cacheManager.getCache().getMaxSize();
-    }
-
-    public void setCacheLifetime(int lifetime) {
-        cacheManager.getCache().setLifetime(lifetime);
-    }
-
-    public int getCacheLifetime() {
-        return cacheManager.getCache().getLifetime();
-    }
-
-    public void expireCache() {
-        cacheManager.expireCache();
     }
 
     public CacheManager getCacheManager() {
@@ -110,9 +95,6 @@ public abstract class WebServiceDataSource extends DataSource {
      */
     public void shutdown() {
         super.shutdown();
-        if(isCacheEnabled()) {
-            getCacheManager().stopExpireThread();
-        }
         getThreadPoolFactory().releaseThreadPool(getThreadPool());
     }
 
@@ -244,17 +226,13 @@ public abstract class WebServiceDataSource extends DataSource {
      */
     public List<Result> searchCheckCache(SearchQuery query) throws Exception {
         if (isCacheEnabled()) {
-            Cache<String, List<Result>> cacheRef = getCacheManager().getCache();
+            Cache cache = getCacheManager().getCache(Application.CACHE_DEFAULT);
 
             String key = query.getHashKey();
-            List<Result> results = cacheRef.get(key);
-            if (results == null) {
-                results = search(query);
-                // only cache if search was successful
-                cacheRef.put(key, results);
-            } else {
-                log.debug("Cache hit for: " + key);
-            }
+            List<Result> results = (List<Result>) cache.get(key, () -> {
+                log.info("Cache miss for: " + key);
+                return search(query);
+            });
             return results;
         }
 

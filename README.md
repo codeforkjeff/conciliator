@@ -193,22 +193,24 @@ A docker image created by [tobinski](https://github.com/tobinski) is available h
 
 ## Creating Your Own Data Source
 
-1. Clone this repository to get the source code.
+1. Clone this repository to get the source code. The code you create
+   in the next steps should live under the `com.codefork.refine`
+   package so that Spring's auto-scanning picks it up.
 
 2. Create a class for your data source that extends `DataSource` for
    very bare-bones functionality, or `WebServiceDataSource` if you are
    making requests to another web service. See the other data sources
-   for some template code. Remember especially to change the
-   @RequestMapping on the class to a unique path for your data source,
-   such as `/reconcile/new_source`.
+   for some template code. Implement the abstract methods as
+   required. Write a test or two if you like.
+   
+3. Create a controller that autowires your new DataSource and hooks up
+   a unique path, e.g. `/reconcile/new_source`. See VIAFController for
+   an example.
 
-   Implement the abstract methods as required. Write a test or two if
-   you like.
-
-3. Set some default properties in `Config` if your data source has any
+4. Set some default properties in `Config` if your data source has any
    settings you want to be configurable.
 
-4. Build a new .jar by running `mvn package`. Run the .jar file as in
+5. Build a new .jar by running `mvn package`. Run the .jar file as in
    the instructions above, and you should be able to access the service
    for your new data source at:
 
