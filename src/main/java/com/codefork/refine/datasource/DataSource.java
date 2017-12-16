@@ -19,15 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,11 +34,6 @@ import java.util.Properties;
  * A super-generic reconciliation data source.
  */
 public abstract class DataSource {
-
-    public static final String PATH_SUGGEST_TYPE = "/suggest/type";
-    public static final String PATH_SUGGEST_PROPERTY = "/suggest/property";
-    public static final String PATH_SUGGEST_ENTITY = "/suggest/entity";
-    public static final String PATH_PREVIEW = "/preview";
 
     protected Log log = LogFactory.getLog(this.getClass());
 
@@ -136,22 +127,10 @@ public abstract class DataSource {
      * Returns the service metadata that OpenRefine uses on its first request
      * to the service.
      */
-    protected abstract ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl);
+    public abstract ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl);
 
     public SearchQueryFactory getSearchQueryFactory() {
         return defaultSearchQueryFactory;
-    }
-
-    @RequestMapping(value = { "", "/" })
-    @ResponseBody
-    public ServiceMetaDataResponse serviceMetaData(HttpServletRequest request) {
-        return createServiceMetaDataResponse(request.getRequestURL().toString());
-    }
-
-    @RequestMapping(value = { "", "/" }, params = "query")
-    @ResponseBody
-    public SearchResponse querySingle(@RequestParam(value = "query") String query) {
-        return querySingle(query, getSearchQueryFactory());
     }
 
     public SearchResponse querySingle(String query, SearchQueryFactory searchQueryFactory) {
@@ -177,12 +156,6 @@ public abstract class DataSource {
             log.error("Got IO error processing JSON: " + ioe.toString());
         }
         return null;
-    }
-
-    @RequestMapping(value = { "", "/" }, params = "queries")
-    @ResponseBody
-    public Map<String, SearchResponse> queryMultiple(@RequestParam(value = "queries") String queries) {
-        return queryMultiple(queries, getSearchQueryFactory());
     }
 
     public Map<String, SearchResponse> queryMultiple(String queries, SearchQueryFactory searchQueryFactory) {
@@ -215,17 +188,6 @@ public abstract class DataSource {
         return null;
     }
 
-    // Data Extension API
-    // https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
-    @RequestMapping(value = { "", "/" }, params = "extend")
-    @ResponseBody
-    public ExtensionResponse extend(@RequestParam(value = "extend") String extend)
-            throws ServiceNotImplementedException {
-        // TODO: convert json to ExtensionQuery
-        return extend(new ExtensionQuery(new ArrayList<>(),
-                new ArrayList<>()));
-    }
-
     public ExtensionResponse extend(ExtensionQuery query) throws ServiceNotImplementedException {
         Map<String, CellList> rows = new HashMap<>();
         for(String id : query.getIds()) {
@@ -248,43 +210,6 @@ public abstract class DataSource {
                 String.format("extend service not implemented for %s data source",
                         getName()));
     }
-
-    /**
-     * returns HTML
-     * @return
-     * @throws ServiceNotImplementedException
-     */
-    @RequestMapping(value = { PATH_PREVIEW }, params = "id")
-    public Object preview() throws ServiceNotImplementedException {
-        throw new ServiceNotImplementedException(
-                String.format("Preview API not implemented for %s data source",
-                        getName()));
-    }
-
-    @RequestMapping(value = { PATH_SUGGEST_ENTITY })
-    @ResponseBody
-    public Object suggestEntity() throws ServiceNotImplementedException {
-        throw new ServiceNotImplementedException(
-                String.format("suggest entity service not implemented for %s data source",
-                        getName()));
-    }
-
-    @RequestMapping(value = { PATH_SUGGEST_PROPERTY })
-    @ResponseBody
-    public Object suggestProperty() throws ServiceNotImplementedException {
-        throw new ServiceNotImplementedException(
-                String.format("suggest property service not implemented for %s data source",
-                        getName()));
-    }
-
-    @RequestMapping(value = { PATH_SUGGEST_TYPE })
-    @ResponseBody
-    public Object suggestType() throws ServiceNotImplementedException {
-        throw new ServiceNotImplementedException(
-                String.format("suggest type service not implemented for %s data source",
-                        getName()));
-    }
-
 
     /**
      * Overrides toString() to provide JSON representation of an object on-demand.

@@ -9,8 +9,7 @@ import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
 import java.net.HttpURLConnection;
@@ -18,8 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Controller
-@RequestMapping("/reconcile/openlibrary")
+@Component("openlibrary")
 public class OpenLibrary extends WebServiceDataSource {
 
     private final ObjectMapper mapper = new ObjectMapper();

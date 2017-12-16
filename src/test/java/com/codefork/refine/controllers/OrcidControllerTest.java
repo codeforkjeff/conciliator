@@ -1,7 +1,5 @@
-package com.codefork.refine.orcid;
+package com.codefork.refine.controllers;
 
-import com.codefork.refine.Config;
-import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.datasource.SimulatedConnectionFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,52 +7,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Properties;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(Orcid.class)
-public class OrcidTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class OrcidControllerTest {
 
     @TestConfiguration
     static class TestConfig {
         @Bean
-        public ConnectionFactory connectionFactory() {
+        ConnectionFactory connectionFactory() {
             return new SimulatedConnectionFactory();
         }
-
-        // we can't use MockBean b/c the PostConstruct hook in VIAF uses config
-        // before we get a chance to put matchers on it in this test code.
-        @Bean
-        public Config config() {
-            Properties props = new Properties();
-            props.put("name", "ORCID");
-
-            Config config = mock(Config.class);
-            when(config.getDataSourceProperties("orcid")).thenReturn(props);
-            return config;
-        }
-
-        @Bean
-        public ThreadPoolFactory threadPoolFactory() {
-            return new ThreadPoolFactory();
-        }
     }
-
-    @Autowired
-    Orcid orcid;
 
     @Autowired
     MockMvc mvc;

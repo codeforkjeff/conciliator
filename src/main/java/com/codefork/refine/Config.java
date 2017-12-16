@@ -23,6 +23,7 @@ public class Config {
 
     public Config() {
         properties.put("datasource.orcid.name", "ORCID");
+        properties.put("datasource.orcidsmartnames.name", "ORCID - Smart Names Mode");
         properties.put("datasource.openlibrary.name", "OpenLibrary");
     }
 
@@ -31,8 +32,9 @@ public class Config {
         if(new File(CONFIG_FILENAME).exists()) {
             try {
                 log.info("Loading configuration from " + CONFIG_FILENAME);
-                properties = new Properties();
-                properties.load(new FileInputStream(CONFIG_FILENAME));
+                Properties p = new Properties();
+                p.load(new FileInputStream(CONFIG_FILENAME));
+                merge(p);
             } catch (IOException ex) {
                 log.error("Error reading config file, skipping it: " + ex);
             }

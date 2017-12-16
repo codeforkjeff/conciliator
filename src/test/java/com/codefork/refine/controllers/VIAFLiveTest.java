@@ -1,57 +1,24 @@
-package com.codefork.refine.viaf;
+package com.codefork.refine.controllers;
 
-import com.codefork.refine.Config;
-import com.codefork.refine.ThreadPoolFactory;
-import com.codefork.refine.datasource.ConnectionFactory;
-import com.codefork.refine.datasource.LiveConnectionFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Properties;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(VIAF.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class VIAFLiveTest {
-
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        ConnectionFactory connectionFactory() {
-            return new LiveConnectionFactory();
-        }
-
-        @Bean
-        public ThreadPoolFactory threadPoolFactory() {
-            return new ThreadPoolFactory();
-        }
-
-        // we can't use @MockBean b/c the PostConstruct hook in VIAF uses config
-        // before we get a chance to stub out calls.
-        @Bean
-        public Config config() {
-            Config config = mock(Config.class);
-            when(config.getDataSourceProperties("viaf")).thenReturn(new Properties());
-            return config;
-        }
-    }
-
-    @Autowired
-    VIAF viaf;
 
     @Autowired
     MockMvc mvc;

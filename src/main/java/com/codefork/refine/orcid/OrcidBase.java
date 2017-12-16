@@ -4,6 +4,7 @@ import com.codefork.refine.PropertyValue;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.Result;
+import com.codefork.refine.resources.ServiceMetaDataResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.util.UriUtils;
@@ -26,6 +27,11 @@ public abstract class OrcidBase extends WebServiceDataSource {
     Log log = LogFactory.getLog(Orcid.class);
 
     private SAXParserFactory spf = SAXParserFactory.newInstance();
+
+    @Override
+    public ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl) {
+        return new OrcidMetaDataResponse(getName());
+    }
 
     protected static String createQueryString(SearchQuery query) {
         StringBuilder buf = new StringBuilder();

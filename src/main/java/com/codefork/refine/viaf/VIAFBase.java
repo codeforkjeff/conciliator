@@ -1,6 +1,5 @@
 package com.codefork.refine.viaf;
 
-import com.codefork.refine.Cache;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.ThreadPool;
 import com.codefork.refine.datasource.WebServiceDataSource;
@@ -50,12 +49,15 @@ public abstract class VIAFBase extends WebServiceDataSource {
 
         Properties props = getConfigProperties();
 
+        int DEFAULT_LIFETIME = 100;
+        int DEFAULT_MAXSIZE = 100;
+
         boolean cacheEnabled = Boolean.valueOf(
                 props.getProperty(PROP_CACHE_ENABLED, "true"));
         int cacheLifetime = Integer.valueOf(
-                props.getProperty(PROP_CACHE_LIFETIME, String.valueOf(Cache.DEFAULT_LIFETIME)));
+                props.getProperty(PROP_CACHE_LIFETIME, String.valueOf(DEFAULT_LIFETIME)));
         int cacheMaxSize = Integer.valueOf(
-                props.getProperty(PROP_CACHE_MAXSIZE, String.valueOf(Cache.DEFAULT_MAXSIZE)));
+                props.getProperty(PROP_CACHE_MAXSIZE, String.valueOf(DEFAULT_MAXSIZE)));
 
         setCacheLifetime(cacheLifetime);
         setCacheMaxSize(cacheMaxSize);

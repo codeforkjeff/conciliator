@@ -4,26 +4,18 @@ import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchQueryFactory;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
-import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
 import java.util.Collections;
 import java.util.List;
 
-@Controller
-@RequestMapping("/reconcile/orcid/smartnames")
+@Component("orcidsmartnames")
 public class OrcidSmartNames extends OrcidBase {
 
     SmartNamesModeSearchQueryFactory smartNamesModeSearchQueryFactory =
             new SmartNamesModeSearchQueryFactory();
-
-    @Override
-    public ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl) {
-        return new OrcidMetaDataResponse(getName() + " - Smart Names Mode");
-    }
 
     @Override
     public SearchQueryFactory getSearchQueryFactory() {

@@ -1,7 +1,6 @@
-package com.codefork.refine.solr;
+package com.codefork.refine.controllers;
 
 import com.codefork.refine.Config;
-import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.datasource.SimulatedConnectionFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,7 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,41 +19,34 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(Solr.class)
-public class SolrTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class SolrControllerTest {
 
     @TestConfiguration
     static class TestConfig {
         @Bean
-        public ConnectionFactory connectionFactory() {
+        ConnectionFactory connectionFactory() {
             return new SimulatedConnectionFactory();
         }
-
         // we can't use MockBean b/c the PostConstruct hook in VIAF uses config
         // before we get a chance to put matchers on it in this test code.
         @Bean
         public Config config() {
             Properties props = new Properties();
-            props.setProperty("nametype.id", "/book/book");
-            props.setProperty("nametype.name", "Book");
-            props.setProperty("url.query", "http://localhost:8983/solr/test-core/select?wt=xml&q={{QUERY}}&rows={{ROWS}}");
-            props.setProperty("url.document", "http://localhost:8983/solr/test-core/get?id={{id}}");
-            props.setProperty("field.id", "id");
-            props.setProperty("field.name", "title_display");
+            props.setProperty("datasource.solr.nametype.id", "/book/book");
+            props.setProperty("datasource.solr.nametype.name", "Book");
+            props.setProperty("datasource.solr.url.query", "http://localhost:8983/solr/test-core/select?wt=xml&q={{QUERY}}&rows={{ROWS}}");
+            props.setProperty("datasource.solr.url.document", "http://localhost:8983/solr/test-core/get?id={{id}}");
+            props.setProperty("datasource.solr.field.id", "id");
+            props.setProperty("datasource.solr.field.name", "title_display");
 
-            Config config = mock(Config.class);
-            when(config.getDataSourceProperties("solr")).thenReturn(props);
+            Config config = new Config();
+            config.merge(props);
             return config;
-        }
-
-        @Bean
-        public ThreadPoolFactory threadPoolFactory() {
-            return new ThreadPoolFactory();
         }
     }
 
