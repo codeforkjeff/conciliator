@@ -7,6 +7,7 @@ import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
 import javax.xml.parsers.SAXParser;
@@ -14,13 +15,12 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Data source for a Solr interface
  */
+@Component("solr")
 public class Solr extends WebServiceDataSource {
 
     public static final String PROP_URL_DOCUMENT = "url.document";
@@ -37,7 +37,7 @@ public class Solr extends WebServiceDataSource {
     private SAXParserFactory spf = SAXParserFactory.newInstance();
 
     @Override
-    public ServiceMetaDataResponse createServiceMetaDataResponse(Map<String, String> extraParams) {
+    public ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl) {
         return new SolrMetaDataResponse(getName(), getConfigProperties().getProperty(PROP_URL_DOCUMENT));
     }
 

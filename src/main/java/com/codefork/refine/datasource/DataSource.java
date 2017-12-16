@@ -1,35 +1,94 @@
 package com.codefork.refine.datasource;
 
 import com.codefork.refine.Config;
+import com.codefork.refine.ExtensionQuery;
+import com.codefork.refine.PropertyValueIdAndSettings;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.SearchQueryFactory;
+import com.codefork.refine.resources.CellList;
+import com.codefork.refine.resources.ExtensionResponse;
+import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 /**
- * A reconciliation data source.
+ * A super-generic reconciliation data source.
  */
 public abstract class DataSource {
 
-    private String name = this.getClass().getSimpleName();
-    private String configName;
+    protected Log log = LogFactory.getLog(this.getClass());
 
+    // human readable name
+    private String name = this.getClass().getSimpleName();
+
+    // key to use for config file properties (datasource.{configName})
+    private String configName = this.getClass().getSimpleName().toLowerCase();
+
+    @Autowired
     private Config config;
 
-    public void init(Config config) {
-        this.config = config;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    private SearchQueryFactory defaultSearchQueryFactory = new SearchQueryFactory() {
+        @Override
+        public SearchQuery createSearchQuery(JsonNode queryStruct) {
+            return new SearchQuery(queryStruct);
+        }
+
+        @Override
+        public SearchQuery createSearchQuery(String query, int limit, NameType nameType, String typeStrict) {
+            return new SearchQuery(query, limit, nameType, typeStrict);
+        }
+    };
+
+    @PostConstruct
+    public void init() {
+        Properties props = getConfigProperties();
+
+        if(props.containsKey("name")) {
+            setName(props.getProperty("name"));
+        }
     }
 
+    @PreDestroy
     public void shutdown() {
         // no-op
     }
 
+    @ExceptionHandler(ServiceNotImplementedException.class)
+    public ResponseEntity serviceNotImplemented(ServiceNotImplementedException ex, HttpServletRequest request) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public Log getLog() {
+        return log;
+    }
+
     public Config getConfig() {
         return config;
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
     }
 
     /**
@@ -60,16 +119,6 @@ public abstract class DataSource {
     }
 
     /**
-     * This provides a way for data sources to create and pass additional arbitrary data
-     * to the controller.
-     * @param request
-     * @return
-     */
-    public Map<String, String> parseRequestToExtraParams(HttpServletRequest request) {
-        return Collections.EMPTY_MAP;
-    }
-
-    /**
      * This is the main entry point for running a set of queries contained in a HTTP request.
      */
     public abstract Map<String, SearchResponse> search(Map<String, SearchQuery> queryEntries);
@@ -78,6 +127,111 @@ public abstract class DataSource {
      * Returns the service metadata that OpenRefine uses on its first request
      * to the service.
      */
-    public abstract ServiceMetaDataResponse createServiceMetaDataResponse(Map<String, String> extraParams);
+    public abstract ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl);
+
+    public SearchQueryFactory getSearchQueryFactory() {
+        return defaultSearchQueryFactory;
+    }
+
+    public SearchResponse querySingle(String query, SearchQueryFactory searchQueryFactory) {
+        log.debug("query=" + query);
+        try {
+            SearchQuery searchQuery;
+            if (query.startsWith("{")) {
+                JsonNode root = mapper.readTree(query);
+                searchQuery = searchQueryFactory.createSearchQuery(root);
+            } else {
+                searchQuery = searchQueryFactory.createSearchQuery(query, 3, null, "should");
+            }
+
+            Map<String, SearchQuery> queriesMap = new HashMap<>();
+            queriesMap.put("q0", searchQuery);
+
+            Map<String, SearchResponse> resultsMap = search(queriesMap);
+
+            return new SearchResponse(resultsMap.get("q0").getResult());
+        } catch (JsonProcessingException jse) {
+            log.error("Got an error processing JSON: " + jse.toString());
+        } catch (IOException ioe) {
+            log.error("Got IO error processing JSON: " + ioe.toString());
+        }
+        return null;
+    }
+
+    public Map<String, SearchResponse> queryMultiple(String queries, SearchQueryFactory searchQueryFactory) {
+        log.debug("queries=" + queries);
+        try {
+            JsonNode root = mapper.readTree(queries);
+
+            Map<String, SearchQuery> queriesMap = new HashMap<>();
+
+            for(Iterator<Map.Entry<String, JsonNode>> iter = root.fields(); iter.hasNext(); ) {
+                Map.Entry<String, JsonNode> fieldEntry = iter.next();
+
+                String indexKey = fieldEntry.getKey();
+                JsonNode queryStruct = fieldEntry.getValue();
+
+                SearchQuery searchQuery = searchQueryFactory.createSearchQuery(queryStruct);
+                queriesMap.put(indexKey, searchQuery);
+            }
+
+            Map<String, SearchResponse> resultsMap = search(queriesMap);
+
+            log.debug(String.format("response=%s", new DeferredJSON(resultsMap)));
+
+            return resultsMap;
+        } catch (JsonProcessingException jse) {
+            log.error("Got an error processing JSON: " + jse.toString());
+        } catch (IOException ioe) {
+            log.error("Got IO error processing JSON: " + ioe.toString());
+        }
+        return null;
+    }
+
+    public ExtensionResponse extend(ExtensionQuery query) throws ServiceNotImplementedException {
+        Map<String, CellList> rows = new HashMap<>();
+        for(String id : query.getIds()) {
+            rows.put(id, extend(id, query.getProperties()));
+        }
+        ExtensionResponse<String> response = new ExtensionResponse<>();
+        response.setRows(rows);
+        return response;
+    }
+
+    /**
+     * Subclasses should override and implement.
+     * @param id record id
+     * @param idsAndSettings list of property IDs and their settings, to be fetched
+     * @return a list of cells for the passed-in properties
+     * @throws ServiceNotImplementedException
+     */
+    public CellList extend(String id, List<PropertyValueIdAndSettings> idsAndSettings) throws ServiceNotImplementedException {
+        throw new ServiceNotImplementedException(
+                String.format("extend service not implemented for %s data source",
+                        getName()));
+    }
+
+    /**
+     * Overrides toString() to provide JSON representation of an object on-demand.
+     * This allows us to avoid doing the JSON serialization if the logger
+     * doesn't actually print it.
+     */
+    private class DeferredJSON {
+
+        private final Object o;
+
+        public DeferredJSON(Object o) {
+            this.o = o;
+        }
+
+        @Override
+        public String toString() {
+            try {
+                return mapper.writeValueAsString(o);
+            } catch (JsonProcessingException ex) {
+                return "[ERROR: Could not serialize object to JSON]";
+            }
+        }
+    }
 
 }

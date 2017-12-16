@@ -83,7 +83,7 @@ public class SolrParser extends XMLParser<SolrParseState> {
                     public void handle(SolrParseState parseState, String uri, String localName, String qName) {
                         if (SolrParseState.Field.NAME.equals(parseState.fieldBeingCaptured)) {
                             if(MultiValueFieldStrategy.CONCAT.equals(SolrParser.this.multiValueFieldStrategy)) {
-                                StringBuffer buf = new StringBuffer();
+                                StringBuilder buf = new StringBuilder();
                                 String delim = "";
                                 for(String s: parseState.multipleValues) {
                                     buf.append(delim);

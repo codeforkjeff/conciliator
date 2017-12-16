@@ -9,7 +9,7 @@ public class ParseState {
 
     public boolean captureChars = false;
 
-    public final List<Result> results = new ArrayList<Result>();
+    public final List<Result> results = new ArrayList<>();
     public Result result = null;
 
     /** buffer for collecting contents of an Element as parser does processing */

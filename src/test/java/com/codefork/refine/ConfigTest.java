@@ -11,11 +11,12 @@ public class ConfigTest {
     @Test
     public void testBasic() throws Exception {
         Properties properties = new Properties();
-        properties.setProperty("datasource.mysource.somekey", "2000");
+        properties.setProperty("datasource.viaf.somekey", "2000");
         properties.setProperty("junk", "junk");
 
-        Config config = new Config(properties);
-        Properties dsProps = config.getDataSourceProperties("mysource");
+        Config config = new Config();
+        config.merge(properties);
+        Properties dsProps = config.getDataSourceProperties("viaf");
         assertEquals(1, dsProps.size());
         assertEquals(dsProps.getProperty("somekey"), "2000");
 

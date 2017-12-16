@@ -4,7 +4,7 @@
 
     <groupId>com.codefork.conciliator</groupId>
     <artifactId>conciliator</artifactId>
-    <version>2.5.0</version>
+    <version>3.0.0-alpha</version>
     <packaging>jar</packaging>
 
     <name>conciliator</name>
@@ -17,13 +17,33 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.7.RELEASE</version>
+        <version>1.5.9.RELEASE</version>
     </parent>
 
     <dependencies>
         <dependency>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <version>1.5.9.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -33,8 +53,8 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
+            <artifactId>mockito-core</artifactId>
+            <version>2.13.0</version>
         </dependency>
     </dependencies>
 
@@ -45,7 +65,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -55,7 +76,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.6.201602180812</version>
+                <version>0.7.9</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>

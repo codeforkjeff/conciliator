@@ -14,7 +14,7 @@ public class VIAFResult {
 
     private String viafId;
     private VIAFNameType nameType;
-    private List<NameEntry> nameEntries = new ArrayList<NameEntry>();
+    private List<NameEntry> nameEntries = new ArrayList<>();
 
     public String getViafId() {
         return viafId;

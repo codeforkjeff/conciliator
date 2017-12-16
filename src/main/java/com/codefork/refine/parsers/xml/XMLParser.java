@@ -16,10 +16,10 @@ import java.util.Stack;
  */
 public abstract class XMLParser<R extends ParseState> extends DefaultHandler {
 
-    protected Map<String, StartElementHandler<R>> startElementHandlers = new HashMap<String, StartElementHandler<R>>();
-    protected Map<String, EndElementHandler<R>> endElementHandlers = new HashMap<String, EndElementHandler<R>>();
+    protected Map<String, StartElementHandler<R>> startElementHandlers = new HashMap<>();
+    protected Map<String, EndElementHandler<R>> endElementHandlers = new HashMap<>();
 
-    public final Stack<String> path = new Stack<String>();
+    public final Stack<String> path = new Stack<>();
 
     protected R parseState;
 
@@ -32,9 +32,7 @@ public abstract class XMLParser<R extends ParseState> extends DefaultHandler {
      * own ParseState subclasses.
      * @return
      */
-    public R createParseState() {
-        return (R) new ParseState();
-    }
+    public abstract R createParseState();
 
     public List<Result> getResults() {
         return parseState.results;
@@ -68,7 +66,7 @@ public abstract class XMLParser<R extends ParseState> extends DefaultHandler {
         String path = getPath();
         //System.out.println(path);
 
-        StartElementHandler handler = startElementHandlers.get(path);
+        StartElementHandler<R> handler = startElementHandlers.get(path);
         if(handler != null) {
             handler.handle(parseState, uri, localName, qName, attributes);
         }
@@ -80,7 +78,7 @@ public abstract class XMLParser<R extends ParseState> extends DefaultHandler {
         String path = getPath();
         //System.out.println(path);
 
-        EndElementHandler handler = endElementHandlers.get(path);
+        EndElementHandler<R> handler = endElementHandlers.get(path);
         if(handler != null) {
             handler.handle(parseState, uri, localName, qName);
         }

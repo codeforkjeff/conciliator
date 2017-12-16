@@ -106,7 +106,7 @@ instructions.
 
 ## Running Conciliator on Your Own Computer
 
-Install Java 1.7 or greater if you don't already have it.
+Install Java 1.8 or greater if you don't already have it.
 
 Download the .jar file for the
 [latest release](https://github.com/codeforkjeff/conciliator/releases). Alternatively,
@@ -193,22 +193,22 @@ A docker image created by [tobinski](https://github.com/tobinski) is available h
 
 ## Creating Your Own Data Source
 
-1. Clone this repository to get the source code.
+1. Clone this repository to get the source code. The code you create
+   in the next steps should live under the `com.codefork.refine`
+   package so that Spring's auto-scanning picks it up.
 
-2. Create a class for your data source that extends
-   `com.codefork.refine.datasource.WebServiceDataSource`. Implement
-   the abstract methods as required. Write a test or two if you like.
+2. Create a class for your data source that extends `DataSource` for
+   very bare-bones functionality, or `WebServiceDataSource` if you are
+   making requests to another web service. See the other data sources
+   for some template code. Implement the abstract methods as
+   required. Write a test or two if you like.
+   
+3. Create a controller that autowires your new DataSource and hooks up
+   a unique path, e.g. `/reconcile/new_source`. See VIAFController for
+   an example.
 
-3. Create a class for the service metadata response, extending
-   `com.codefork.refine.resources.ServiceMetaDataResponse`
-
-4. Register your new data source class in the `conciliator.properties`
-   file by adding the following lines:
-
-   ```
-   datasource.new_source=com.company.MyDataSource
-   datasource.new_source.name=My DataSource
-   ```
+4. Set some default properties in `Config` if your data source has any
+   settings you want to be configurable.
 
 5. Build a new .jar by running `mvn package`. Run the .jar file as in
    the instructions above, and you should be able to access the service

@@ -1,19 +1,22 @@
 package com.codefork.refine.datasource;
 
-import com.codefork.refine.Cache;
-import com.codefork.refine.CacheManager;
+import com.codefork.refine.Application;
+import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchResult;
 import com.codefork.refine.ThreadPool;
+import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -25,18 +28,29 @@ public abstract class WebServiceDataSource extends DataSource {
 
     public static final boolean DEFAULT_CACHE_ENABLED = false;
 
-    private Log log = LogFactory.getLog(this.getClass());
-
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
-    private CacheManager cacheManager = new CacheManager(getName() + " Cache");
 
-    private ThreadPool threadPool = createThreadPool();
+    @Autowired
+    private CacheManager cacheManager;
 
-    private ConnectionFactory connectionFactory = new ConnectionFactory();
+    @Autowired
+    private ThreadPoolFactory threadPoolFactory;
 
-    public Log getLog() {
-        return log;
-    }
+    private ThreadPool threadPool;
+
+    @Autowired
+    private ConnectionFactory connectionFactory;
+
+    @Override
+    public void init() {
+        super.init();
+        this.threadPool = createThreadPool();
+
+        Properties props = getConfig().getProperties();
+        if(props.containsKey(Config.PROP_CACHE_ENABLED)) {
+            setCacheEnabled(Boolean.valueOf(props.getProperty(Config.PROP_CACHE_ENABLED)));
+        }
+   }
 
     public boolean isCacheEnabled() {
         return cacheEnabled;
@@ -48,39 +62,18 @@ public abstract class WebServiceDataSource extends DataSource {
      */
     public void setCacheEnabled(boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
-        if(isCacheEnabled()) {
-            cacheManager.startExpireThread();
-        } else {
-            cacheManager.stopExpireThread();
-        }
-    }
-
-    public void setCacheMaxSize(int maxSize) {
-        cacheManager.getCache().setMaxSize(maxSize);
-    }
-
-    public int getCacheMaxSize() {
-        return cacheManager.getCache().getMaxSize();
-    }
-
-    public void setCacheLifetime(int lifetime) {
-        cacheManager.getCache().setLifetime(lifetime);
-    }
-
-    public int getCacheLifetime() {
-        return cacheManager.getCache().getLifetime();
-    }
-
-    public void expireCache() {
-        cacheManager.expireCache();
     }
 
     public CacheManager getCacheManager() {
         return cacheManager;
     }
 
-    public ThreadPool createThreadPool() {
-        return new ThreadPool();
+    protected ThreadPoolFactory getThreadPoolFactory() {
+        return threadPoolFactory;
+    }
+
+    protected ThreadPool createThreadPool() {
+        return threadPoolFactory.createThreadPool();
     }
 
     public ThreadPool getThreadPool() {
@@ -101,10 +94,8 @@ public abstract class WebServiceDataSource extends DataSource {
      * and the thread pool.
      */
     public void shutdown() {
-        if(isCacheEnabled()) {
-            getCacheManager().stopExpireThread();
-        }
-        getThreadPool().shutdown();
+        super.shutdown();
+        getThreadPoolFactory().releaseThreadPool(getThreadPool());
     }
 
     /**
@@ -135,7 +126,7 @@ public abstract class WebServiceDataSource extends DataSource {
     public Map<String, SearchResponse> search(Map<String, SearchQuery> queryEntries) {
         long start = System.currentTimeMillis();
 
-        Map<String, SearchResponse> allResults = new HashMap<String, SearchResponse>();
+        Map<String, SearchResponse> allResults = new HashMap<>();
 
         Map<String, SearchResult> results = searchUsingThreadPool(queryEntries);
 
@@ -150,7 +141,7 @@ public abstract class WebServiceDataSource extends DataSource {
         }
 
         // figure out which queries need to be done again
-        Map<String, SearchQuery> secondTries = new HashMap<String, SearchQuery>();
+        Map<String, SearchQuery> secondTries = new HashMap<>();
         for(Map.Entry<String, SearchQuery> queryEntry : queryEntries.entrySet()) {
             String indexKey = queryEntry.getKey();
             if(!results.containsKey(indexKey)) {
@@ -182,7 +173,7 @@ public abstract class WebServiceDataSource extends DataSource {
             if(searchResult.isSuccessful()) {
                 allResults.put(indexKey, new SearchResponse(searchResult.getResults()));
             } else {
-                allResults.put(indexKey, new SearchResponse(new ArrayList<Result>()));
+                allResults.put(indexKey, new SearchResponse(new ArrayList<>()));
             }
         }
 
@@ -199,15 +190,15 @@ public abstract class WebServiceDataSource extends DataSource {
      * @return
      */
     private Map<String, SearchResult> searchUsingThreadPool(Map<String, SearchQuery> queryEntries) {
-        Map<String, SearchResult> results = new HashMap<String, SearchResult>();
+        Map<String, SearchResult> results = new HashMap<>();
 
-        List<SearchTask> tasks = new ArrayList<SearchTask>();
+        List<SearchTask> tasks = new ArrayList<>();
         for (Map.Entry<String, SearchQuery> queryEntry : queryEntries.entrySet()) {
             SearchTask task = createSearchTask(queryEntry.getKey(), queryEntry.getValue());
             tasks.add(task);
         }
 
-        List<Future<SearchResult>> futures = new ArrayList<Future<SearchResult>>();
+        List<Future<SearchResult>> futures = new ArrayList<>();
         for (SearchTask task : tasks) {
             futures.add(getThreadPool().submit(task));
         }
@@ -235,17 +226,13 @@ public abstract class WebServiceDataSource extends DataSource {
      */
     public List<Result> searchCheckCache(SearchQuery query) throws Exception {
         if (isCacheEnabled()) {
-            Cache<String, List<Result>> cacheRef = getCacheManager().getCache();
+            Cache cache = getCacheManager().getCache(Application.CACHE_DEFAULT);
 
             String key = query.getHashKey();
-            List<Result> results = cacheRef.get(key);
-            if (results == null) {
-                results = search(query);
-                // only cache if search was successful
-                cacheRef.put(key, results);
-            } else {
-                log.debug("Cache hit for: " + key);
-            }
+            List<Result> results = (List<Result>) cache.get(key, () -> {
+                log.info("Cache miss for: " + key);
+                return search(query);
+            });
             return results;
         }
 

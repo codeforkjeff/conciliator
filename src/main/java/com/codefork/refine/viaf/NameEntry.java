@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class NameEntry {
     private String name;
-    private List<NameSource> nameSources = new ArrayList<NameSource>();
+    private List<NameSource> nameSources = new ArrayList<>();
 
     public String getName() {
         return name;

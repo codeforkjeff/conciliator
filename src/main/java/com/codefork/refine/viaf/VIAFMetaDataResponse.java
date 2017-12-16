@@ -2,6 +2,7 @@ package com.codefork.refine.viaf;
 
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
+import com.codefork.refine.resources.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ public class VIAFMetaDataResponse extends ServiceMetaDataResponse {
     private final static String IDENTIFIER_SPACE = "http://rdf.freebase.com/ns/user/hangy/viaf";
     private final static View VIEW = new View("http://viaf.org/viaf/{{id}}");
     private final static String SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
-    private final static List<NameType> DEFAULT_TYPES = new ArrayList<NameType>();
+    private final static List<NameType> DEFAULT_TYPES = new ArrayList<>();
 
     static {
         for(VIAFNameType nameType : VIAFNameType.values()) {
@@ -19,30 +20,18 @@ public class VIAFMetaDataResponse extends ServiceMetaDataResponse {
         }
     }
 
-    public VIAFMetaDataResponse(String baseServiceName, String source) {
+    public VIAFMetaDataResponse(String baseServiceName, String source, String baseUrl) {
         setName(baseServiceName);
         if(source != null) {
             setName(getName() + " - " + source);
         }
+        setIdentifierSpace(IDENTIFIER_SPACE);
+        setSchemaSpace(SCHEMA_SPACE);
+        setView(VIEW);
+        setDefaultTypes(DEFAULT_TYPES);
+//        setExtend(new Extend(
+//                new ProposeProperties(baseUrl,
+//                        "/propose_properties")));
     }
 
-    @Override
-    public String getIdentifierSpace() {
-        return IDENTIFIER_SPACE;
-    }
-
-    @Override
-    public String getSchemaSpace() {
-        return SCHEMA_SPACE;
-    }
-
-    @Override
-    public View getView() {
-        return VIEW;
-    }
-
-    @Override
-    public List<NameType> getDefaultTypes() {
-        return DEFAULT_TYPES;
-    }
 }

@@ -57,7 +57,7 @@ public class ThreadPool {
     public void start() {
         if(executor == null || executor.isShutdown()) {
             log.info("Starting thread pool, size = " + initialPoolSize);
-            executor = new ThreadPoolExecutor(initialPoolSize, initialPoolSize, 0, TimeUnit.HOURS, new LinkedBlockingQueue<Runnable>());
+            executor = new ThreadPoolExecutor(initialPoolSize, initialPoolSize, 0, TimeUnit.HOURS, new LinkedBlockingQueue<>());
         } else {
             log.info("Thread pool already started, doing nothing.");
         }
@@ -88,7 +88,7 @@ public class ThreadPool {
         return executor.getCorePoolSize();
     }
 
-    private void setPoolSize(int newSize) {
+    public void setPoolSize(int newSize) {
         executor.setCorePoolSize(newSize);
         executor.setMaximumPoolSize(newSize);
     }

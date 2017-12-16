@@ -40,7 +40,7 @@ public class Result {
     public Result(String id, String name, NameType nameType, double score, boolean match) {
         this.id = id;
         this.name = name;
-        this.type = new ArrayList<NameType>();
+        this.type = new ArrayList<>();
         this.type.add(nameType);
         this.score = score;
         this.match = match;

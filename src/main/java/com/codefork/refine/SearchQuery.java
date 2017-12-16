@@ -4,8 +4,6 @@ package com.codefork.refine;
 import com.codefork.refine.resources.NameType;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,15 +24,30 @@ public class SearchQuery {
     private NameType nameType;
     private String typeStrict;
     private Map<String, PropertyValue> properties;
-    private Map<String, String> extraParams;
 
-    /**
-     * Factory method that builds SearchQuery instances out of the JSON structure
-     * representing a single name query.
-     * @return SearchQuery
-     */
-    public static SearchQuery createFromJson(JsonNode queryStruct, Map<String, String> extraParams) {
+    // below are data source specific search parameters; we don't subclass SearchQuery
+    // b/c it's a nightmare to get the types right in all the code in the DataSource
+    // hierarchy
 
+    private String viafSource = null;
+    private boolean isViafProxyMode = false;
+
+    private boolean isOrcidSmartNamesMode = false;
+
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict,
+                       Map<String, PropertyValue> properties) {
+        this.query = query;
+        this.limit = limit;
+        this.nameType = nameType;
+        this.typeStrict = typeStrict;
+        this.properties = properties;
+    }
+
+    public SearchQuery(String query, int limit, NameType nameType, String typeStrict) {
+        this(query, limit, nameType, typeStrict, null);
+    }
+
+    public SearchQuery(JsonNode queryStruct) {
         int limit = queryStruct.path("limit").asInt();
         if(limit == 0) {
             limit = 3;
@@ -51,7 +64,7 @@ public class SearchQuery {
             typeStrict = queryStruct.path("type_strict").asText();
         }
 
-        Map<String, PropertyValue> properties = new HashMap<String, PropertyValue>();
+        Map<String, PropertyValue> properties = new HashMap<>();
         if(!queryStruct.path("properties").isMissingNode()) {
             Iterator<JsonNode> propObjects = queryStruct.path("properties").elements();
             while(propObjects.hasNext()) {
@@ -79,39 +92,11 @@ public class SearchQuery {
             }
         }
 
-        SearchQuery searchQuery = new SearchQuery(
-                queryStruct.path("query").asText().trim(),
-                limit,
-                nameType,
-                typeStrict,
-                properties,
-                extraParams
-        );
-
-        return searchQuery;
-    }
-
-    public SearchQuery(String query, int limit, NameType nameType, String typeStrict,
-                       Map<String, PropertyValue> properties,
-                       Map<String, String> extraParams) {
-        this.query = query;
+        this.query = queryStruct.path("query").asText().trim();
         this.limit = limit;
         this.nameType = nameType;
         this.typeStrict = typeStrict;
         this.properties = properties;
-        this.extraParams = extraParams;
-    }
-
-    public SearchQuery(String query, int limit, NameType nameType, String typeStrict,
-                       Map<String, String> extraParams) {
-        this(query, limit, nameType, typeStrict, null, extraParams);
-    }
-
-    /**
-     * Constructor setting proxyMode = false
-     */
-    public SearchQuery(String query, int limit, NameType nameType, String typeStrict) {
-        this(query, limit, nameType, typeStrict, null, Collections.EMPTY_MAP);
     }
 
     public String getQuery() {
@@ -154,25 +139,40 @@ public class SearchQuery {
         this.properties = properties;
     }
 
-    public Map<String, String> getExtraParams() {
-        return extraParams;
+    public String getViafSource() {
+        return viafSource;
+    }
+
+    public void setViafSource(String viafSource) {
+        this.viafSource = viafSource;
+    }
+
+    public boolean isViafProxyMode() {
+        return isViafProxyMode;
+    }
+
+    public void setViafProxyMode(boolean viafProxyMode) {
+        isViafProxyMode = viafProxyMode;
+    }
+
+    public boolean isOrcidSmartNamesMode() {
+        return isOrcidSmartNamesMode;
+    }
+
+    public void setOrcidSmartNamesMode(boolean orcidSmartNamesMode) {
+        isOrcidSmartNamesMode = orcidSmartNamesMode;
     }
 
     public String getHashKey() {
-        StringBuilder buf = new StringBuilder();
-        buf.append((query != null ? query : "") + "|" +
+        String buf = ((query != null ? query : "") + "|" +
                 limit + "|" +
                 (nameType != null ? nameType.getId() : "") + "|" +
-                (typeStrict != null ? typeStrict : ""));
+                (typeStrict != null ? typeStrict : "") + "|" +
+                (viafSource != null ? viafSource : "") + "|" +
+                String.valueOf(isViafProxyMode) + "|" +
+                String.valueOf(isOrcidSmartNamesMode));
 
-        Map<String, String> extraParams = getExtraParams();
-        Object[] keysAsObj = extraParams.keySet().toArray();
-        String[] keys = Arrays.copyOf(keysAsObj, keysAsObj.length, String[].class);
-        Arrays.sort(keys, String.CASE_INSENSITIVE_ORDER);
-        for(String key : keys) {
-            buf.append("|" + key + "=" + extraParams.get(key));
-        }
-        return buf.toString();
+        return buf;
     }
 
 }
