@@ -254,7 +254,12 @@ This code drew inspiration from these other projects:
 
 ## Do you use this thing??
 
-If so, please take a few seconds to leave a comment on
+Apparently, you do. Here's a bibliography of things that reference conciliator:
+
+https://github.com/codeforkjeff/conciliator/wiki
+
+If you use conciliator, please take a few seconds to leave a comment
+on
 [this page](http://codefork.com/blog/index.php/2016/10/24/announcing-conciliator/). Hearing
 from users really motivates me to continue improving this project.
 
