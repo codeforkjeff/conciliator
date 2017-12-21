@@ -1,14 +1,19 @@
 package com.codefork.refine.openlibrary;
 
+import com.codefork.refine.Config;
 import com.codefork.refine.PropertyValue;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.StringUtil;
+import com.codefork.refine.ThreadPoolFactory;
+import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
@@ -23,9 +28,10 @@ public class OpenLibrary extends WebServiceDataSource {
     private final ObjectMapper mapper = new ObjectMapper();
     private static final NameType bookType = new NameType("/book/book", "Book");
 
-    @Override
-    public void init() {
-        super.init();
+    @Autowired
+    public OpenLibrary(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
+        super(config, cacheManager, threadPoolFactory, connectionFactory);
+
         // openlibrary seems to enforce non-simultaneous queries
         getThreadPool().setPoolSize(1);
     }

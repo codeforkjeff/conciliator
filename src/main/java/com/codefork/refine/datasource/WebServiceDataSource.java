@@ -8,7 +8,6 @@ import com.codefork.refine.ThreadPool;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
@@ -30,20 +29,24 @@ public abstract class WebServiceDataSource extends DataSource {
 
     private boolean cacheEnabled = DEFAULT_CACHE_ENABLED;
 
-    @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
     private ThreadPoolFactory threadPoolFactory;
 
     private ThreadPool threadPool;
 
-    @Autowired
     private ConnectionFactory connectionFactory;
 
-    @Override
-    public void init() {
-        super.init();
+    public WebServiceDataSource(
+            Config config,
+            CacheManager cacheManager,
+            ThreadPoolFactory threadPoolFactory,
+            ConnectionFactory connectionFactory) {
+        super(config);
+        this.cacheManager = cacheManager;
+        this.threadPoolFactory = threadPoolFactory;
+        this.connectionFactory = connectionFactory;
+
         this.threadPool = createThreadPool();
 
         Properties props = getConfig().getProperties();

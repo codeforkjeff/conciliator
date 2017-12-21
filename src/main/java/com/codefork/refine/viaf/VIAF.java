@@ -1,9 +1,14 @@
 package com.codefork.refine.viaf;
 
+import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchQueryFactory;
+import com.codefork.refine.ThreadPoolFactory;
+import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.resources.NameType;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 /**
@@ -56,6 +61,11 @@ public class VIAF extends VIAFBase {
             searchQuery.setViafProxyMode(true);
             return searchQuery;
         }
+    }
+
+    @Autowired
+    public VIAF(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
+        super(config, cacheManager, threadPoolFactory, connectionFactory);
     }
 
 }

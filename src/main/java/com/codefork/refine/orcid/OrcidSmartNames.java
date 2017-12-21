@@ -1,10 +1,15 @@
 package com.codefork.refine.orcid;
 
+import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchQueryFactory;
+import com.codefork.refine.ThreadPoolFactory;
+import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
@@ -16,6 +21,11 @@ public class OrcidSmartNames extends OrcidBase {
 
     SmartNamesModeSearchQueryFactory smartNamesModeSearchQueryFactory =
             new SmartNamesModeSearchQueryFactory();
+
+    @Autowired
+    public OrcidSmartNames(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
+        super(config, cacheManager, threadPoolFactory, connectionFactory);
+    }
 
     @Override
     public SearchQueryFactory getSearchQueryFactory() {

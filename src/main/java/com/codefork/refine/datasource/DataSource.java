@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -43,7 +42,6 @@ public abstract class DataSource {
     // key to use for config file properties (datasource.{configName})
     private String configName = this.getClass().getSimpleName().toLowerCase();
 
-    @Autowired
     private Config config;
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -60,8 +58,10 @@ public abstract class DataSource {
         }
     };
 
-    @PostConstruct
-    public void init() {
+    @Autowired
+    public DataSource(Config config) {
+        setConfig(config);
+
         Properties props = getConfigProperties();
 
         if(props.containsKey("name")) {

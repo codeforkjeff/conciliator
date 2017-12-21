@@ -1,13 +1,18 @@
 package com.codefork.refine.viaf;
 
+import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.ThreadPool;
+import com.codefork.refine.ThreadPoolFactory;
+import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.codefork.refine.viaf.sources.NonVIAFSource;
 import com.codefork.refine.viaf.sources.Source;
 import com.codefork.refine.viaf.sources.VIAFSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.web.util.UriUtils;
 import org.xml.sax.SAXException;
 
@@ -36,9 +41,9 @@ public abstract class VIAFBase extends WebServiceDataSource {
     private VIAFSource viafSource = null;
     private Map<String, NonVIAFSource> nonViafSources = new HashMap<>();
 
-    @Override
-    public void init() {
-        super.init();
+    @Autowired
+    public VIAFBase(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
+        super(config, cacheManager, threadPoolFactory, connectionFactory);
 
         setCacheEnabled(true);
 

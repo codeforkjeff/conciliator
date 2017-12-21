@@ -1,12 +1,17 @@
 package com.codefork.refine.orcid;
 
+import com.codefork.refine.Config;
 import com.codefork.refine.PropertyValue;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.ThreadPoolFactory;
+import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.web.util.UriUtils;
 
 import javax.xml.parsers.SAXParser;
@@ -27,6 +32,11 @@ public abstract class OrcidBase extends WebServiceDataSource {
     Log log = LogFactory.getLog(Orcid.class);
 
     private SAXParserFactory spf = SAXParserFactory.newInstance();
+
+    @Autowired
+    public OrcidBase(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
+        super(config, cacheManager, threadPoolFactory, connectionFactory);
+    }
 
     @Override
     public ServiceMetaDataResponse createServiceMetaDataResponse(String baseUrl) {
