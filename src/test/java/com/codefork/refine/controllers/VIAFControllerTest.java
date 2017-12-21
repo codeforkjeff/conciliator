@@ -123,18 +123,21 @@ public class VIAFControllerTest {
 
         JsonNode result1 = results.get(0);
         assertEquals("Wittgenstein, Ludwig, 1889-1951", result1.get("name").asText());
+        assertEquals("/people/person", result1.get("type").get(0).get("id").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
         assertEquals("24609378", result1.get("id").asText());
         assertFalse(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
         assertEquals("Anscombe, G. E. M. (Gertrude Elizabeth Margaret)", result2.get("name").asText());
+        assertEquals("/people/person", result2.get("type").get(0).get("id").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
         assertEquals("59078032", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
         assertEquals("Klossowski, Pierre, 1905-2001", result3.get("name").asText());
+        assertEquals("/people/person", result3.get("type").get(0).get("id").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
         assertEquals("27066848", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
@@ -151,18 +154,21 @@ public class VIAFControllerTest {
 
         JsonNode result1 = results.get(0);
         assertEquals("Wittgenstein, Ludwig, 1889-1951.", result1.get("name").asText());
+        assertEquals("/people/person", result1.get("type").get(0).get("id").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
         assertEquals("24609378", result1.get("id").asText());
         assertFalse(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
         assertEquals("Anscombe, Gertrude Elizabeth Margaret, 1919-2001.", result2.get("name").asText());
+        assertEquals("/people/person", result2.get("type").get(0).get("id").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
         assertEquals("59078032", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
         assertEquals("Klossowski, Pierre, 1905-2001.", result3.get("name").asText());
+        assertEquals("/people/person", result3.get("type").get(0).get("id").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
         assertEquals("27066848", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
@@ -185,18 +191,21 @@ public class VIAFControllerTest {
 
         JsonNode result1 = results.get(0);
         assertEquals("Wittgenstein, Ludwig, 1889-1951.", result1.get("name").asText());
+        assertEquals("/people/person", result1.get("type").get(0).get("id").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
         assertEquals("24609378", result1.get("id").asText());
         assertFalse(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
         assertEquals("Anscombe, Gertrude Elizabeth Margaret, 1919-2001.", result2.get("name").asText());
+        assertEquals("/people/person", result2.get("type").get(0).get("id").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
         assertEquals("59078032", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
         assertEquals("Klossowski, Pierre, 1905-2001.", result3.get("name").asText());
+        assertEquals("/people/person", result3.get("type").get(0).get("id").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
         assertEquals("27066848", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
@@ -220,18 +229,21 @@ public class VIAFControllerTest {
 
         JsonNode result1 = results.get(0);
         assertEquals("Steinbeck, John, 1902-1968", result1.get("name").asText());
+        assertEquals("/people/person", result1.get("type").get(0).get("id").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
         assertEquals("96992551", result1.get("id").asText());
         assertFalse(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
         assertEquals("Steinbeck, John 1946-1991", result2.get("name").asText());
+        assertEquals("/people/person", result2.get("type").get(0).get("id").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
         assertEquals("19893647", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
         assertEquals("Steinbeck, John, 1902-1968. | Of mice and men.", result3.get("name").asText());
+        assertEquals("/book/book", result3.get("type").get(0).get("id").asText());
         assertEquals("Work", result3.get("type").get(0).get("name").asText());
         assertEquals("180993990", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
@@ -255,18 +267,21 @@ public class VIAFControllerTest {
 
         JsonNode result1 = results.get(0);
         assertEquals("Nabokov, Vladimir Vladimirovič", result1.get("name").asText());
+        assertEquals("/people/person", result1.get("type").get(0).get("id").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
         assertEquals("27069388", result1.get("id").asText());
         assertFalse(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
         assertEquals("Nabokov, Vladimir Vladimirovič | Lolita", result2.get("name").asText());
+        assertEquals("/book/book", result2.get("type").get(0).get("id").asText());
         assertEquals("Work", result2.get("type").get(0).get("name").asText());
         assertEquals("176671347", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
         assertEquals("Nabokov, Vladimir Vladimirovič | Govori, sjećanje!", result3.get("name").asText());
+        assertEquals("/book/book", result3.get("type").get(0).get("id").asText());
         assertEquals("Work", result3.get("type").get(0).get("name").asText());
         assertEquals("183561595", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
@@ -289,18 +304,21 @@ public class VIAFControllerTest {
 
         JsonNode result1 = results.get(0);
         assertEquals("Shakespeare, William, 1564-1616.", result1.get("name").asText());
+        assertEquals("/people/person", result1.get("type").get(0).get("id").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
         assertEquals("96994048", result1.get("id").asText());
         assertTrue(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
         assertEquals("Pasternak, Boris Leonidovich, 1890-1960.", result2.get("name").asText());
+        assertEquals("/people/person", result2.get("type").get(0).get("id").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
         assertEquals("68933968", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
         assertEquals("Hauptmann, Gerhart, 1862-1946.", result3.get("name").asText());
+        assertEquals("/people/person", result3.get("type").get(0).get("id").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
         assertEquals("71404832", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());

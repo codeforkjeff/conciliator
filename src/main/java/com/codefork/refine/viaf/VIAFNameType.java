@@ -3,6 +3,10 @@ package com.codefork.refine.viaf;
 
 import com.codefork.refine.resources.NameType;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * Different types of names. Note that this is for the application's internal
  * use; see NameType (and the asNameType() method in this enum) for a
@@ -46,8 +50,12 @@ public enum VIAFNameType {
     }
 
     public NameType asNameType() {
-        return new NameType(getId(), getDisplayName());
+        return asNameTypes.get(getId());
     }
+
+    private static Map<String, NameType> asNameTypes = Arrays.stream(VIAFNameType.values())
+            .map(viafNameType -> new NameType(viafNameType.getId(), viafNameType.getDisplayName()))
+            .collect(Collectors.toMap(item -> item.getId(), item -> item));
 
     public static VIAFNameType getByViafCode(String viafCodeArg) {
         for(VIAFNameType nameType: VIAFNameType.values()) {
