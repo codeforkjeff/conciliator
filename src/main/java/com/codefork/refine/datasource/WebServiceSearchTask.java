@@ -3,8 +3,6 @@ package com.codefork.refine.datasource;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchResult;
 import com.codefork.refine.resources.Result;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
 
@@ -14,8 +12,6 @@ import java.util.List;
  * methods.
  */
 public class WebServiceSearchTask implements SearchTask {
-
-    private Log log = LogFactory.getLog(WebServiceSearchTask.class);
 
     private WebServiceDataSource dataSource;
     private String key;
@@ -45,7 +41,7 @@ public class WebServiceSearchTask implements SearchTask {
         try {
             results = dataSource.searchCheckCache(searchQuery);
         } catch(Exception e) {
-            log.error(String.format("error for query=%s", searchQuery.getQuery()), e);
+            dataSource.getLog().error(String.format("error for query=%s", searchQuery.getQuery()), e);
             if (e.toString().contains("HTTP response code: 429")) {
                 return new SearchResult(key, SearchResult.ErrorType.TOO_MANY_REQUESTS);
             }

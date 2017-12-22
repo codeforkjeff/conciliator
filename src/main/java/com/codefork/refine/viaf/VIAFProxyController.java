@@ -1,8 +1,8 @@
-package com.codefork.refine.controllers;
+package com.codefork.refine.viaf;
 
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.viaf.VIAF;
-import com.codefork.refine.viaf.VIAFMetaDataResponse;
+import com.codefork.refine.viaf.VIAFProxyModeMetaDataResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,37 +18,33 @@ import java.util.Map;
  * because of the additional source param. Ugh.
  */
 @Controller
-@RequestMapping("/reconcile/viaf/{source}")
-public class VIAFSourceSpecificController {
+@RequestMapping("/reconcile/viafproxy/{source}")
+public class VIAFProxyController {
 
     @Autowired
     VIAF viaf;
 
-    // These /reconcile/viaf/{source} mappings are gross; it would be better to handle
-    // separate controller in a separate controller, but we can't subclass VIAF b/c
-    // we need the RequestMappings to go to new methods containing the additional source arg.
-
     @RequestMapping(value = { "", "/" })
     @ResponseBody
-    public VIAFMetaDataResponse sourceSpecificServiceMetaData(
+    public VIAFProxyModeMetaDataResponse proxyModeServiceMetaData(
             HttpServletRequest request,
             @PathVariable String source) {
         String baseUrl = request.getRequestURL().toString();
-        return new VIAFMetaDataResponse("VIAF", source, baseUrl);
+        return new VIAFProxyModeMetaDataResponse(viaf.findNonViafSource(source), baseUrl);
     }
 
     @RequestMapping(value = { "", "/" }, params = "query")
     @ResponseBody
-    public SearchResponse sourceSpecificQuerySingle(
+    public SearchResponse proxyModeQuerySingle(
             @PathVariable String source, @RequestParam(value = "query") String query) {
-        return viaf.querySingle(query, new VIAF.SourceSpecificSearchQueryFactory(source));
+        return viaf.querySingle(query, new VIAF.ProxyModeSearchQueryFactory(source));
     }
 
     @RequestMapping(value = { "", "/" }, params = "queries")
     @ResponseBody
-    public Map<String, SearchResponse> sourceSpecificQueryMultiple(
+    public Map<String, SearchResponse> proxyModeQueryMultiple(
             @PathVariable String source, @RequestParam(value = "queries") String queries) {
-        return viaf.queryMultiple(queries, new VIAF.SourceSpecificSearchQueryFactory(source));
+        return viaf.queryMultiple(queries, new VIAF.ProxyModeSearchQueryFactory(source));
     }
 
 }
