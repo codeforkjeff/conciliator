@@ -4,6 +4,9 @@ package com.codefork.refine.resources;
 /**
  * Name Types are a JSON object found in the service metadata
  * and in the results data.
+ * TODO: this should probably be renamed to something more generic;
+ * the id/name combo is used in at least 2 diff places to represent
+ * name types but also Properties
  */
 public class NameType {
 

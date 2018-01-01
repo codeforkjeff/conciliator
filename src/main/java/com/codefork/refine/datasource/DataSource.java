@@ -6,8 +6,10 @@ import com.codefork.refine.PropertyValueIdAndSettings;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchQueryFactory;
 import com.codefork.refine.resources.CellList;
+import com.codefork.refine.resources.ColumnMetaData;
 import com.codefork.refine.resources.ExtensionResponse;
 import com.codefork.refine.resources.NameType;
+import com.codefork.refine.resources.ProposePropertiesResponse;
 import com.codefork.refine.resources.SearchResponse;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -188,13 +191,35 @@ public abstract class DataSource {
         return null;
     }
 
+    public ProposePropertiesResponse proposeProperties(String type, int limit)
+            throws ServiceNotImplementedException {
+        throw new ServiceNotImplementedException(
+                String.format("propose properties service not implemented for %s data source",
+                        getName()));
+    }
+
     public ExtensionResponse extend(ExtensionQuery query) throws ServiceNotImplementedException {
         Map<String, CellList> rows = new HashMap<>();
         for(String id : query.getIds()) {
             rows.put(id, extend(id, query.getProperties()));
         }
+
+        // TODO: move column metadata generation into separate method
+        List<ColumnMetaData> meta = new ArrayList<>();
+        for(PropertyValueIdAndSettings prop : query.getProperties()) {
+            ColumnMetaData col = new ColumnMetaData();
+            col.setId(prop.getId());
+            col.setName("isbn");
+            col.setType(new NameType("isbn", "isbn"));
+            meta.add(col);
+        }
+
         ExtensionResponse<String> response = new ExtensionResponse<>();
+        response.setMeta(meta);
         response.setRows(rows);
+
+        log.debug(String.format("response=%s", new DeferredJSON(response)));
+
         return response;
     }
 

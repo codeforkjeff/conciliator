@@ -17,6 +17,7 @@ import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpResponseBodyAdvice;
 
 import java.util.HashMap;
@@ -76,4 +77,22 @@ public class Application {
         return new JCacheCacheManager(
                 provider.getCacheManager(provider.getDefaultURI(), configuration));
     }
+
+    /**
+     * set property logging.level.org.springframework.web.filter=DEBUG
+     * for logging output
+     * @return
+     */
+    @Bean
+    public CommonsRequestLoggingFilter logFilter() {
+        CommonsRequestLoggingFilter filter
+                = new CommonsRequestLoggingFilter();
+        filter.setIncludeQueryString(true);
+        filter.setIncludePayload(true);
+        filter.setMaxPayloadLength(10000);
+        filter.setIncludeHeaders(false);
+        filter.setAfterMessagePrefix("REQUEST DATA : ");
+        return filter;
+    }
+
 }
