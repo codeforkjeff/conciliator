@@ -1,9 +1,9 @@
 package com.codefork.refine;
 
-import com.codefork.refine.datasource.SearchTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -69,7 +69,7 @@ public class ThreadPool {
      * @param task
      * @return
      */
-    public Future<SearchResult> submit(SearchTask task) {
+    public <T> Future<T> submit(Callable<T> task) {
         if(lastTimePoolAdjusted != 0) {
             grow();
             long now = System.currentTimeMillis();

@@ -3,6 +3,7 @@ package com.codefork.refine.orcid;
 import com.codefork.refine.Config;
 import com.codefork.refine.PropertyValue;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.ThreadPool;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.datasource.WebServiceDataSource;
@@ -19,8 +20,12 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * This isn't very "abstract" since it is aware of smartnames mode.
@@ -33,9 +38,13 @@ public abstract class OrcidBase extends WebServiceDataSource {
 
     private SAXParserFactory spf = SAXParserFactory.newInstance();
 
+    private final ThreadPool threadPoolForIndividualRecords;
+
     @Autowired
     public OrcidBase(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
         super(config, cacheManager, threadPoolFactory, connectionFactory);
+        threadPoolForIndividualRecords = threadPoolFactory.createThreadPool();
+        threadPoolForIndividualRecords.setPoolSize(20);
     }
 
     @Override
@@ -82,7 +91,7 @@ public abstract class OrcidBase extends WebServiceDataSource {
 
     protected List<Result> searchKeyword(SearchQuery query) throws Exception {
         String q = createQueryString(query);
-        String url = String.format("http://pub.orcid.org/v1.2/search/orcid-bio/?rows=%d&q=", query.getLimit()) +
+        String url = String.format("https://pub.orcid.org/v2.1/search/?rows=%d&q=", query.getLimit()) +
                 UriUtils.encodeQueryParam(q, "UTF-8");
         return doSearch(query, url);
     }
@@ -94,7 +103,7 @@ public abstract class OrcidBase extends WebServiceDataSource {
         InputStream response = conn.getInputStream();
 
         SAXParser parser = spf.newSAXParser();
-        OrcidParser orcidParser = new OrcidParser();
+        OrcidSearchResultsParser orcidParser = new OrcidSearchResultsParser();
 
         long start = System.currentTimeMillis();
         parser.parse(response, orcidParser);
@@ -110,7 +119,69 @@ public abstract class OrcidBase extends WebServiceDataSource {
         log.debug(String.format("Query: %s - parsing took %dms, got %d results",
                 query.getQuery(), parseTime, orcidParser.getResults().size()));
 
-        return orcidParser.getResults();
+        return fillInResults(orcidParser.getResults());
+    }
+
+    class FillInResultTask implements Callable<Result> {
+
+        private Result result;
+
+        public FillInResultTask(Result result) {
+            this.result = result;
+        }
+
+        @Override
+        public Result call() throws Exception {
+            String url = String.format("https://pub.orcid.org/v2.1/%s/record", result.getId());
+
+            log.debug("Filling in ORCID result: making request to " + url);
+
+            HttpURLConnection conn = getConnectionFactory().createConnection(url);
+            InputStream response = conn.getInputStream();
+
+            SAXParser parser = spf.newSAXParser();
+            OrcidIndividualRecordParser orcidParser = new OrcidIndividualRecordParser(result);
+
+            parser.parse(response, orcidParser);
+
+            try {
+                response.close();
+                conn.disconnect();
+            } catch(IOException ioe) {
+                log.error("Ignoring error from trying to close input stream and connection: " + ioe);
+            }
+            return orcidParser.getParseState().result;
+        }
+    }
+
+    /**
+     * given a list of Results with id field populated, fills in the name and other fields
+     * @param results
+     * @return
+     */
+    private List<Result> fillInResults(List<Result> results) {
+        List<FillInResultTask> tasks = new ArrayList<>();
+        for (Result result : results) {
+            tasks.add(new FillInResultTask(result));
+        }
+
+        List<Future<Result>> futures = new ArrayList<>();
+        for (FillInResultTask task : tasks) {
+            futures.add(threadPoolForIndividualRecords.submit(task));
+        }
+
+        List<Result> returnResults = new ArrayList<>();
+        for (Future<Result> future : futures) {
+            try {
+                Result result = future.get();
+                returnResults.add(result);
+            } catch (InterruptedException e) {
+                log.error("error getting value from future: " + e);
+            } catch (ExecutionException e) {
+                log.error("error getting value from future: " + e);
+            }
+        }
+        return returnResults;
     }
 
 }
