@@ -52,6 +52,12 @@ public abstract class OrcidBase extends WebServiceDataSource {
         return new OrcidMetaDataResponse(getName());
     }
 
+    @Override
+    public void shutdown() {
+        super.shutdown();
+        getThreadPoolFactory().releaseThreadPool(threadPoolForIndividualRecords);
+    }
+
     protected static String createQueryString(SearchQuery query) {
         StringBuilder buf = new StringBuilder();
         buf.append(query.getQuery());

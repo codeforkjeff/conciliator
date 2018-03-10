@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<record:record path="/0000-0002-5081-5887" xmlns:internal="http://www.orcid.org/ns/internal" xmlns:funding="http://www.orcid.org/ns/funding" xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:address="http://www.orcid.org/ns/address" xmlns:education="http://www.orcid.org/ns/education" xmlns:work="http://www.orcid.org/ns/work" xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:other-name="http://www.orcid.org/ns/other-name" xmlns:history="http://www.orcid.org/ns/history" xmlns:employment="http://www.orcid.org/ns/employment" xmlns:error="http://www.orcid.org/ns/error" xmlns:common="http://www.orcid.org/ns/common" xmlns:person="http://www.orcid.org/ns/person" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:record="http://www.orcid.org/ns/record" xmlns:researcher-url="http://www.orcid.org/ns/researcher-url" xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:personal-details="http://www.orcid.org/ns/personal-details" xmlns:bulk="http://www.orcid.org/ns/bulk" xmlns:keyword="http://www.orcid.org/ns/keyword" xmlns:email="http://www.orcid.org/ns/email" xmlns:external-identifier="http://www.orcid.org/ns/external-identifier">
+    <common:orcid-identifier>
+        <common:uri>https://orcid.org/0000-0002-5081-5887</common:uri>
+        <common:path>0000-0002-5081-5887</common:path>
+        <common:host>orcid.org</common:host>
+    </common:orcid-identifier>
+    <preferences:preferences>
+        <preferences:locale>es</preferences:locale>
+    </preferences:preferences>
+    <history:history>
+        <history:creation-method>Direct</history:creation-method>
+        <history:submission-date>2016-10-09T22:52:10.302Z</history:submission-date>
+        <common:last-modified-date>2017-04-27T03:58:31.323Z</common:last-modified-date>
+        <history:claimed>true</history:claimed>
+        <history:verified-email>true</history:verified-email>
+        <history:verified-primary-email>true</history:verified-primary-email>
+    </history:history>
+    <person:person path="/0000-0002-5081-5887/person">
+        <person:name visibility="public" path="0000-0002-5081-5887">
+            <common:created-date>2016-10-09T22:52:10.532Z</common:created-date>
+            <common:last-modified-date>2016-10-09T22:52:10.532Z</common:last-modified-date>
+            <personal-details:given-names>Edinson</personal-details:given-names>
+            <personal-details:family-name>Cueto</personal-details:family-name>
+        </person:name>
+        <other-name:other-names path="/0000-0002-5081-5887/other-names"/>
+        <researcher-url:researcher-urls path="/0000-0002-5081-5887/researcher-urls"/>
+        <email:emails path="/0000-0002-5081-5887/email"/>
+        <address:addresses path="/0000-0002-5081-5887/address"/>
+        <keyword:keywords path="/0000-0002-5081-5887/keywords"/>
+        <external-identifier:external-identifiers path="/0000-0002-5081-5887/external-identifiers"/>
+    </person:person>
+    <activities:activities-summary path="/0000-0002-5081-5887/activities">
+        <common:last-modified-date>2017-01-12T14:54:30.807Z</common:last-modified-date>
+        <activities:educations path="/0000-0002-5081-5887/educations">
+            <common:last-modified-date>2016-10-09T22:54:40.580Z</common:last-modified-date>
+            <education:education-summary put-code="2393647" path="/0000-0002-5081-5887/education/2393647" visibility="public">
+                <common:created-date>2016-10-09T22:54:40.580Z</common:created-date>
+                <common:last-modified-date>2016-10-09T22:54:40.580Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>https://orcid.org/0000-0002-5081-5887</common:uri>
+                        <common:path>0000-0002-5081-5887</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Edinson Cueto</common:source-name>
+                </common:source>
+                <education:department-name>Programa de Filosofía</education:department-name>
+                <education:role-title>Filósofo</education:role-title>
+                <common:start-date>
+                    <common:year>2010</common:year>
+                    <common:month>07</common:month>
+                    <common:day>07</common:day>
+                </common:start-date>
+                <common:end-date>
+                    <common:year>2015</common:year>
+                    <common:month>04</common:month>
+                    <common:day>24</common:day>
+                </common:end-date>
+                <education:organization>
+                    <common:name>Universidad de Cartagena</common:name>
+                    <common:address>
+                        <common:city>Cartagena</common:city>
+                        <common:region>Bolívar</common:region>
+                        <common:country>CO</common:country>
+                    </common:address>
+                    <common:disambiguated-organization>
+                        <common:disambiguated-organization-identifier>27986</common:disambiguated-organization-identifier>
+                        <common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+                    </common:disambiguated-organization>
+                </education:organization>
+            </education:education-summary>
+        </activities:educations>
+        <activities:employments path="/0000-0002-5081-5887/employments">
+            <common:last-modified-date>2016-10-10T03:18:25.156Z</common:last-modified-date>
+            <employment:employment-summary put-code="2395695" path="/0000-0002-5081-5887/employment/2395695" visibility="public">
+                <common:created-date>2016-10-10T03:18:25.156Z</common:created-date>
+                <common:last-modified-date>2016-10-10T03:18:25.156Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>https://orcid.org/0000-0002-5081-5887</common:uri>
+                        <common:path>0000-0002-5081-5887</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Edinson Cueto</common:source-name>
+                </common:source>
+                <employment:department-name>Académico</employment:department-name>
+                <employment:role-title>Teacher</employment:role-title>
+                <common:start-date>
+                    <common:year>2015</common:year>
+                    <common:month>05</common:month>
+                    <common:day>04</common:day>
+                </common:start-date>
+                <common:end-date>
+                    <common:year>2015</common:year>
+                    <common:month>11</common:month>
+                    <common:day>30</common:day>
+                </common:end-date>
+                <employment:organization>
+                    <common:name>Colegio la Enseñanza</common:name>
+                    <common:address>
+                        <common:city>Cartagena de Indias</common:city>
+                        <common:region>Bolívar</common:region>
+                        <common:country>CO</common:country>
+                    </common:address>
+                    <common:disambiguated-organization>
+                        <common:disambiguated-organization-identifier>248975</common:disambiguated-organization-identifier>
+                        <common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+                    </common:disambiguated-organization>
+                </employment:organization>
+            </employment:employment-summary>
+            <employment:employment-summary put-code="2394877" path="/0000-0002-5081-5887/employment/2394877" visibility="public">
+                <common:created-date>2016-10-10T01:14:05.798Z</common:created-date>
+                <common:last-modified-date>2016-10-10T01:14:05.798Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>https://orcid.org/0000-0002-5081-5887</common:uri>
+                        <common:path>0000-0002-5081-5887</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Edinson Cueto</common:source-name>
+                </common:source>
+                <employment:department-name>Emprendimiento</employment:department-name>
+                <employment:role-title>Teacher</employment:role-title>
+                <common:start-date>
+                    <common:year>2008</common:year>
+                    <common:month>06</common:month>
+                    <common:day>09</common:day>
+                </common:start-date>
+                <common:end-date>
+                    <common:year>2008</common:year>
+                    <common:month>12</common:month>
+                    <common:day>06</common:day>
+                </common:end-date>
+                <employment:organization>
+                    <common:name>Servicio National de Aprendizaje</common:name>
+                    <common:address>
+                        <common:city>Cartagena de Indias</common:city>
+                        <common:region>Bolívar</common:region>
+                        <common:country>CO</common:country>
+                    </common:address>
+                    <common:disambiguated-organization>
+                        <common:disambiguated-organization-identifier>125414</common:disambiguated-organization-identifier>
+                        <common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+                    </common:disambiguated-organization>
+                </employment:organization>
+            </employment:employment-summary>
+        </activities:employments>
+        <activities:fundings path="/0000-0002-5081-5887/fundings"/>
+        <activities:peer-reviews path="/0000-0002-5081-5887/peer-reviews"/>
+        <activities:works path="/0000-0002-5081-5887/works">
+            <common:last-modified-date>2017-01-12T14:54:30.807Z</common:last-modified-date>
+            <activities:group>
+                <common:last-modified-date>2017-01-12T14:54:30.807Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.6018/daimon/270971</common:external-id-value>
+                        <common:external-id-url>http://dx.doi.org/10.6018/daimon/270971</common:external-id-url>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="29434300" path="/0000-0002-5081-5887/work/29434300" visibility="public" display-index="0">
+                    <common:created-date>2017-01-12T14:54:30.807Z</common:created-date>
+                    <common:last-modified-date>2017-01-12T14:54:30.807Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-client-id>
+                            <common:uri>https://orcid.org/client/0000-0001-9884-1913</common:uri>
+                            <common:path>0000-0001-9884-1913</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-client-id>
+                        <common:source-name>Crossref</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>La Música Champeta: un movimiento de resistencia cultural afrodescendiente a través del cuerpo.</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.6018/daimon/270971</common:external-id-value>
+                            <common:external-id-url>http://dx.doi.org/10.6018/daimon/270971</common:external-id-url>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>journal-article</work:type>
+                    <common:publication-date>
+                        <common:year>2017</common:year>
+                        <common:month>01</common:month>
+                        <common:day>03</common:day>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-10-10T00:46:58.885Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>issn</common:external-id-type>
+                        <common:external-id-value>ISSN: 2346-3074. </common:external-id-value>
+                        <common:external-id-url>http://ojs.udc.edu.co/index.php/espirales/article/view/665/570  </common:external-id-url>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="27271219" path="/0000-0002-5081-5887/work/27271219" visibility="public" display-index="1">
+                    <common:created-date>2016-10-10T00:46:58.885Z</common:created-date>
+                    <common:last-modified-date>2016-10-10T00:46:58.885Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-orcid>
+                            <common:uri>https://orcid.org/0000-0002-5081-5887</common:uri>
+                            <common:path>0000-0002-5081-5887</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-orcid>
+                        <common:source-name>Edinson Cueto</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>Breve análisis de la Teoría M propuesta por Stephen Hawking y Leonard Mledinow como teoría unificada del Universo</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>issn</common:external-id-type>
+                            <common:external-id-value>ISSN: 2346-3074. </common:external-id-value>
+                            <common:external-id-url>http://ojs.udc.edu.co/index.php/espirales/article/view/665/570  </common:external-id-url>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>journal-article</work:type>
+                    <common:publication-date>
+                        <common:year>2015</common:year>
+                        <common:month>10</common:month>
+                        <common:day>30</common:day>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-10-10T04:02:51.471Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>other-id</common:external-id-type>
+                        <common:external-id-value>http://www.uniatlantico.edu.co/uatlantico/eventos/20-anios-ciencias-humanas</common:external-id-value>
+                        <common:external-id-url>http://www.uniatlantico.edu.co/uatlantico/eventos/20-anios-ciencias-humanas</common:external-id-url>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="27272677" path="/0000-0002-5081-5887/work/27272677" visibility="public" display-index="1">
+                    <common:created-date>2016-10-10T04:02:51.471Z</common:created-date>
+                    <common:last-modified-date>2016-10-10T04:02:51.471Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-orcid>
+                            <common:uri>https://orcid.org/0000-0002-5081-5887</common:uri>
+                            <common:path>0000-0002-5081-5887</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-orcid>
+                        <common:source-name>Edinson Cueto</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>La imposibilidad de la inconmensurabilidad de Thomas Kuhn. </common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>other-id</common:external-id-type>
+                            <common:external-id-value>http://www.uniatlantico.edu.co/uatlantico/eventos/20-anios-ciencias-humanas</common:external-id-value>
+                            <common:external-id-url>http://www.uniatlantico.edu.co/uatlantico/eventos/20-anios-ciencias-humanas</common:external-id-url>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>conference-paper</work:type>
+                    <common:publication-date>
+                        <common:year>2013</common:year>
+                        <common:month>11</common:month>
+                        <common:day>22</common:day>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-10-10T01:04:05.830Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>other-id</common:external-id-type>
+                        <common:external-id-value>University of Athens  School of Philosophy  ELTA-University Campus  15703 ZOGRAFOS-ATHENS-GREECE   </common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="27271283" path="/0000-0002-5081-5887/work/27271283" visibility="public" display-index="1">
+                    <common:created-date>2016-10-10T01:04:05.830Z</common:created-date>
+                    <common:last-modified-date>2016-10-10T01:04:05.830Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-orcid>
+                            <common:uri>https://orcid.org/0000-0002-5081-5887</common:uri>
+                            <common:path>0000-0002-5081-5887</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-orcid>
+                        <common:source-name>Edinson Cueto</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>Critical to the work of Stephen Hawking and Leonard Mlodinow "The Grand Design", his attack on the philosophy and theory "M".</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>other-id</common:external-id-type>
+                            <common:external-id-value>University of Athens  School of Philosophy  ELTA-University Campus  15703 ZOGRAFOS-ATHENS-GREECE   </common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>conference-paper</work:type>
+                    <common:publication-date>
+                        <common:year>2013</common:year>
+                        <common:month>07</common:month>
+                        <common:day>04</common:day>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+        </activities:works>
+    </activities:activities-summary>
+</record:record>

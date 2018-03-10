@@ -31,11 +31,27 @@ public class SimulatedConnectionFactory implements ConnectionFactory {
                 "/openlibrary_rainforest.json");
 
         urlsToFiles.put(
-                "http://pub.orcid.org/v1.2/search/orcid-bio/?rows=3&q=stephen%20hawking",
+                "https://pub.orcid.org/v2.1/search/?rows=3&q=stephen%20hawking",
                 "/orcid_stephen_hawking.xml");
         urlsToFiles.put(
-                "http://pub.orcid.org/v1.2/search/orcid-bio/?rows=3&q=given-names:Igor%20AND%20family-name:Ozerov",
+                "https://pub.orcid.org/v2.1/0000-0002-4166-6322/record",
+                "/0000-0002-4166-6322.xml");
+        urlsToFiles.put(
+                "https://pub.orcid.org/v2.1/0000-0002-5081-5887/record",
+                "/0000-0002-5081-5887.xml");
+        urlsToFiles.put(
+                "https://pub.orcid.org/v2.1/0000-0002-9079-593X/record",
+                "/0000-0002-9079-593X.xml");
+
+        urlsToFiles.put(
+                "https://pub.orcid.org/v2.1/search/?rows=3&q=given-names:Igor%20AND%20family-name:Ozerov",
                 "/orcid_igor_ozerov.xml");
+        urlsToFiles.put(
+                "https://pub.orcid.org/v2.1/0000-0001-5839-7854/record",
+                "/0000-0001-5839-7854.xml");
+        urlsToFiles.put(
+                "https://pub.orcid.org/v2.1/0000-0002-7850-0772/record",
+                "/0000-0002-7850-0772.xml");
 
         urlsToFiles.put(
                 "http://localhost:8983/solr/test-core/select?wt=xml&q=The%20Complete%20Adventures%20of%20Sherlock%20Holmes&rows=3",

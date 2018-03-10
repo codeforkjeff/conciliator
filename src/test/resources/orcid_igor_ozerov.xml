@@ -1,52 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<orcid-message xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.2</message-version>
-    <orcid-search-results num-found="1">
-        <orcid-search-result>
-            <relevancy-score>16.160421</relevancy-score>
-            <orcid-profile>
-                <orcid-identifier>
-                    <uri>http://orcid.org/0000-0001-5839-7854</uri>
-                    <path>0000-0001-5839-7854</path>
-                    <host>orcid.org</host>
-                </orcid-identifier>
-                <orcid-bio>
-                    <personal-details>
-                        <given-names visibility="public">Igor</given-names>
-                        <family-name visibility="public">OZEROV</family-name>
-                    </personal-details>
-                    <external-identifiers visibility="private">
-                        <external-identifier>
-                            <external-id-common-name>ResearcherID</external-id-common-name>
-                            <external-id-reference>A-5227-2008</external-id-reference>
-                            <external-id-url>http://www.researcherid.com/rid/A-5227-2008</external-id-url>
-                            <source>
-                                <source-orcid>
-                                    <uri>http://orcid.org/0000-0001-7707-4137</uri>
-                                    <path>0000-0001-7707-4137</path>
-                                    <host>orcid.org</host>
-                                </source-orcid>
-                                <source-name>Clarivate Analytics</source-name>
-                                <source-date>2014-02-04T08:11:33.716Z</source-date>
-                            </source>
-                        </external-identifier>
-                        <external-identifier>
-                            <external-id-common-name>Scopus Author ID</external-id-common-name>
-                            <external-id-reference>6602742886</external-id-reference>
-                            <external-id-url>http://www.scopus.com/inward/authorDetails.url?authorID=6602742886&amp;partnerID=MN8TOARS</external-id-url>
-                            <source>
-                                <source-orcid>
-                                    <uri>http://orcid.org/0000-0002-5982-8983</uri>
-                                    <path>0000-0002-5982-8983</path>
-                                    <host>orcid.org</host>
-                                </source-orcid>
-                                <source-name>Scopus to ORCID</source-name>
-                                <source-date>2014-02-04T08:18:52.733Z</source-date>
-                            </source>
-                        </external-identifier>
-                    </external-identifiers>
-                </orcid-bio>
-            </orcid-profile>
-        </orcid-search-result>
-    </orcid-search-results>
-</orcid-message>
+<search:search num-found="2" xmlns:search="http://www.orcid.org/ns/search" xmlns:common="http://www.orcid.org/ns/common">
+    <search:result>
+        <common:orcid-identifier>
+            <common:uri>https://orcid.org/0000-0001-5839-7854</common:uri>
+            <common:path>0000-0001-5839-7854</common:path>
+            <common:host>orcid.org</common:host>
+        </common:orcid-identifier>
+    </search:result>
+    <search:result>
+        <common:orcid-identifier>
+            <common:uri>https://orcid.org/0000-0002-7850-0772</common:uri>
+            <common:path>0000-0002-7850-0772</common:path>
+            <common:host>orcid.org</common:host>
+        </common:orcid-identifier>
+    </search:result>
+</search:search>

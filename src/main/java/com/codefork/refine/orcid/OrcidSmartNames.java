@@ -55,7 +55,7 @@ public class OrcidSmartNames extends OrcidBase {
         if(fields.length() > 0) {
             q += " " + fields;
         }
-        String url = String.format("http://pub.orcid.org/v1.2/search/orcid-bio/?rows=%d&q=", query.getLimit()) +
+        String url = String.format("https://pub.orcid.org/v2.1/search/?rows=%d&q=", query.getLimit()) +
                 UriUtils.encodeQueryParam(q, "UTF-8");
         return doSearch(query, url);
     }

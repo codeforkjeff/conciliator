@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<record:record path="/0000-0002-4166-6322" xmlns:internal="http://www.orcid.org/ns/internal" xmlns:funding="http://www.orcid.org/ns/funding" xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:address="http://www.orcid.org/ns/address" xmlns:education="http://www.orcid.org/ns/education" xmlns:work="http://www.orcid.org/ns/work" xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:other-name="http://www.orcid.org/ns/other-name" xmlns:history="http://www.orcid.org/ns/history" xmlns:employment="http://www.orcid.org/ns/employment" xmlns:error="http://www.orcid.org/ns/error" xmlns:common="http://www.orcid.org/ns/common" xmlns:person="http://www.orcid.org/ns/person" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:record="http://www.orcid.org/ns/record" xmlns:researcher-url="http://www.orcid.org/ns/researcher-url" xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:personal-details="http://www.orcid.org/ns/personal-details" xmlns:bulk="http://www.orcid.org/ns/bulk" xmlns:keyword="http://www.orcid.org/ns/keyword" xmlns:email="http://www.orcid.org/ns/email" xmlns:external-identifier="http://www.orcid.org/ns/external-identifier">
+    <common:orcid-identifier>
+        <common:uri>https://orcid.org/0000-0002-4166-6322</common:uri>
+        <common:path>0000-0002-4166-6322</common:path>
+        <common:host>orcid.org</common:host>
+    </common:orcid-identifier>
+    <preferences:preferences>
+        <preferences:locale>ru</preferences:locale>
+    </preferences:preferences>
+    <history:history>
+        <history:creation-method>Member-referred</history:creation-method>
+        <history:submission-date>2015-02-22T18:18:39.644Z</history:submission-date>
+        <common:last-modified-date>2016-05-05T17:24:26.223Z</common:last-modified-date>
+        <history:claimed>true</history:claimed>
+        <history:verified-email>true</history:verified-email>
+        <history:verified-primary-email>true</history:verified-primary-email>
+    </history:history>
+    <person:person path="/0000-0002-4166-6322/person">
+        <common:last-modified-date>2015-02-22T22:09:03.319Z</common:last-modified-date>
+        <person:name visibility="public" path="0000-0002-4166-6322">
+            <common:created-date>2016-04-15T22:24:24.991Z</common:created-date>
+            <common:last-modified-date>2016-04-15T22:24:24.991Z</common:last-modified-date>
+            <personal-details:given-names>Mikhail</personal-details:given-names>
+            <personal-details:family-name>Soloshenko</personal-details:family-name>
+        </person:name>
+        <other-name:other-names path="/0000-0002-4166-6322/other-names"/>
+        <person:biography visibility="public" path="/0000-0002-4166-6322/biography">
+            <common:created-date>2016-04-15T22:24:24.993Z</common:created-date>
+            <common:last-modified-date>2016-04-15T22:24:24.993Z</common:last-modified-date>
+        </person:biography>
+        <researcher-url:researcher-urls path="/0000-0002-4166-6322/researcher-urls"/>
+        <email:emails path="/0000-0002-4166-6322/email"/>
+        <address:addresses path="/0000-0002-4166-6322/address"/>
+        <keyword:keywords path="/0000-0002-4166-6322/keywords">
+            <common:last-modified-date>2015-02-22T22:09:03.319Z</common:last-modified-date>
+            <keyword:keyword put-code="329282" visibility="public" path="/0000-0002-4166-6322/keywords/329282" display-index="0">
+                <common:created-date>2015-02-22T22:09:03.319Z</common:created-date>
+                <common:last-modified-date>2015-02-22T22:09:03.319Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>https://orcid.org/0000-0002-4166-6322</common:uri>
+                        <common:path>0000-0002-4166-6322</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Mikhail Soloshenko</common:source-name>
+                </common:source>
+                <keyword:content>Effect of Soloshenko-Yanchilin, gravitation, time, teleportation, quantum theory, Albert Einstein, Hafele-Keating, gravity, Stephen Hawking</keyword:content>
+            </keyword:keyword>
+        </keyword:keywords>
+        <external-identifier:external-identifiers path="/0000-0002-4166-6322/external-identifiers"/>
+    </person:person>
+    <activities:activities-summary path="/0000-0002-4166-6322/activities">
+        <common:last-modified-date>2015-07-24T14:11:45.995Z</common:last-modified-date>
+        <activities:educations path="/0000-0002-4166-6322/educations">
+            <common:last-modified-date>2015-02-22T22:05:34.964Z</common:last-modified-date>
+            <education:education-summary put-code="747278" path="/0000-0002-4166-6322/education/747278" visibility="public">
+                <common:created-date>2015-02-22T22:05:34.964Z</common:created-date>
+                <common:last-modified-date>2015-02-22T22:05:34.964Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>https://orcid.org/0000-0002-4166-6322</common:uri>
+                        <common:path>0000-0002-4166-6322</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Mikhail Soloshenko</common:source-name>
+                </common:source>
+                <education:department-name>Physics </education:department-name>
+                <education:role-title>Ph.D</education:role-title>
+                <common:start-date>
+                    <common:year>1991</common:year>
+                    <common:month>04</common:month>
+                    <common:day>10</common:day>
+                </common:start-date>
+                <education:organization>
+                    <common:name>Institute of Special Scientific Investigations </common:name>
+                    <common:address>
+                        <common:city>Saint Petersburg</common:city>
+                        <common:country>RU</common:country>
+                    </common:address>
+                </education:organization>
+            </education:education-summary>
+        </activities:educations>
+        <activities:employments path="/0000-0002-4166-6322/employments"/>
+        <activities:fundings path="/0000-0002-4166-6322/fundings"/>
+        <activities:peer-reviews path="/0000-0002-4166-6322/peer-reviews"/>
+        <activities:works path="/0000-0002-4166-6322/works">
+            <common:last-modified-date>2015-07-24T14:11:45.995Z</common:last-modified-date>
+            <activities:group>
+                <common:last-modified-date>2015-07-24T14:11:45.995Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>other-id</common:external-id-type>
+                        <common:external-id-value>01.12.2014 ria-stk.ru </common:external-id-value>
+                        <common:external-id-url></common:external-id-url>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="15503577" path="/0000-0002-4166-6322/work/15503577" visibility="public" display-index="0">
+                    <common:created-date>2015-02-22T22:00:48.161Z</common:created-date>
+                    <common:last-modified-date>2015-07-24T14:11:45.995Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-orcid>
+                            <common:uri>https://orcid.org/0000-0002-4166-6322</common:uri>
+                            <common:path>0000-0002-4166-6322</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-orcid>
+                        <common:source-name>Mikhail Soloshenko</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>The Effect of Soloshenko-Yanchilin</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>other-id</common:external-id-type>
+                            <common:external-id-value>01.12.2014 ria-stk.ru </common:external-id-value>
+                            <common:external-id-url></common:external-id-url>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>journal-article</work:type>
+                    <common:publication-date>
+                        <common:year>2014</common:year>
+                        <common:month>12</common:month>
+                        <common:day>01</common:day>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+        </activities:works>
+    </activities:activities-summary>
+</record:record>
