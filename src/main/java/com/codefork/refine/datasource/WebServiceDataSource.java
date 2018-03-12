@@ -231,8 +231,8 @@ public abstract class WebServiceDataSource extends DataSource {
         if (isCacheEnabled()) {
             Cache cache = getCacheManager().getCache(Application.CACHE_DEFAULT);
 
-            String key = query.getHashKey();
-            List<Result> results = (List<Result>) cache.get(key, () -> {
+            String key = getClass().getSimpleName() + "|" + query.getHashKey();
+            List<Result> results = cache.get(key, () -> {
                 log.info("Cache miss for: " + key);
                 return search(query);
             });

@@ -27,7 +27,7 @@ public class Config {
     public Config() {
         properties.put(PROP_CACHE_ENABLED, "true");
         properties.put(PROP_CACHE_TTL, "3600");
-        properties.put(PROP_CACHE_SIZE, "0.5");
+        properties.put(PROP_CACHE_SIZE, "64MB");
 
         properties.put("datasource.orcid.name", "ORCID");
         properties.put("datasource.orcidsmartnames.name", "ORCID - Smart Names Mode");

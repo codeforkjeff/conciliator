@@ -4,7 +4,6 @@ import org.apache.commons.logging.LogFactory;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.config.units.MemoryUnit;
 import org.ehcache.core.config.DefaultConfiguration;
 import org.ehcache.expiry.Expirations;
 import org.ehcache.jsr107.EhcacheCachingProvider;
@@ -47,17 +46,18 @@ public class Application {
     public CacheManager cacheManager(@Autowired Config config) {
         long ttl = Long.valueOf(config.getProperties().getProperty(Config.PROP_CACHE_TTL));
 
-        double pctOfHeap = Double.valueOf(config.getProperties().getProperty(Config.PROP_CACHE_SIZE));
-        long cacheSizeMB = new Double(Runtime.getRuntime().maxMemory() * pctOfHeap / 1048576.0).longValue();
+        config.getProperties().getProperty(Config.PROP_CACHE_SIZE);
+
+        MemSize memSize = MemSize.valueOf(config.getProperties().getProperty(Config.PROP_CACHE_SIZE));
 
         LogFactory.getLog(getClass()).info(
-                String.format("Initializing cache TTL=%d secs, size=%d MB (%.2f percent of max heap)",
-                        ttl, cacheSizeMB, pctOfHeap * 100));
+                String.format("Initializing cache TTL=%d secs, size=%d %s",
+                        ttl, memSize.getSize(), memSize.getUnit().toString()));
 
         org.ehcache.config.CacheConfiguration<Object, Object> cacheConfiguration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(Object.class, Object.class,
                         ResourcePoolsBuilder.newResourcePoolsBuilder()
-                                .heap(cacheSizeMB, MemoryUnit.MB))
+                                .heap(memSize.getSize(), memSize.getUnit()))
                 .withExpiry(Expirations.timeToLiveExpiration(new org.ehcache.expiry.Duration(ttl, TimeUnit.SECONDS)))
                 .build();
 
