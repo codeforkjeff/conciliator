@@ -3,6 +3,7 @@ package com.codefork.refine.orcid;
 import com.codefork.refine.Config;
 import com.codefork.refine.PropertyValue;
 import com.codefork.refine.SearchQuery;
+import com.codefork.refine.StringUtil;
 import com.codefork.refine.ThreadPool;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
@@ -125,14 +126,16 @@ public abstract class OrcidBase extends WebServiceDataSource {
         log.debug(String.format("Query: %s - parsing took %dms, got %d results",
                 query.getQuery(), parseTime, orcidParser.getResults().size()));
 
-        return fillInResults(orcidParser.getResults());
+        return fillInResults(query, orcidParser.getResults());
     }
 
     class FillInResultTask implements Callable<Result> {
 
+        private SearchQuery query;
         private Result result;
 
-        public FillInResultTask(Result result) {
+        public FillInResultTask(SearchQuery query, Result result) {
+            this.query = query;
             this.result = result;
         }
 
@@ -156,7 +159,12 @@ public abstract class OrcidBase extends WebServiceDataSource {
             } catch(IOException ioe) {
                 log.error("Ignoring error from trying to close input stream and connection: " + ioe);
             }
-            return orcidParser.getParseState().result;
+
+            Result result = orcidParser.getParseState().result;
+
+            result.setScore(StringUtil.levenshteinDistanceRatio(result.getName(), query.getQuery()));
+
+            return result;
         }
     }
 
@@ -165,10 +173,10 @@ public abstract class OrcidBase extends WebServiceDataSource {
      * @param results
      * @return
      */
-    private List<Result> fillInResults(List<Result> results) {
+    private List<Result> fillInResults(SearchQuery query, List<Result> results) {
         List<FillInResultTask> tasks = new ArrayList<>();
         for (Result result : results) {
-            tasks.add(new FillInResultTask(result));
+            tasks.add(new FillInResultTask(query, result));
         }
 
         List<Future<Result>> futures = new ArrayList<>();

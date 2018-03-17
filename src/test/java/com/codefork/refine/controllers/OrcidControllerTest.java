@@ -65,6 +65,7 @@ public class OrcidControllerTest {
         assertEquals("Stephen Hawking", result1.get("name").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
         assertEquals("0000-0002-9079-593X", result1.get("id").asText());
+        assertEquals("0.8666666666666667", result1.get("score").asText());
         assertFalse(result1.get("match").asBoolean());
     }
 
