@@ -232,10 +232,16 @@ public abstract class WebServiceDataSource extends DataSource {
             Cache cache = getCacheManager().getCache(Application.CACHE_DEFAULT);
 
             String key = getClass().getSimpleName() + "|" + query.getHashKey();
-            List<Result> results = cache.get(key, () -> {
+            Cache.ValueWrapper value = cache.get(key);
+
+            List<Result> results;
+            if(value != null) {
+                results = (List<Result>) value.get();
+            } else {
                 log.info("Cache miss for: " + key);
-                return search(query);
-            });
+                results = search(query);
+                cache.put(key, results);
+            }
             return results;
         }
 
