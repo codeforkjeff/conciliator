@@ -3,8 +3,11 @@ package com.codefork.refine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.List;
 
 public class StringUtil {
@@ -13,7 +16,7 @@ public class StringUtil {
      * Shamelessly copied from this website with only a tiny modification:
      * https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java
      */
-    public static int levenshteinDistance (CharSequence lhs, CharSequence rhs) {
+    public static int levenshteinDistance(CharSequence lhs, CharSequence rhs) {
         // if strings are the same, dist is 0
         if (lhs.equals(rhs)) {
             return 0;
@@ -37,21 +40,23 @@ public class StringUtil {
             newcost[0] = j;
 
             // transformation cost for each letter in s0
-            for(int i = 1; i < len0; i++) {
+            for (int i = 1; i < len0; i++) {
                 // matching current letters in both strings
                 int match = (lhs.charAt(i - 1) == rhs.charAt(j - 1)) ? 0 : 1;
 
                 // computing cost for each transformation
                 int cost_replace = cost[i - 1] + match;
-                int cost_insert  = cost[i] + 1;
-                int cost_delete  = newcost[i - 1] + 1;
+                int cost_insert = cost[i] + 1;
+                int cost_delete = newcost[i - 1] + 1;
 
                 // keep minimum cost
                 newcost[i] = Math.min(Math.min(cost_insert, cost_delete), cost_replace);
             }
 
             // swap cost/newcost arrays
-            int[] swap = cost; cost = newcost; newcost = swap;
+            int[] swap = cost;
+            cost = newcost;
+            newcost = swap;
         }
 
         // the distance is the cost for transforming all letters in both strings
@@ -63,6 +68,7 @@ public class StringUtil {
      * levenshstein distance to max possible distance (which is the length of
      * the longer string). The more dissimilar the strings are, the lower
      * the value returned. Identical strings return 1.0.
+     *
      * @param lhs
      * @param rhs
      * @return
@@ -80,6 +86,7 @@ public class StringUtil {
 
     /**
      * consumes an InputStream into a String
+     *
      * @param is
      * @param bufferSize
      * @return
@@ -89,24 +96,22 @@ public class StringUtil {
         final StringBuilder out = new StringBuilder();
         try {
             Reader in = new InputStreamReader(is, "UTF-8");
-            for (;;) {
+            for (; ; ) {
                 int rsz = in.read(buffer, 0, buffer.length);
                 if (rsz < 0)
                     break;
                 out.append(buffer, 0, rsz);
             }
-        }
-        catch (UnsupportedEncodingException ex) {
-        }
-        catch (IOException ex) {
+        } catch (UnsupportedEncodingException ex) {
+        } catch (IOException ex) {
         }
         return out.toString();
     }
 
     public static String join(List<String> strings, String sep) {
         StringBuilder buf = new StringBuilder();
-        for(String s: strings) {
-            if(buf.length() > 0) {
+        for (String s : strings) {
+            if (buf.length() > 0) {
                 buf.append(sep);
             }
             buf.append(s);
@@ -114,4 +119,10 @@ public class StringUtil {
         return buf.toString();
     }
 
+    public static String getStackTrace(Throwable aThrowable) {
+        Writer result = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(result);
+        aThrowable.printStackTrace(printWriter);
+        return result.toString();
+    }
 }

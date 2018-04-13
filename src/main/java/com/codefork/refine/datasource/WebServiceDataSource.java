@@ -4,6 +4,7 @@ import com.codefork.refine.Application;
 import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchResult;
+import com.codefork.refine.StringUtil;
 import com.codefork.refine.ThreadPool;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.resources.Result;
@@ -211,10 +212,8 @@ public abstract class WebServiceDataSource extends DataSource {
                 SearchResult result = future.get();
                 String indexKey = result.getKey();
                 results.put(indexKey, result);
-            } catch (InterruptedException e) {
-                log.error("error getting value from future: " + e);
-            } catch (ExecutionException e) {
-                log.error("error getting value from future: " + e);
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("searchUsingThreadPool: error getting value from future: " + StringUtil.getStackTrace(e));
             }
         }
         return results;
@@ -236,9 +235,9 @@ public abstract class WebServiceDataSource extends DataSource {
 
             List<Result> results;
             if(value != null) {
+                log.info("Cache hit for: " + key);
                 results = (List<Result>) value.get();
             } else {
-                log.info("Cache miss for: " + key);
                 results = search(query);
                 cache.put(key, results);
             }

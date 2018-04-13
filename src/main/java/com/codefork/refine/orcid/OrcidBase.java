@@ -189,10 +189,8 @@ public abstract class OrcidBase extends WebServiceDataSource {
             try {
                 Result result = future.get();
                 returnResults.add(result);
-            } catch (InterruptedException e) {
-                log.error("error getting value from future: " + e);
-            } catch (ExecutionException e) {
-                log.error("error getting value from future: " + e);
+            } catch (InterruptedException | ExecutionException  e) {
+                log.error("fillInResults: error getting value from future: " + StringUtil.getStackTrace(e));
             }
         }
         return returnResults;
