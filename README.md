@@ -68,10 +68,10 @@ instructions.
 
 ### ORCID
 
-* Currently uses the v1.2 API, which is due to be phased out sometime in 2017.
-  Note that the v2.0 API does not offer detailed search results; a separate query
-  must be made for each ORCID within the results in order to retrieve the person's name,
-  which isn't feasible, especially given rate limits.
+* Uses the ORCID v2.1 API. The detailed search results of the v1.2 API
+  are no longer supported, so n+1 requests are made to fetch name
+  details, which is gross, but it's the best we can do. Heavy use may
+  cause the ORCID API to start returning rate-limiting errors.
 
 * Properties are supported as a way to do fielded searches using Solr syntax.
   For lists of valid field names to use in the "As Property" box, see the section titled
@@ -116,7 +116,8 @@ build the .jar file using maven.
 Run this command:
 
 ```
-java -jar conciliator-3.0.1.jar
+# replace VERSION with the release you downloaded
+java -jar conciliator-VERSION.jar
 ```
 
 That's it! You should see some messages as the application starts
