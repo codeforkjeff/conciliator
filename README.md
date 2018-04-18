@@ -213,9 +213,9 @@ A docker image created by [tobinski](https://github.com/tobinski) is available h
 5. Set some default properties in `Config` if your data source has any
    settings you want to be configurable.
 
-6. Build a new .jar by running `mvn package`. Run the .jar file as in
-   the instructions above, and you should be able to access the service
-   for your new data source at:
+6. Build a new .jar by running `mvn clean package`. Run the .jar file
+   as in the instructions above, and you should be able to access the
+   service for your new data source at:
 
    ```
    http://localhost:8080/reconcile/new_source
