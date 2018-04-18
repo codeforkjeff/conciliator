@@ -14,4 +14,6 @@
 # the JVM from having to dynamically allocate memory, which takes time.
 # -Xms128m -Xmx128m
 
-java -XX:+HeapDumpOnOutOfMemoryError -Xms256m -Xmx256m -Dlogging.level.com.codefork.refine=DEBUG -jar target/conciliator-3.0.1.jar
+JAR_PATH=`find target -type f -name "conciliator*.jar" -print`
+
+java -XX:+HeapDumpOnOutOfMemoryError -Xms256m -Xmx256m -Dlogging.level.com.codefork.refine=DEBUG -jar $JAR_PATH
