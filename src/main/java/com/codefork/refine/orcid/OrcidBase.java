@@ -162,7 +162,13 @@ public abstract class OrcidBase extends WebServiceDataSource {
 
             Result result = orcidParser.getParseState().result;
 
-            result.setScore(StringUtil.levenshteinDistanceRatio(result.getName(), query.getQuery()));
+            if(result != null) {
+                if(result.getName() != null) {
+                    result.setScore(StringUtil.levenshteinDistanceRatio(result.getName(), query.getQuery()));
+                } else {
+                    log.warn("Name not found in record for " + result.getId());
+                }
+            }
 
             return result;
         }
