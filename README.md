@@ -128,6 +128,14 @@ If a file named `conciliator.properties` exists in the current
 directory, conciliator will use the options found in it. See the
 sample file in this repository.
 
+By default, conciliator will run on port 8080, which is used in the
+example URLs below. To use a different port, set the `server.port`
+property as follows when running the program:
+
+```
+java -Dserver.port=7000 -jar conciliator-VERSION.jar
+```
+
 ## Docker Image
 
 A docker image created by [tobinski](https://github.com/tobinski) is available here:
