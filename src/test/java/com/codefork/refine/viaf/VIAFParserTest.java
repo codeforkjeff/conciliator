@@ -138,11 +138,7 @@ public class VIAFParserTest {
     @Test
     public void testParseTime() throws Exception {
 
-        int maxTime = 50; // milliseconds
-        // travis ci can be a bit pokey
-        if("true".equals(System.getenv("TRAVIS"))) {
-            maxTime = 100;
-        }
+        int maxTime = 150; // milliseconds
 
         SAXParserFactory spf = SAXParserFactory.newInstance();
         SAXParser parser = spf.newSAXParser();
