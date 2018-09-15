@@ -89,8 +89,13 @@ public class ThreadPool {
     }
 
     public void setPoolSize(int newSize) {
-        executor.setCorePoolSize(newSize);
-        executor.setMaximumPoolSize(newSize);
+        if(newSize > executor.getCorePoolSize()) {
+            executor.setMaximumPoolSize(newSize);
+            executor.setCorePoolSize(newSize);
+        } else {
+            executor.setCorePoolSize(newSize);
+            executor.setMaximumPoolSize(newSize);
+        }
     }
 
     /**
