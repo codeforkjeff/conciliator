@@ -64,15 +64,15 @@ public class OrcidSmartNamesControllerTest {
         assertEquals(2, results.size());
 
         JsonNode result1 = results.get(0);
-        assertEquals("Igor OZEROV", result1.get("name").asText());
+        assertEquals("Igor Ozerov", result1.get("name").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
-        assertEquals("0000-0001-5839-7854", result1.get("id").asText());
+        assertEquals("0000-0002-7850-0772", result1.get("id").asText());
         assertFalse(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
-        assertEquals("Igor Ozerov", result2.get("name").asText());
+        assertEquals("Igor OZEROV", result2.get("name").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
-        assertEquals("0000-0002-7850-0772", result2.get("id").asText());
+        assertEquals("0000-0001-5839-7854", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
     }
 

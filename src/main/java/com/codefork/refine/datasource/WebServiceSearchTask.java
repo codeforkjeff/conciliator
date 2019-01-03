@@ -4,6 +4,7 @@ import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchResult;
 import com.codefork.refine.resources.Result;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -12,6 +13,8 @@ import java.util.List;
  * methods.
  */
 public class WebServiceSearchTask implements SearchTask {
+
+    static Comparator<Result> BY_SCORE_REVERSED = Comparator.comparingDouble((Result r) -> r.getScore()).reversed();
 
     private WebServiceDataSource dataSource;
     private String key;
@@ -40,13 +43,14 @@ public class WebServiceSearchTask implements SearchTask {
         SearchQuery searchQuery = getSearchQuery();
         try {
             results = dataSource.searchCheckCache(searchQuery);
-        } catch(Exception e) {
+        } catch (Exception e) {
             dataSource.getLog().error(String.format("error for query=%s", searchQuery.getQuery()), e);
             if (e.toString().contains("HTTP response code: 429")) {
                 return new SearchResult(key, SearchResult.ErrorType.TOO_MANY_REQUESTS);
             }
             return new SearchResult(key, SearchResult.ErrorType.UNKNOWN);
         }
+        results.sort(BY_SCORE_REVERSED);
         return new SearchResult(key, results);
     }
 

@@ -69,15 +69,15 @@ public class VIAFProxyControllerTest {
         assertTrue(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
-        assertEquals("Pasternak, Boris Leonidovich, 1890-1960.", result2.get("name").asText());
+        assertEquals("Hauptmann, Gerhart, 1862-1946.", result2.get("name").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
-        assertEquals("n79018438", result2.get("id").asText());
+        assertEquals("n80076391", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
-        assertEquals("Hauptmann, Gerhart, 1862-1946.", result3.get("name").asText());
+        assertEquals("Pasternak, Boris Leonidovich, 1890-1960.", result3.get("name").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
-        assertEquals("n80076391", result3.get("id").asText());
+        assertEquals("n79018438", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
     }
 
@@ -107,15 +107,15 @@ public class VIAFProxyControllerTest {
         assertTrue(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
-        assertEquals("Pasternak, Boris Leonidovič, 1890-1960", result2.get("name").asText());
+        assertEquals("Hauptmann, Gerhart, 1862-1946.", result2.get("name").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
-        assertEquals("11918737", result2.get("id").asText());
+        assertEquals("12026662", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
-        assertEquals("Hauptmann, Gerhart, 1862-1946.", result3.get("name").asText());
+        assertEquals("Pasternak, Boris Leonidovič, 1890-1960", result3.get("name").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
-        assertEquals("12026662", result3.get("id").asText());
+        assertEquals("11918737", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
     }
 
@@ -137,10 +137,11 @@ public class VIAFProxyControllerTest {
 
         assertEquals(3, results.size());
 
+        // this entry in XML is missing an ID ../mainHeadings/data/sources
         JsonNode result1 = results.get(0);
-        assertEquals("Arago, Jacques, 1790-1855", result1.get("name").asText());
+        assertEquals("Alexandre, Jean-François 1804-1874", result1.get("name").asText());
         assertEquals("Person", result1.get("type").get(0).get("name").asText());
-        assertEquals("12265696", result1.get("id").asText());
+        assertEquals("10341017", result1.get("id").asText());
         assertFalse(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
@@ -149,11 +150,10 @@ public class VIAFProxyControllerTest {
         assertEquals("10343440", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
-        // this entry in XML is missing an ID ../mainHeadings/data/sources
         JsonNode result3 = results.get(2);
-        assertEquals("Alexandre, Jean-François 1804-1874", result3.get("name").asText());
+        assertEquals("Arago, Jacques, 1790-1855", result3.get("name").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
-        assertEquals("10341017", result3.get("id").asText());
+        assertEquals("12265696", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
     }
 
@@ -182,15 +182,15 @@ public class VIAFProxyControllerTest {
         assertFalse(result1.get("match").asBoolean());
 
         JsonNode result2 = results.get(1);
-        assertEquals("Friedrich, Carl J. 1901-1984", result2.get("name").asText());
+        assertEquals("Koyré, Alexandre, 1892-1964", result2.get("name").asText());
         assertEquals("Person", result2.get("type").get(0).get("name").asText());
-        assertEquals("118535870", result2.get("id").asText());
+        assertEquals("118777890", result2.get("id").asText());
         assertFalse(result2.get("match").asBoolean());
 
         JsonNode result3 = results.get(2);
-        assertEquals("Koyré, Alexandre, 1892-1964", result3.get("name").asText());
+        assertEquals("Friedrich, Carl J. 1901-1984", result3.get("name").asText());
         assertEquals("Person", result3.get("type").get(0).get("name").asText());
-        assertEquals("118777890", result3.get("id").asText());
+        assertEquals("118535870", result3.get("id").asText());
         assertFalse(result3.get("match").asBoolean());
     }
 
