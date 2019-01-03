@@ -47,7 +47,7 @@ public class OrcidControllerTest {
     }
 
     @Test
-    public void testLiveSearch() throws Exception {
+    public void testSearch() throws Exception {
 
         String json = "{\"q0\":{\"query\": \"stephen hawking\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 

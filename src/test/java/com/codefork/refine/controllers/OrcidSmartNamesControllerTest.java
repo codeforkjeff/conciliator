@@ -49,7 +49,7 @@ public class OrcidSmartNamesControllerTest {
     }
     // https://github.com/codeforkjeff/conciliator/issues/8
     @Test
-    public void testLiveSearchSmartNames() throws Exception {
+    public void testSearchSmartNames() throws Exception {
 
         String json = "{\"q0\":{\"query\": \"Igor Ozerov\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
