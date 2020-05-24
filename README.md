@@ -256,7 +256,7 @@ You can change run-time options by editing the
 
 Specification for the Reconciliation Service API:
 
-https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-Api
+https://reconciliation-api.github.io/specs/latest/
 
 This code drew inspiration from these other projects:
 
