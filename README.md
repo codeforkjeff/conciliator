@@ -75,7 +75,7 @@ instructions.
 
 * Properties are supported as a way to do fielded searches using Solr syntax.
   For lists of valid field names to use in the "As Property" box, see the section titled
-  "Fielded search for specific elements" on [this page](https://members.orcid.org/api/archive/tutorial-searching-data-using-api),
+  "Search for specific elements by field" on [this page](https://members.orcid.org/api/tutorial/search-orcid-registry),
   and the list of identifier fields on the
   [Supported Work Identifiers](https://members.orcid.org/api/resources/supported-work-identifiers) page.
 
