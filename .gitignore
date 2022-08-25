@@ -3,3 +3,6 @@
 target/
 nbactions.xml
 nb-configuration.xml
+*.log
+*.log.gz
+

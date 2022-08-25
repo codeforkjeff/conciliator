@@ -8,7 +8,6 @@ WORKDIR /opt/conciliator
 
 RUN apk --no-cache add alpine-conf git maven openjdk8
 
-COPY conciliator.iml .
 COPY conciliator.properties .
 COPY pom.xml .
 
@@ -29,6 +28,8 @@ RUN apk --no-cache add alpine-conf openjdk8-jre
 
 RUN setup-timezone -z America/Los_Angeles
 
+WORKDIR /opt/conciliator
+
 COPY --from=build /opt/conciliator/target/conciliator*.jar .
 
 CMD JARFILE=`find . -type f -name "conciliator*.jar" -print` && \
@@ -41,4 +42,5 @@ CMD JARFILE=`find . -type f -name "conciliator*.jar" -print` && \
   -XX:+HeapDumpOnOutOfMemoryError \
   -Xms256m -Xmx256m \
   -Dlogging.level.com.codefork.refine=DEBUG -jar \
-  $JARFILE
+  $JARFILE >> conciliator.log 2>> conciliator.log
+
