@@ -106,7 +106,16 @@ instructions.
 
 ## Running Conciliator on Your Own Computer
 
-Install Java 1.8 or greater if you don't already have it.
+Using Docker is the easiest and preferred way to build and run the application:
+
+```
+docker build -t conciliator .
+./run_docker.sh
+```
+
+If you don't have Docker, you can run the application as follows:
+
+Install Java 8 if you don't already have it.
 
 Download the .jar file for the
 [latest release](https://github.com/codeforkjeff/conciliator/releases). Alternatively,
