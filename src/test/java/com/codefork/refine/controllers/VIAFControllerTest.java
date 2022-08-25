@@ -69,7 +69,7 @@ public class VIAFControllerTest {
         JsonNode root = new ObjectMapper().readTree(body);
 
         assertEquals("VIAF", root.get("name").asText());
-        assertEquals("http://viaf.org/viaf/{{id}}", root.get("view").get("url").asText());
+        assertEquals("https://viaf.org/viaf/{{id}}", root.get("view").get("url").asText());
     }
 
     @Test

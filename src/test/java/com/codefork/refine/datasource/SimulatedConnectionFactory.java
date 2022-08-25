@@ -58,40 +58,40 @@ public class SimulatedConnectionFactory implements ConnectionFactory {
                 "/solr_results.xml");
 
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Jean-Fran%C3%A7ois%20Alexandre%201804%201874%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Jean-Fran%C3%A7ois%20Alexandre%201804%201874%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/alexandre.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22nabokov%22%20and%20local.sources%20%3D%20%22nsk%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22nabokov%22%20and%20local.sources%20%3D%20%22nsk%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/nabokov_nsk.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22ncjecerence%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22ncjecerence%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/nonsense.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22shakespeare%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22shakespeare%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/shakespeare.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/shakespeare_bnf.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22hegel%22%20and%20local.sources%20%3D%20%22dnb%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22hegel%22%20and%20local.sources%20%3D%20%22dnb%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/shakespeare_dnb.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/shakespeare_exact.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22lc%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22lc%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/shakespeare_lc.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22steinbeck%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22steinbeck%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/steinbeck_no_type.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22John%20Steinbeck%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22John%20Steinbeck%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/steinbeck_no_type.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/wittgenstein.xml");
         urlsToFiles.put(
-                "http://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
                 "/wittgenstein_personalnames.xml");
     }
 

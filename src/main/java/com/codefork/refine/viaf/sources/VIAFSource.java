@@ -12,7 +12,7 @@ public class VIAFSource extends Source {
 
     @Override
     public String getServiceURLTemplate() {
-        return "http://viaf.org/viaf/{{id}}";
+        return "https://viaf.org/viaf/{{id}}";
     }
 
     @Override

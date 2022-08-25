@@ -139,7 +139,7 @@ public class VIAF extends WebServiceDataSource {
             return Collections.emptyList();
         }
 
-        String url = String.format("http://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml",
+        String url = String.format("https://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s&httpAccept=application/xml",
                 UriUtils.encodeQueryParam(cql, "UTF-8"), query.getLimit());
 
         HttpURLConnection conn = getConnectionFactory().createConnection(url);
