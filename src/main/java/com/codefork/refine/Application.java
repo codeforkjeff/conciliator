@@ -21,7 +21,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
-import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpResponseBodyAdvice;
+//import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpResponseBodyAdvice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,12 +37,14 @@ public class Application {
     /**
      * Needed for jsonp support 
      */
+     /*
     @ControllerAdvice
     public static class JsonpAdvice extends AbstractJsonpResponseBodyAdvice {
         public JsonpAdvice() {
             super("callback");
         }
     }
+    */
 
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(Application.class, args);

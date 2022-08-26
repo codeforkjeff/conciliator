@@ -7,8 +7,8 @@ import com.codefork.refine.datasource.SimulatedConnectionFactory;
 import com.codefork.refine.viaf.VIAF;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,24 +16,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class VIAFControllerTest {
     public static final int TTL_SECONDS = 1;
 
-    @TestConfiguration
+    @Configuration
     static class TestConfig {
         @Bean
         ConnectionFactory connectionFactory() {
@@ -41,6 +42,7 @@ public class VIAFControllerTest {
         }
 
         @Bean
+        @Primary
         public Config config() {
             Properties props = new Properties();
             props.setProperty(Config.PROP_CACHE_TTL, String.valueOf(TTL_SECONDS));
@@ -395,7 +397,7 @@ public class VIAFControllerTest {
         assertEquals(2, cf.getNumCallsToCreateConnection() - numCallsAtStart);
     }
 
-    @After
+    @AfterEach
     public void cleanup() throws Exception {
         cacheManager.getCache(Application.CACHE_DEFAULT).clear();
     }
