@@ -3,26 +3,24 @@ package com.codefork.refine.controllers;
 import com.codefork.refine.Application;
 import com.codefork.refine.Config;
 import com.codefork.refine.datasource.ConnectionFactory;
-import com.codefork.refine.datasource.SimulatedConnectionFactory;
+import com.codefork.refine.datasource.MockConnectionFactoryHelper;
 import com.codefork.refine.viaf.VIAF;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.invocation.Invocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Properties;
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,27 +29,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class VIAFControllerTest {
     public static final int TTL_SECONDS = 1;
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        ConnectionFactory connectionFactory() {
-            return new SimulatedConnectionFactory();
-        }
+    @MockBean
+    private ConnectionFactory connectionFactory;
 
-        @Bean
-        @Primary
-        public Config config() {
-            Properties props = new Properties();
-            props.setProperty(Config.PROP_CACHE_TTL, String.valueOf(TTL_SECONDS));
+    public MockConnectionFactoryHelper mockConnectionFactoryHelper = new MockConnectionFactoryHelper();
 
-            Config config = new Config();
-            config.merge(props);
-            return config;
-        }
-    }
+    @Autowired
+    public Config config;
 
     @Autowired
     CacheManager cacheManager;
@@ -76,6 +64,12 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchMultiple() throws Exception {
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/wittgenstein_personalnames.xml");
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22shakespeare%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare.xml");
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -117,6 +111,10 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchSingleWithText() throws Exception {
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/wittgenstein.xml");
+
         JsonNode root = doSearchSingle("wittgenstein");
 
         JsonNode results = root.get("result");
@@ -147,6 +145,11 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchSingleWithJson() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/wittgenstein_personalnames.xml");
+
         String json = "{\"query\": \"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}";
         JsonNode root = doSearchSingle(json);
 
@@ -178,6 +181,10 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchPersonalName() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/wittgenstein_personalnames.xml");
 
         String json = "{\"q0\":{\"query\": \"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -217,6 +224,10 @@ public class VIAFControllerTest {
     public void testSearchNoParticularType() throws Exception {
         // This is when you get when you choose "Reconcile against no particular type" in OpenRefine
 
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22steinbeck%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/steinbeck_no_type.xml");
+
         String json = "{\"q0\":{\"query\": \"steinbeck\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viaf").param("queries", json)).andReturn();
@@ -255,6 +266,10 @@ public class VIAFControllerTest {
     public void testSearchWithSource() throws Exception {
         // Also chose "Reconcile against no particular type" for this one
 
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22nabokov%22%20and%20local.sources%20%3D%20%22nsk%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/nabokov_nsk.xml");
+
         String json = "{\"q0\":{\"query\": \"nabokov\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viaf/NSK").param("queries", json)).andReturn();
@@ -291,6 +306,10 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchWithExactMatch() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare_exact.xml");
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -345,8 +364,9 @@ public class VIAFControllerTest {
     @Test
     public void testCache() throws Exception {
 
-        SimulatedConnectionFactory cf = (SimulatedConnectionFactory) viaf.getConnectionFactory();
-        int numCallsAtStart = cf.getNumCallsToCreateConnection();
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare_exact.xml");
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -365,14 +385,16 @@ public class VIAFControllerTest {
                 .get("q0").get("result");
         assertEquals(3, results2.size());
 
-        assertEquals(1, cf.getNumCallsToCreateConnection() - numCallsAtStart);
+        Collection<Invocation> invocations = Mockito.mockingDetails(connectionFactory).getInvocations();
+
+        assertEquals(1, invocations.size());
     }
 
     @Test
     public void testExpireCache() throws Exception {
-
-        SimulatedConnectionFactory cf = (SimulatedConnectionFactory) viaf.getConnectionFactory();
-        int numCallsAtStart = cf.getNumCallsToCreateConnection();
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare_exact.xml", 2);
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -394,7 +416,9 @@ public class VIAFControllerTest {
                 .get("q0").get("result");
         assertEquals(3, results2.size());
 
-        assertEquals(2, cf.getNumCallsToCreateConnection() - numCallsAtStart);
+        Collection<Invocation> invocations = Mockito.mockingDetails(connectionFactory).getInvocations();
+
+        assertEquals(2, invocations.size());
     }
 
     @AfterEach
