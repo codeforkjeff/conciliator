@@ -36,7 +36,8 @@ public class VIAFControllerTest {
     @MockBean
     private ConnectionFactory connectionFactory;
 
-    public MockConnectionFactoryHelper mockConnectionFactoryHelper = new MockConnectionFactoryHelper();
+    @Autowired
+    public MockConnectionFactoryHelper mockConnectionFactoryHelper;
 
     @Autowired
     public Config config;
