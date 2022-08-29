@@ -7,6 +7,7 @@ import com.codefork.refine.datasource.MockConnectionFactoryHelper;
 import com.codefork.refine.viaf.VIAF;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext
 public class VIAFControllerTest {
     public static final int TTL_SECONDS = 1;
 
@@ -450,4 +453,5 @@ public class VIAFControllerTest {
     public void cleanup() throws Exception {
         cacheManager.getCache(Application.CACHE_DEFAULT).clear();
     }
+
 }
