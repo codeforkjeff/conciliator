@@ -4,17 +4,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Component
+@Profile("test")
 public class MockConnectionFactoryHelper {
 
     public HttpURLConnection createMockHttpURLConnection(String resource) throws IOException {
