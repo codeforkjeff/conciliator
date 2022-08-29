@@ -10,6 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.nio.charset.Charset;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -31,7 +33,7 @@ public class VIAFLiveTest {
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viaf").param("queries", json)).andReturn();
 
-        String body = mvcResult.getResponse().getContentAsString();
+        String body = mvcResult.getResponse().getContentAsString(Charset.defaultCharset());
 
         JsonNode root = new ObjectMapper().readTree(body);
 
@@ -48,4 +50,27 @@ public class VIAFLiveTest {
         assertEquals("96994048", result1.get("id").asText());
         assertFalse(result1.get("match").asBoolean());
     }
+
+    @Test
+    public void testLiveSearchEncoding() throws Exception {
+
+        String json = "{\"q0\":{\"query\": \"Nabokov, Vladimir Vladimirovič\",\"type_strict\":\"should\"}}";
+
+        MvcResult mvcResult = mvc.perform(get("/reconcile/viaf/NSK").param("queries", json)).andReturn();
+
+        String body = mvcResult.getResponse().getContentAsString(Charset.defaultCharset());
+
+        JsonNode root = new ObjectMapper().readTree(body);
+
+        JsonNode results = root.get("q0").get("result");
+
+        assertEquals(3, results.size());
+
+        JsonNode result1 = results.get(0);
+        assertEquals("Nabokov, Vladimir Vladimirovič", result1.get("name").asText());
+        assertEquals("/people/person", result1.get("type").get(0).get("id").asText());
+        assertEquals("Person", result1.get("type").get(0).get("name").asText());
+        assertEquals("27069388", result1.get("id").asText());
+    }
+
 }
