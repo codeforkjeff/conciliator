@@ -2,7 +2,6 @@ package com.codefork.refine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -14,7 +13,6 @@ import java.util.Properties;
  * Application configuration
  */
 @Component
-@Profile("default")
 public class Config {
 
     public static final String PROP_CACHE_ENABLED = "cache.enabled";

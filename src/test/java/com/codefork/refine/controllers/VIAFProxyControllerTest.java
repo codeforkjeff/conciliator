@@ -1,7 +1,7 @@
 package com.codefork.refine.controllers;
 
 import com.codefork.refine.datasource.ConnectionFactory;
-import com.codefork.refine.datasource.SimulatedConnectionFactory;
+import com.codefork.refine.datasource.MockConnectionFactoryHelper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,13 +24,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 public class VIAFProxyControllerTest {
 
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        ConnectionFactory connectionFactory() {
-            return new SimulatedConnectionFactory();
-        }
-    }
+    @MockBean
+    private ConnectionFactory connectionFactory;
+
+    @Autowired
+    public MockConnectionFactoryHelper mockConnectionFactoryHelper;
 
     @Autowired
     MockMvc mvc;
@@ -48,6 +47,11 @@ public class VIAFProxyControllerTest {
 
     @Test
     public void testSearchProxyModeLC() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22lc%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare_lc.xml");
+
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viafproxy/LC").param("queries", json)).andReturn();
@@ -86,6 +90,10 @@ public class VIAFProxyControllerTest {
     @Test
     public void testSearchProxyModeBNF() throws Exception {
 
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare_bnf.xml");
+
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viafproxy/BNF").param("queries", json)).andReturn();
@@ -123,6 +131,11 @@ public class VIAFProxyControllerTest {
      */
     @Test
     public void testSearchProxyModeBNFMissingID() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Jean-Fran%C3%A7ois%20Alexandre%201804%201874%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/alexandre.xml");
+
         String json = "{\"q0\":{\"query\": \"Jean-François Alexandre 1804 1874\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viafproxy/BNF").param("queries", json)).andReturn();
@@ -161,6 +174,11 @@ public class VIAFProxyControllerTest {
      */
     @Test
     public void testSearchProxyModeDNB() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22hegel%22%20and%20local.sources%20%3D%20%22dnb%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare_dnb.xml");
+
         String json = "{\"q0\":{\"query\": \"hegel\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viafproxy/DNB").param("queries", json)).andReturn();

@@ -14,13 +14,16 @@ import org.mockito.invocation.Invocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Collection;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,9 +32,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 public class VIAFControllerTest {
     public static final int TTL_SECONDS = 1;
+
+    public static class LocalConfig extends Config {
+        public LocalConfig() {
+            super();
+            Properties props = new Properties();
+            props.setProperty(Config.PROP_CACHE_TTL, String.valueOf(TTL_SECONDS));
+            merge(props);
+        }
+    }
+
+    @TestConfiguration
+    public static class MyTestConfiguration {
+        @Bean
+        @Primary
+        public Config overrideConfig() {
+            return new LocalConfig();
+        }
+    }
 
     @MockBean
     private ConnectionFactory connectionFactory;
@@ -348,6 +368,10 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchWithNoResults() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22ncjecerence%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/nonsense.xml");
 
         String json = "{\"q0\":{\"query\": \"ncjecerence\",\"type_strict\":\"should\"}}";
 

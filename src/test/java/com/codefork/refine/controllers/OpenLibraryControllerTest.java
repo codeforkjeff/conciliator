@@ -1,7 +1,7 @@
 package com.codefork.refine.controllers;
 
 import com.codefork.refine.datasource.ConnectionFactory;
-import com.codefork.refine.datasource.SimulatedConnectionFactory;
+import com.codefork.refine.datasource.MockConnectionFactoryHelper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,13 +23,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 public class OpenLibraryControllerTest {
 
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        ConnectionFactory connectionFactory() {
-            return new SimulatedConnectionFactory();
-        }
-    }
+    @MockBean
+    private ConnectionFactory connectionFactory;
+
+    @Autowired
+    public MockConnectionFactoryHelper mockConnectionFactoryHelper;
 
     @Autowired
     MockMvc mvc;
@@ -47,6 +46,10 @@ public class OpenLibraryControllerTest {
 
     @Test
     public void testSearch() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://openlibrary.org/search.json?q=through%20the%20arc%20of%20the%20rainforest",
+                "/openlibrary_rainforest.json");
 
         String json = "{\"q0\":{\"query\": \"through the arc of the rainforest\",\"type\":\"/book/book\",\"type_strict\":\"should\"}}";
 

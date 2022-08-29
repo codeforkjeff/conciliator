@@ -1,5 +1,6 @@
 package com.codefork.refine.controllers;
 
+import com.codefork.refine.Config;
 import com.codefork.refine.datasource.ConnectionFactory;
 import com.codefork.refine.datasource.MockConnectionFactoryHelper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,18 +9,44 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 public class SolrControllerTest {
+
+    public static class LocalConfig extends Config {
+        public LocalConfig() {
+            super();
+            Properties props = new Properties();
+            props.setProperty("datasource.solr.nametype.id", "/book/book");
+            props.setProperty("datasource.solr.nametype.name", "Book");
+            props.setProperty("datasource.solr.url.query", "http://localhost:8983/solr/test-core/select?wt=xml&q={{QUERY}}&rows={{ROWS}}");
+            props.setProperty("datasource.solr.url.document", "http://localhost:8983/solr/test-core/get?id={{id}}");
+            props.setProperty("datasource.solr.field.id", "id");
+            props.setProperty("datasource.solr.field.name", "title_display");
+            merge(props);
+        }
+    }
+
+    @TestConfiguration
+    public static class MyTestConfiguration {
+        @Bean
+        @Primary
+        public Config overrideConfig() {
+            return new LocalConfig();
+        }
+    }
 
     @MockBean
     private ConnectionFactory connectionFactory;
