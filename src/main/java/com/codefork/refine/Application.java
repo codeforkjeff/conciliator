@@ -17,34 +17,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
-//import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpResponseBodyAdvice;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @EnableCaching
+@EnableWebSecurity
 public class Application {
     public static final String CACHE_DEFAULT = "default";
-
-    /**
-     * Needed for jsonp support 
-     */
-     /*
-    @ControllerAdvice
-    public static class JsonpAdvice extends AbstractJsonpResponseBodyAdvice {
-        public JsonpAdvice() {
-            super("callback");
-        }
-    }
-    */
 
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(Application.class, args);
@@ -103,18 +87,14 @@ public class Application {
         return filter;
     }
 
-    @EnableWebSecurity
-    public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.headers().disable();
-            http.csrf().disable();
-            http.cors().configurationSource(request -> {
-                CorsConfiguration c = new CorsConfiguration();
-                c.setAllowedOrigins(new ArrayList<String>(Arrays.asList("*")));
-                return c;
-            });
-        }
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf().disable()
+                .authorizeRequests()
+                .anyRequest()
+                .permitAll()
+                .and().build();
     }
+
 }

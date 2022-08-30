@@ -449,6 +449,13 @@ public class VIAFControllerTest {
         assertEquals(2, invocations.size());
     }
 
+    @Test
+    public void testCors() throws Exception {
+        MvcResult mvcResult = mvc.perform(get("/reconcile/viaf").header("Origin", "http://testo.com")).andReturn();
+
+        assertEquals("*", mvcResult.getResponse().getHeaderValue("Access-Control-Allow-Origin"));
+    }
+
     @AfterEach
     public void cleanup() throws Exception {
         cacheManager.getCache(Application.CACHE_DEFAULT).clear();
