@@ -2,40 +2,34 @@ package com.codefork.refine.controllers;
 
 import com.codefork.refine.Config;
 import com.codefork.refine.datasource.ConnectionFactory;
-import com.codefork.refine.datasource.SimulatedConnectionFactory;
+import com.codefork.refine.datasource.MockConnectionFactoryHelper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.context.annotation.Primary;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext
 public class SolrControllerTest {
 
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        ConnectionFactory connectionFactory() {
-            return new SimulatedConnectionFactory();
-        }
-        // we can't use MockBean b/c the PostConstruct hook in VIAF uses config
-        // before we get a chance to put matchers on it in this test code.
-        @Bean
-        public Config config() {
+    public static class LocalConfig extends Config {
+        public LocalConfig() {
+            super();
             Properties props = new Properties();
             props.setProperty("datasource.solr.nametype.id", "/book/book");
             props.setProperty("datasource.solr.nametype.name", "Book");
@@ -43,18 +37,34 @@ public class SolrControllerTest {
             props.setProperty("datasource.solr.url.document", "http://localhost:8983/solr/test-core/get?id={{id}}");
             props.setProperty("datasource.solr.field.id", "id");
             props.setProperty("datasource.solr.field.name", "title_display");
-
-            Config config = new Config();
-            config.merge(props);
-            return config;
+            merge(props);
         }
     }
+
+    @TestConfiguration
+    public static class MyTestConfiguration {
+        @Bean
+        @Primary
+        public Config overrideConfig() {
+            return new LocalConfig();
+        }
+    }
+
+    @MockBean
+    private ConnectionFactory connectionFactory;
+
+    @Autowired
+    public MockConnectionFactoryHelper mockConnectionFactoryHelper;
 
     @Autowired
     MockMvc mvc;
 
     @Test
     public void testSearchPersonalName() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "http://localhost:8983/solr/test-core/select?wt=xml&q=The%20Complete%20Adventures%20of%20Sherlock%20Holmes&rows=3",
+                "/solr_results.xml");
 
         String json = "{\"q0\":{\"query\": \"The Complete Adventures of Sherlock Holmes\",\"type\":\"/book/book\",\"type_strict\":\"should\"}}";
 

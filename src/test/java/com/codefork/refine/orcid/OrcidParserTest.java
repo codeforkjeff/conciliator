@@ -1,14 +1,16 @@
 package com.codefork.refine.orcid;
 
 import com.codefork.refine.resources.Result;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 
 public class OrcidParserTest {
 

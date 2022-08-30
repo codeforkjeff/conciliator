@@ -3,7 +3,9 @@ package com.codefork.refine.controllers;
 import com.codefork.refine.datasource.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "*")
 public class DataSourceController implements
         ReconciliationAPI, DataExtensionAPI, SuggestAPI, PreviewAPI {
 

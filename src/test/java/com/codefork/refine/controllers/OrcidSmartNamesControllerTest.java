@@ -1,38 +1,34 @@
 package com.codefork.refine.controllers;
 
 import com.codefork.refine.datasource.ConnectionFactory;
-import com.codefork.refine.datasource.SimulatedConnectionFactory;
+import com.codefork.refine.datasource.MockConnectionFactoryHelper;
 import com.codefork.refine.orcid.OrcidSmartNames;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext
 public class OrcidSmartNamesControllerTest {
 
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        ConnectionFactory connectionFactory() {
-            return new SimulatedConnectionFactory();
-        }
-    }
+    @MockBean
+    private ConnectionFactory connectionFactory;
+
+    @Autowired
+    public MockConnectionFactoryHelper mockConnectionFactoryHelper;
 
     @Autowired
     MockMvc mvc;
@@ -50,6 +46,16 @@ public class OrcidSmartNamesControllerTest {
     // https://github.com/codeforkjeff/conciliator/issues/8
     @Test
     public void testSearchSmartNames() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://pub.orcid.org/v2.1/search/?rows=3&q=given-names:Igor%20AND%20family-name:Ozerov",
+                "/orcid_igor_ozerov.xml");
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://pub.orcid.org/v2.1/0000-0001-5839-7854/record",
+                "/0000-0001-5839-7854.xml");
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://pub.orcid.org/v2.1/0000-0002-7850-0772/record",
+                "/0000-0002-7850-0772.xml");
 
         String json = "{\"q0\":{\"query\": \"Igor Ozerov\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 

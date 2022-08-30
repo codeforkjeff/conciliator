@@ -3,7 +3,7 @@ package com.codefork.refine.viaf;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.viaf.sources.VIAFSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
@@ -11,8 +11,8 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VIAFParserTest {
 
@@ -153,7 +153,7 @@ public class VIAFParserTest {
         long t = (System.currentTimeMillis() - start) / n;
 
         // should take less than
-        assertTrue("should take less than " + maxTime + "ms, on average, to parse a big XML doc, but took " + t + "ms", t < maxTime);
+        assertTrue(t < maxTime, "should take less than " + maxTime + "ms, on average, to parse a big XML doc, but took " + t + "ms");
     }
 
 }

@@ -3,53 +3,67 @@ package com.codefork.refine.controllers;
 import com.codefork.refine.Application;
 import com.codefork.refine.Config;
 import com.codefork.refine.datasource.ConnectionFactory;
-import com.codefork.refine.datasource.SimulatedConnectionFactory;
+import com.codefork.refine.datasource.MockConnectionFactoryHelper;
 import com.codefork.refine.viaf.VIAF;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.Invocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.context.annotation.Primary;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.Collection;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext
 public class VIAFControllerTest {
     public static final int TTL_SECONDS = 1;
 
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        ConnectionFactory connectionFactory() {
-            return new SimulatedConnectionFactory();
-        }
-
-        @Bean
-        public Config config() {
+    public static class LocalConfig extends Config {
+        public LocalConfig() {
+            super();
             Properties props = new Properties();
             props.setProperty(Config.PROP_CACHE_TTL, String.valueOf(TTL_SECONDS));
-
-            Config config = new Config();
-            config.merge(props);
-            return config;
+            merge(props);
         }
     }
+
+    @TestConfiguration
+    public static class MyTestConfiguration {
+        @Bean
+        @Primary
+        public Config overrideConfig() {
+            return new LocalConfig();
+        }
+    }
+
+    @MockBean
+    private ConnectionFactory connectionFactory;
+
+    @Autowired
+    public MockConnectionFactoryHelper mockConnectionFactoryHelper;
+
+    @Autowired
+    public Config config;
 
     @Autowired
     CacheManager cacheManager;
@@ -74,6 +88,12 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchMultiple() throws Exception {
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/wittgenstein_personalnames.xml");
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22shakespeare%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare.xml");
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -115,6 +135,10 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchSingleWithText() throws Exception {
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/wittgenstein.xml");
+
         JsonNode root = doSearchSingle("wittgenstein");
 
         JsonNode results = root.get("result");
@@ -145,6 +169,11 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchSingleWithJson() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/wittgenstein_personalnames.xml");
+
         String json = "{\"query\": \"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}";
         JsonNode root = doSearchSingle(json);
 
@@ -176,6 +205,10 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchPersonalName() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/wittgenstein_personalnames.xml");
 
         String json = "{\"q0\":{\"query\": \"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -215,6 +248,10 @@ public class VIAFControllerTest {
     public void testSearchNoParticularType() throws Exception {
         // This is when you get when you choose "Reconcile against no particular type" in OpenRefine
 
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22steinbeck%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/steinbeck_no_type.xml");
+
         String json = "{\"q0\":{\"query\": \"steinbeck\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viaf").param("queries", json)).andReturn();
@@ -253,6 +290,10 @@ public class VIAFControllerTest {
     public void testSearchWithSource() throws Exception {
         // Also chose "Reconcile against no particular type" for this one
 
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22nabokov%22%20and%20local.sources%20%3D%20%22nsk%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/nabokov_nsk.xml");
+
         String json = "{\"q0\":{\"query\": \"nabokov\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viaf/NSK").param("queries", json)).andReturn();
@@ -289,6 +330,10 @@ public class VIAFControllerTest {
 
     @Test
     public void testSearchWithExactMatch() throws Exception {
+
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare_exact.xml");
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -327,6 +372,10 @@ public class VIAFControllerTest {
     @Test
     public void testSearchWithNoResults() throws Exception {
 
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22ncjecerence%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/nonsense.xml");
+
         String json = "{\"q0\":{\"query\": \"ncjecerence\",\"type_strict\":\"should\"}}";
 
         MvcResult mvcResult = mvc.perform(get("/reconcile/viaf").param("queries", json)).andReturn();
@@ -343,8 +392,9 @@ public class VIAFControllerTest {
     @Test
     public void testCache() throws Exception {
 
-        SimulatedConnectionFactory cf = (SimulatedConnectionFactory) viaf.getConnectionFactory();
-        int numCallsAtStart = cf.getNumCallsToCreateConnection();
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare_exact.xml");
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -363,14 +413,16 @@ public class VIAFControllerTest {
                 .get("q0").get("result");
         assertEquals(3, results2.size());
 
-        assertEquals(1, cf.getNumCallsToCreateConnection() - numCallsAtStart);
+        Collection<Invocation> invocations = Mockito.mockingDetails(connectionFactory).getInvocations();
+
+        assertEquals(1, invocations.size());
     }
 
     @Test
     public void testExpireCache() throws Exception {
-
-        SimulatedConnectionFactory cf = (SimulatedConnectionFactory) viaf.getConnectionFactory();
-        int numCallsAtStart = cf.getNumCallsToCreateConnection();
+        mockConnectionFactoryHelper.expect(connectionFactory,
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "/shakespeare_exact.xml", 2);
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
 
@@ -392,11 +444,21 @@ public class VIAFControllerTest {
                 .get("q0").get("result");
         assertEquals(3, results2.size());
 
-        assertEquals(2, cf.getNumCallsToCreateConnection() - numCallsAtStart);
+        Collection<Invocation> invocations = Mockito.mockingDetails(connectionFactory).getInvocations();
+
+        assertEquals(2, invocations.size());
     }
 
-    @After
+    @Test
+    public void testCors() throws Exception {
+        MvcResult mvcResult = mvc.perform(get("/reconcile/viaf").header("Origin", "http://testo.com")).andReturn();
+
+        assertEquals("*", mvcResult.getResponse().getHeaderValue("Access-Control-Allow-Origin"));
+    }
+
+    @AfterEach
     public void cleanup() throws Exception {
         cacheManager.getCache(Application.CACHE_DEFAULT).clear();
     }
+
 }
