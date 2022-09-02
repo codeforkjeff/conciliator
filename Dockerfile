@@ -8,7 +8,6 @@ WORKDIR /opt/conciliator
 
 RUN apk --no-cache add alpine-conf git maven openjdk8
 
-COPY conciliator.properties .
 COPY pom.xml .
 
 RUN mvn verify clean --fail-never
