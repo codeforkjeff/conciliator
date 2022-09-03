@@ -41,11 +41,27 @@ public abstract class OrcidBase extends WebServiceDataSource {
 
     private final ThreadPool threadPoolForIndividualRecords;
 
+    private static final int POOL_SIZE_FOR_INDIVIDUAL_RECORDS = 20;
+
     @Autowired
     public OrcidBase(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
         super(config, cacheManager, threadPoolFactory, connectionFactory);
-        threadPoolForIndividualRecords = threadPoolFactory.createThreadPool();
-        threadPoolForIndividualRecords.setPoolSize(20);
+        threadPoolForIndividualRecords = createThreadPoolForIndividualRecords();
+
+    }
+
+    @Override
+    protected ThreadPool createThreadPool() {
+        return getThreadPoolFactory().getSharedThreadPool("orcid");
+    }
+
+    protected ThreadPool createThreadPoolForIndividualRecords() {
+
+        ThreadPool pool = getThreadPoolFactory().getSharedThreadPool("orcid-individual-records");
+        if(pool.getPoolSize() != POOL_SIZE_FOR_INDIVIDUAL_RECORDS) {
+            pool.setPoolSize(POOL_SIZE_FOR_INDIVIDUAL_RECORDS);
+        }
+        return pool;
     }
 
     @Override

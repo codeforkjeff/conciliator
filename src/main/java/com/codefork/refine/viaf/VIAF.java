@@ -56,15 +56,6 @@ public class VIAF extends WebServiceDataSource {
     }
 
     /**
-     * All VIAF instances share a single threadpool
-     * @return
-     */
-    @Override
-    protected ThreadPool createThreadPool() {
-        return getThreadPoolFactory().getSharedThreadPool("viaf");
-    }
-
-    /**
      * Factory method for getting a NonVIAFSource object
      */
     public NonVIAFSource findNonViafSource(String code) {

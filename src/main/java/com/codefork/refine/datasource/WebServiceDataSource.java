@@ -76,6 +76,10 @@ public abstract class WebServiceDataSource extends DataSource {
         return threadPoolFactory;
     }
 
+    /**
+     * In cases where a service has multiple WebServiceDataSource instances (like Orcid)
+     * this method should probably be overridden to share the same pool.
+     */
     protected ThreadPool createThreadPool() {
         return threadPoolFactory.createThreadPool();
     }
