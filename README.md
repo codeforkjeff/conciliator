@@ -11,7 +11,7 @@ This project supercedes [refine_viaf](https://github.com/codeforkjeff/refine_via
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 
-## Table of Contents
+**Table of Contents**
 
 - [Public Server](#public-server)
 - [General Features](#general-features)
@@ -21,7 +21,6 @@ This project supercedes [refine_viaf](https://github.com/codeforkjeff/refine_via
     - [Open Library](#open-library)
     - [Solr](#solr)
 - [Running Conciliator on Your Own Computer](#running-conciliator-on-your-own-computer)
-- [Docker Image](#docker-image)
 - [Configuring OpenRefine](#configuring-openrefine)
 - [Creating Your Own Data Source](#creating-your-own-data-source)
 - [Advanced Usage](#advanced-usage)
@@ -113,6 +112,9 @@ docker build -t conciliator .
 ./run_docker.sh
 ```
 
+An alternative way to run conciliator using docker is available
+[here](https://hub.docker.com/r/tobinski/docker-codefork-conciliator/).
+
 If you don't have Docker, you can run the application as follows:
 
 Install Java 8 if you don't already have it.
@@ -144,12 +146,6 @@ property as follows when running the program:
 ```
 java -Dserver.port=7000 -jar conciliator-VERSION.jar
 ```
-
-## Docker Image
-
-A docker image created by [tobinski](https://github.com/tobinski) is available here:
-
-<https://hub.docker.com/r/tobinski/docker-codefork-conciliator/>
 
 ## Configuring OpenRefine
 
