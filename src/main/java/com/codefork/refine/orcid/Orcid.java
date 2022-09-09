@@ -4,6 +4,7 @@ import com.codefork.refine.Config;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
+import com.codefork.refine.datasource.stats.Stats;
 import com.codefork.refine.resources.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -15,8 +16,8 @@ import java.util.List;
 public class Orcid extends OrcidBase {
 
     @Autowired
-    public Orcid(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
-        super(config, cacheManager, threadPoolFactory, connectionFactory);
+    public Orcid(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory, Stats stats) {
+        super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.codefork.refine.StringUtil;
 import com.codefork.refine.ThreadPool;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
+import com.codefork.refine.datasource.stats.Stats;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
@@ -44,8 +45,8 @@ public abstract class OrcidBase extends WebServiceDataSource {
     private static final int POOL_SIZE_FOR_INDIVIDUAL_RECORDS = 20;
 
     @Autowired
-    public OrcidBase(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
-        super(config, cacheManager, threadPoolFactory, connectionFactory);
+    public OrcidBase(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory, Stats stats) {
+        super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
         threadPoolForIndividualRecords = createThreadPoolForIndividualRecords();
 
     }

@@ -5,6 +5,7 @@ import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchQueryFactory;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
+import com.codefork.refine.datasource.stats.Stats;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,8 +24,8 @@ public class OrcidSmartNames extends OrcidBase {
             new SmartNamesModeSearchQueryFactory();
 
     @Autowired
-    public OrcidSmartNames(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory) {
-        super(config, cacheManager, threadPoolFactory, connectionFactory);
+    public OrcidSmartNames(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory, Stats stats) {
+        super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
     }
 
     @Override
