@@ -10,7 +10,7 @@ RUN apk --no-cache add alpine-conf git maven openjdk8
 
 COPY pom.xml .
 
-RUN mvn verify clean --fail-never
+RUN mvn dependency:go-offline -B
 
 COPY src src
 
