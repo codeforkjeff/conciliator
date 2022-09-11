@@ -10,11 +10,14 @@ RUN apk --no-cache add alpine-conf git maven openjdk8
 
 COPY pom.xml .
 
-RUN mvn verify clean --fail-never
+RUN mvn dependency:go-offline -B
 
 COPY src src
 
-RUN mvn package
+ARG skiptests=0
+
+RUN if [ "$skiptests" -eq "1" ]; then SKIPTESTS_ARG="-Dmaven.test.skip"; fi && \
+    mvn package $SKIPTESTS_ARG
 
 ####
 ## application container

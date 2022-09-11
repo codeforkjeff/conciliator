@@ -5,6 +5,7 @@ import com.codefork.refine.ExtensionQuery;
 import com.codefork.refine.PropertyValueIdAndSettings;
 import com.codefork.refine.SearchQuery;
 import com.codefork.refine.SearchQueryFactory;
+import com.codefork.refine.datasource.stats.Stats;
 import com.codefork.refine.resources.CellList;
 import com.codefork.refine.resources.ColumnMetaData;
 import com.codefork.refine.resources.ExtensionResponse;
@@ -47,6 +48,8 @@ public abstract class DataSource {
 
     private Config config;
 
+    private Stats stats;
+
     private final ObjectMapper mapper = new ObjectMapper();
 
     private SearchQueryFactory defaultSearchQueryFactory = new SearchQueryFactory() {
@@ -62,8 +65,11 @@ public abstract class DataSource {
     };
 
     @Autowired
-    public DataSource(Config config) {
+    public DataSource(Config config, Stats stats) {
         setConfig(config);
+
+        this.stats = stats;
+        this.stats.setDataSourceName(getName());
 
         Properties props = getConfigProperties();
 
@@ -92,6 +98,10 @@ public abstract class DataSource {
 
     public void setConfig(Config config) {
         this.config = config;
+    }
+
+    public Stats getStats() {
+        return stats;
     }
 
     /**

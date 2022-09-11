@@ -7,15 +7,19 @@ import com.codefork.refine.SearchResult;
 import com.codefork.refine.StringUtil;
 import com.codefork.refine.ThreadPool;
 import com.codefork.refine.ThreadPoolFactory;
+import com.codefork.refine.datasource.stats.CounterType;
+import com.codefork.refine.datasource.stats.Interval;
+import com.codefork.refine.datasource.stats.Stats;
 import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.SearchResponse;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -42,8 +46,9 @@ public abstract class WebServiceDataSource extends DataSource {
             Config config,
             CacheManager cacheManager,
             ThreadPoolFactory threadPoolFactory,
-            ConnectionFactory connectionFactory) {
-        super(config);
+            ConnectionFactory connectionFactory,
+            Stats stats) {
+        super(config, stats);
         this.cacheManager = cacheManager;
         this.threadPoolFactory = threadPoolFactory;
         this.connectionFactory = connectionFactory;
@@ -220,7 +225,33 @@ public abstract class WebServiceDataSource extends DataSource {
                 log.error("searchUsingThreadPool: error getting value from future: " + StringUtil.getStackTrace(e));
             }
         }
+
+        try {
+            long start = System.currentTimeMillis();
+            updateStats(results.values());
+            log.debug(String.format("updateStats took %s ms", System.currentTimeMillis() - start));
+        } catch(Exception e) {
+            log.error("error in updateStats(), ignoring and continuing: " + StringUtil.getStackTrace(e));
+        }
+
         return results;
+    }
+
+    // TODO: remove throws when this is more solid
+    private void updateStats(Collection<SearchResult> results) throws Exception {
+        Map<CounterType, Integer> counts = results.stream().collect(
+                HashMap::new,
+                (partial, element) -> {
+                    partial.put(CounterType.QUERIES, partial.getOrDefault(CounterType.QUERIES, 0) + 1);
+                    if(!element.isSuccessful()) {
+                        partial.put(CounterType.ERRORS, partial.getOrDefault(CounterType.ERRORS, 0) + 1);
+                    }
+                },
+                (e1, e2) -> { e1.putAll(e2); });
+
+        Interval interval = getStats().getCurrentInterval();
+        interval.add(CounterType.QUERIES, counts.getOrDefault(CounterType.QUERIES, 0));
+        interval.add(CounterType.ERRORS, counts.getOrDefault(CounterType.ERRORS, 0));
     }
 
     /**
