@@ -165,8 +165,6 @@ public abstract class DataSource {
             return new SearchResponse(resultsMap.get("q0").getResult());
         } catch (JsonProcessingException jse) {
             log.error("Got an error processing JSON: " + jse.toString());
-        } catch (IOException ioe) {
-            log.error("Got IO error processing JSON: " + ioe.toString());
         }
         return null;
     }
@@ -195,8 +193,6 @@ public abstract class DataSource {
             return resultsMap;
         } catch (JsonProcessingException jse) {
             log.error("Got an error processing JSON: " + jse.toString());
-        } catch (IOException ioe) {
-            log.error("Got IO error processing JSON: " + ioe.toString());
         }
         return null;
     }
