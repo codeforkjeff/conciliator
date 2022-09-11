@@ -153,7 +153,7 @@ public class Stats {
 
     public StatsDataSource generateReport() {
         // must force stats to update
-        getCurrentInterval();
+        trimIntervals();
 
         long now = Interval.timestamp();
 
