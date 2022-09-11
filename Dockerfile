@@ -14,7 +14,10 @@ RUN mvn dependency:go-offline -B
 
 COPY src src
 
-RUN mvn package
+ARG skiptests=0
+
+RUN if [ "$skiptests" -eq "1" ]; then SKIPTESTS_ARG="-Dmaven.test.skip"; fi && \
+    mvn package $SKIPTESTS_ARG
 
 ####
 ## application container
