@@ -114,6 +114,8 @@ public class Stats {
      * Trim off the intervals that exceed our largest bucket size
      */
     private synchronized void trimIntervals() {
+        long start = System.currentTimeMillis();
+        long intervalsSizeStart = intervals.size();
         Interval interval = getFirstInterval();
         if (interval != null) {
             Bucket largestBucket = buckets.get(buckets.size() - 1);
@@ -124,6 +126,8 @@ public class Stats {
                 interval = getFirstInterval();
             }
         }
+        log.debug(String.format("Removed %s intervals from stats history, took %s ms",
+                intervalsSizeStart - intervals.size(), System.currentTimeMillis() - start));
     }
 
     private synchronized Map<Bucket, Interval> tally(long now) {
