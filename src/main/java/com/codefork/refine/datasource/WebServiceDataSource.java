@@ -21,8 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * A data source that queries a web service API using a threadpool
@@ -205,20 +208,16 @@ public abstract class WebServiceDataSource extends DataSource {
     private Map<String, SearchResult> searchUsingThreadPool(Map<String, SearchQuery> queryEntries) {
         Map<String, SearchResult> results = new HashMap<>();
 
-        List<SearchTask> tasks = new ArrayList<>();
-        for (Map.Entry<String, SearchQuery> queryEntry : queryEntries.entrySet()) {
+        ExecutorCompletionService<SearchResult> completionService = getThreadPool().createCompletionService(SearchResult.class);
+
+        queryEntries.entrySet().stream().forEach(queryEntry -> {
             SearchTask task = createSearchTask(queryEntry.getKey(), queryEntry.getValue());
-            tasks.add(task);
-        }
+            completionService.submit(task);
+        });
 
-        List<Future<SearchResult>> futures = new ArrayList<>();
-        for (SearchTask task : tasks) {
-            futures.add(getThreadPool().submit(task));
-        }
-
-        for (Future<SearchResult> future : futures) {
+        for(int i = 0; i < queryEntries.size(); i++) {
             try {
-                SearchResult result = future.get();
+                SearchResult result = completionService.take().get();
                 String indexKey = result.getKey();
                 results.put(indexKey, result);
             } catch (InterruptedException | ExecutionException e) {

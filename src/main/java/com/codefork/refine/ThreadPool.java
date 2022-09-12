@@ -1,13 +1,18 @@
 package com.codefork.refine;
 
+import com.codefork.refine.datasource.SearchTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * A wrapper around an ExecutorService thread pool.
@@ -79,6 +84,14 @@ public class ThreadPool {
             }
         }
         return executor.submit(task);
+    }
+
+    /**
+     * Creates a ExecutorCompletionService which efficiently handles retrieving results
+     * for a batch of tasks in the order in which they finish.
+     */
+    public <T> ExecutorCompletionService<T> createCompletionService(Class<T> resultClass) {
+        return new ExecutorCompletionService<T>(executor);
     }
 
     /**
