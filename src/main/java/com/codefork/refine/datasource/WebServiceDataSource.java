@@ -18,14 +18,11 @@ import org.springframework.cache.CacheManager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 /**
  * A data source that queries a web service API using a threadpool
