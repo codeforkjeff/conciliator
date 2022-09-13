@@ -5,6 +5,7 @@ import com.codefork.refine.viaf.VIAF;
 import com.codefork.refine.viaf.VIAFMetaDataResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/reconcile/viaf/{source}")
+@CrossOrigin(origins = "*")
 public class VIAFSourceSpecificController {
 
     @Autowired
