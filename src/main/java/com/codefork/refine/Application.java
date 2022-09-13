@@ -3,9 +3,9 @@ package com.codefork.refine;
 import org.apache.commons.logging.LogFactory;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.core.config.DefaultConfiguration;
-import org.ehcache.expiry.Expirations;
 import org.ehcache.jsr107.EhcacheCachingProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -20,9 +20,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @EnableCaching
@@ -50,7 +50,7 @@ public class Application {
                 .newCacheConfigurationBuilder(Object.class, Object.class,
                         ResourcePoolsBuilder.newResourcePoolsBuilder()
                                 .heap(memSize.getSize(), memSize.getUnit()))
-                .withExpiry(Expirations.timeToLiveExpiration(new org.ehcache.expiry.Duration(ttl, TimeUnit.SECONDS)))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ttl)))
                 .build();
 
         Map<String, CacheConfiguration<?, ?>> caches = new HashMap<>();
