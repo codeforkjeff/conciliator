@@ -6,7 +6,7 @@ FROM alpine:3.16.0 as build
 
 WORKDIR /opt/conciliator
 
-RUN apk --no-cache add alpine-conf git maven openjdk8
+RUN apk --no-cache add alpine-conf git maven openjdk11
 
 COPY pom.xml .
 
@@ -24,7 +24,7 @@ RUN if [ "$skiptests" -eq "1" ]; then SKIPTESTS_ARG="-Dmaven.test.skip"; fi && \
 
 FROM alpine:3.16.0
 
-RUN apk --no-cache add alpine-conf openjdk8-jre
+RUN apk --no-cache add alpine-conf openjdk11-jre
 
 RUN setup-timezone -z America/Los_Angeles
 
