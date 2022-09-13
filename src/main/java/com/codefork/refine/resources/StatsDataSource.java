@@ -1,12 +1,13 @@
 package com.codefork.refine.resources;
 
+import java.util.List;
 import java.util.Map;
 
 public class StatsDataSource {
 
     private String name;
     private int numIntervalsStored;
-    private Map<String, Map<String, Integer>> stats;
+    private List<Map<String, Object>> stats;
 
     public String getName() {
         return name;
@@ -24,11 +25,11 @@ public class StatsDataSource {
         this.numIntervalsStored = numIntervalsStored;
     }
 
-    public Map<String, Map<String, Integer>> getStats() {
+    public List<Map<String, Object>> getStats() {
         return stats;
     }
 
-    public void setStats(Map<String, Map<String, Integer>> stats) {
+    public void setStats(List<Map<String, Object>> stats) {
         this.stats = stats;
     }
 

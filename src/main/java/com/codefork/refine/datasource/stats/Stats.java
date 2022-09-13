@@ -12,6 +12,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class Stats {
         // must be added from smallest to largest
         buckets.add(new Bucket("Last 5 mins", 5 * 60));
         buckets.add(new Bucket("Last hour", 60 * 60));
+        buckets.add(new Bucket("Last 6 hours", 6 * 60 * 60));
         buckets.add(new Bucket("Last day", 24 * 60 * 60));
         buckets.add(new Bucket("Last week", 7 * 24 * 60 * 60));
 
@@ -159,15 +161,16 @@ public class Stats {
 
         Map<Bucket, Interval> tallyMap = tally(now);
 
-        Map<String, Map<String, Integer>> stats = tallyMap.entrySet().stream().collect(Collectors.toMap(
-                e -> e.getKey().getLabel(),
-                e -> {
-                    Map<String, Integer> map = new HashMap<>();
-                    map.put(CounterType.QUERIES.name(), e.getValue().get(CounterType.QUERIES));
-                    map.put(CounterType.ERRORS.name(), e.getValue().get(CounterType.ERRORS));
+        List<Map<String, Object>> stats = tallyMap.keySet().stream()
+                .sorted(Comparator.comparing(a -> Long.valueOf(a.getSize())))
+                .map(bucket -> {
+                    Interval interval = tallyMap.get(bucket);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("label", bucket.getLabel());
+                    map.put(CounterType.QUERIES.getJsonKeyName(), interval.get(CounterType.QUERIES));
+                    map.put(CounterType.ERRORS.getJsonKeyName(), interval.get(CounterType.ERRORS));
                     return map;
-                }
-        ));
+                }).collect(Collectors.toList());
 
         StatsDataSource statsDataSource = new StatsDataSource();
         statsDataSource.setName(getDataSourceName());
