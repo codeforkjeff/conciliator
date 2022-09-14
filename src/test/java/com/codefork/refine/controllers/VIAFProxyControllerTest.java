@@ -209,4 +209,14 @@ public class VIAFProxyControllerTest {
         assertFalse(result3.get("match").asBoolean());
     }
 
+    /**
+     * VIAFProxyController doesn't (currently) inherit from DataSourceController so make sure CORS works for it
+     */
+    @Test
+    public void testCors() throws Exception {
+        MvcResult mvcResult = mvc.perform(get("/reconcile/viafproxy/LC").header("Origin", "http://testo.com")).andReturn();
+
+        assertEquals("*", mvcResult.getResponse().getHeaderValue("Access-Control-Allow-Origin"));
+    }
+
 }
