@@ -249,13 +249,12 @@ if you want to enable logging for debugging purposes, take a look at
 You can change run-time options by editing the
 `conciliator.properties` file.
 
+To see usage/error statistics for the service, go to `http://localhost:8080/stats`  
+
 ## TODO
 
 - A few aspects of the Reconciliation Service API aren't implemented by
   this framework yet.
-- Use dependency injection instead of singleton for the threadpool
-  shared by all VIAF instances. Might need to rework how data sources
-  get instantiated on-the-fly in ReconcileController.
 
 ## Resources
 
