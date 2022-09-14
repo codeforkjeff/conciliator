@@ -4,7 +4,7 @@
 
     <groupId>com.codefork.conciliator</groupId>
     <artifactId>conciliator</artifactId>
-    <version>3.0.6</version>
+    <version>3.1.0</version>
     <packaging>jar</packaging>
 
     <name>conciliator</name>
@@ -60,7 +60,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.10.1</version>
+                <configuration>
+                    <release>11</release>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

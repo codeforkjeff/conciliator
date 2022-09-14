@@ -117,7 +117,7 @@ An alternative way to run conciliator using docker is available
 
 If you don't have Docker, you can run the application as follows:
 
-Install Java 8 if you don't already have it.
+Install Java 11 if you don't already have it.
 
 Download the .jar file for the
 [latest release](https://github.com/codeforkjeff/conciliator/releases). Alternatively,
