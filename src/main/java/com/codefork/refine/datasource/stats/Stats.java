@@ -123,7 +123,7 @@ public class Stats {
             Bucket largestBucket = buckets.get(buckets.size() - 1);
             long now = Interval.timestamp();
             long threshold = largestBucket.getSize();
-            while (now - interval.getStart() > threshold && interval != null) {
+            while (interval != null && now - interval.getStart() > threshold) {
                 intervals.removeFirst();
                 interval = getFirstInterval();
             }
