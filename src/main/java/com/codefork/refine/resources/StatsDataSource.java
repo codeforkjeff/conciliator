@@ -7,6 +7,8 @@ public class StatsDataSource {
 
     private String name;
     private int numIntervalsStored;
+    private int threadPoolSize;
+
     private List<Map<String, Object>> stats;
 
     public String getName() {
@@ -23,6 +25,14 @@ public class StatsDataSource {
 
     public void setNumIntervalsStored(int numIntervalsStored) {
         this.numIntervalsStored = numIntervalsStored;
+    }
+
+    public int getThreadPoolSize() {
+        return threadPoolSize;
+    }
+
+    public void setThreadPoolSize(int threadPoolSize) {
+        this.threadPoolSize = threadPoolSize;
     }
 
     public List<Map<String, Object>> getStats() {

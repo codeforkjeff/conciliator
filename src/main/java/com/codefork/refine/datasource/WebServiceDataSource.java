@@ -248,6 +248,8 @@ public abstract class WebServiceDataSource extends DataSource {
         Interval interval = getStats().getCurrentInterval();
         interval.add(CounterType.QUERIES, counts.getOrDefault(CounterType.QUERIES, 0));
         interval.add(CounterType.ERRORS, counts.getOrDefault(CounterType.ERRORS, 0));
+
+        getStats().setThreadPoolSize(getThreadPool().getPoolSize());
     }
 
     /**

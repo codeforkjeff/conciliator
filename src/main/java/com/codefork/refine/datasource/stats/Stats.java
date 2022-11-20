@@ -44,6 +44,8 @@ public class Stats {
 
     private final List<Bucket> buckets = new ArrayList<>();
 
+    private int threadPoolSize = 0;
+
     public Stats() {
         // must be added from smallest to largest
         buckets.add(new Bucket("Last 5 mins", 5 * 60));
@@ -132,6 +134,14 @@ public class Stats {
                 intervalsSizeStart - intervals.size(), System.currentTimeMillis() - start));
     }
 
+    public void setThreadPoolSize(int threadPoolSize) {
+        this.threadPoolSize = threadPoolSize;
+    }
+
+    public int getThreadPoolSize() {
+        return threadPoolSize;
+    }
+
     private synchronized Map<Bucket, Interval> tally(long now) {
         // create a map of intervals to new buckets
         Map<Bucket, Interval> tallyMap = buckets.stream().collect(Collectors.toMap(
@@ -175,6 +185,7 @@ public class Stats {
         StatsDataSource statsDataSource = new StatsDataSource();
         statsDataSource.setName(getDataSourceName());
         statsDataSource.setNumIntervalsStored(intervals.size());
+        statsDataSource.setThreadPoolSize(threadPoolSize);
         statsDataSource.setStats(stats);
 
         return statsDataSource;
