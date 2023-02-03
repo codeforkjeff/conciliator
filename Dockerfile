@@ -30,7 +30,7 @@ RUN if [ "$skiptests" -eq "1" ]; then SKIPTESTS_ARG="-Dmaven.test.skip"; fi && \
 
 FROM eclipse-temurin:11
 
-RUN ln -s /usr/share/zoneinfo/America/Los_Angeles localtime
+RUN rm /etc/localtime && ln -s /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
 
 WORKDIR /opt/conciliator
 
