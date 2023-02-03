@@ -2,11 +2,17 @@
 ####
 ## build container
 
-FROM alpine:3.16.0 as build
+FROM eclipse-temurin:11 as build
+
+RUN apt-get update && apt-get install -y git
+
+ADD https://dlcdn.apache.org/maven/maven-3/3.8.7/binaries/apache-maven-3.8.7-bin.tar.gz /
+
+RUN cd /opt && tar xzf /apache-maven-3.8.7-bin.tar.gz && mv apache-maven* maven
+
+ENV PATH="$PATH:/opt/maven/bin"
 
 WORKDIR /opt/conciliator
-
-RUN apk --no-cache add alpine-conf git maven openjdk11
 
 COPY pom.xml .
 
@@ -22,11 +28,9 @@ RUN if [ "$skiptests" -eq "1" ]; then SKIPTESTS_ARG="-Dmaven.test.skip"; fi && \
 ####
 ## application container
 
-FROM alpine:3.16.0
+FROM eclipse-temurin:11
 
-RUN apk --no-cache add alpine-conf openjdk11-jre
-
-RUN setup-timezone -z America/Los_Angeles
+RUN ln -s /usr/share/zoneinfo/America/Los_Angeles localtime
 
 WORKDIR /opt/conciliator
 
@@ -35,7 +39,7 @@ COPY --from=build /opt/conciliator/target/conciliator*.jar .
 EXPOSE 8080 8081 8082
 
 CMD JARFILE=`find . -type f -name "conciliator*.jar" -print` && \
-  /usr/bin/java \
+  java \
   -Dcom.sun.management.jmxremote \
   -Dcom.sun.management.jmxremote.port=8081 \
   -Dcom.sun.management.jmxremote.rmi.port=8082 \
