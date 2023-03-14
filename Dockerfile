@@ -32,6 +32,8 @@ FROM eclipse-temurin:11
 
 RUN rm /etc/localtime && ln -s /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
 
+ENV TZ="America/Los_Angeles"
+
 WORKDIR /opt/conciliator
 
 COPY --from=build /opt/conciliator/target/conciliator*.jar .
