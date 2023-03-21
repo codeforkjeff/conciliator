@@ -6,9 +6,9 @@ FROM eclipse-temurin:11 as build
 
 RUN apt-get update && apt-get install -y git
 
-ADD https://dlcdn.apache.org/maven/maven-3/3.8.7/binaries/apache-maven-3.8.7-bin.tar.gz /
+ADD https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz /
 
-RUN cd /opt && tar xzf /apache-maven-3.8.7-bin.tar.gz && mv apache-maven* maven
+RUN cd /opt && tar xzf /apache-maven-3.8.8-bin.tar.gz && mv apache-maven* maven
 
 ENV PATH="$PATH:/opt/maven/bin"
 
