@@ -1,4 +1,6 @@
 
+ARG TZ="America/Los_Angeles"
+
 ####
 ## build container
 
@@ -30,9 +32,11 @@ RUN if [ "$skiptests" -eq "1" ]; then SKIPTESTS_ARG="-Dmaven.test.skip"; fi && \
 
 FROM eclipse-temurin:11
 
-RUN rm /etc/localtime && ln -s /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+ARG TZ
 
-ENV TZ="America/Los_Angeles"
+RUN rm /etc/localtime && ln -s /usr/share/zoneinfo/$TZ /etc/localtime
+
+ENV TZ=$TZ
 
 WORKDIR /opt/conciliator
 
