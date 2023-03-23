@@ -6,6 +6,7 @@ ARG TZ="America/Los_Angeles"
 
 FROM eclipse-temurin:11 as build
 
+# maven needs git
 RUN apt-get update && apt-get install -y git
 
 ADD https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz /
