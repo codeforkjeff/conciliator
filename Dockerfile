@@ -4,7 +4,7 @@ ARG TZ="America/Los_Angeles"
 ####
 ## build container
 
-FROM eclipse-temurin:11 as build
+FROM eclipse-temurin:11 AS build
 
 # maven needs git
 RUN apt-get update && apt-get install -y git
@@ -45,17 +45,11 @@ COPY --from=build /opt/conciliator/target/conciliator*.jar .
 
 EXPOSE 8080 8081 8082
 
-CMD JARFILE=`find . -type f -name "conciliator*.jar" -print` && \
-  java \
-  -Dcom.sun.management.jmxremote \
-  -Dcom.sun.management.jmxremote.port=8081 \
-  -Dcom.sun.management.jmxremote.rmi.port=8082 \
-  -Dcom.sun.management.jmxremote.local.only=false \
-  -Dcom.sun.management.jmxremote.authenticate=false \
-  -Dcom.sun.management.jmxremote.ssl=false \
-  -Djava.rmi.server.hostname=127.0.0.1 \
-  -XX:+HeapDumpOnOutOfMemoryError \
-  -Xms256m -Xmx256m \
-  -Dlogging.level.com.codefork.refine=DEBUG -jar \
-  $JARFILE >> conciliator.log 2>> conciliator.log
+COPY run.sh .
 
+COPY --chmod=755 <<EOT run_wrapper.sh
+#!/usr/bin/env bash
+./run.sh >> conciliator.log 2>> conciliator.log
+EOT
+
+CMD ["./run_wrapper.sh"]

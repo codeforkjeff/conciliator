@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Some useful options (these need to come before -jar)
 #
@@ -14,7 +14,7 @@
 # the JVM from having to dynamically allocate memory, which takes time.
 # -Xms128m -Xmx128m
 
-JAR_PATH=`find target -type f -name "conciliator*.jar" -print`
+JAR_PATH=`find . -type f -name "conciliator*.jar" -print`
 
 if [[ $JAR_PATH == *$'\n'* ]];
 then
@@ -23,4 +23,15 @@ then
     exit 1
 fi
 
-java -XX:+HeapDumpOnOutOfMemoryError -Xms256m -Xmx256m -Dlogging.level.com.codefork.refine=DEBUG -jar $JAR_PATH
+if [[ -n "DEBUG" ]];
+then
+    JVM_ARGS="-Dcom.sun.management.jmxremote \
+  -Dcom.sun.management.jmxremote.port=8081 \
+  -Dcom.sun.management.jmxremote.rmi.port=8082 \
+  -Dcom.sun.management.jmxremote.local.only=false \
+  -Dcom.sun.management.jmxremote.authenticate=false \
+  -Dcom.sun.management.jmxremote.ssl=false \
+  -Djava.rmi.server.hostname=127.0.0.1"
+fi
+
+java $JVM_ARGS -XX:+HeapDumpOnOutOfMemoryError -Xms256m -Xmx256m -Dlogging.level.com.codefork.refine=DEBUG -jar $JAR_PATH
