@@ -89,10 +89,10 @@ public class VIAFControllerTest {
     @Test
     public void testSearchMultiple() throws Exception {
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3",
                 "/wittgenstein_personalnames.xml");
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22shakespeare%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22shakespeare%22&sortKeys=holdingscount&maximumRecords=3",
                 "/shakespeare.xml");
 
         String json = "{\"q0\":{\"query\": \"shakespeare\",\"type\":\"/people/person\",\"type_strict\":\"should\"},\"q1\":{\"query\":\"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
@@ -136,7 +136,7 @@ public class VIAFControllerTest {
     @Test
     public void testSearchSingleWithText() throws Exception {
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3",
                 "/wittgenstein.xml");
 
         JsonNode root = doSearchSingle("wittgenstein");
@@ -171,7 +171,7 @@ public class VIAFControllerTest {
     public void testSearchSingleWithJson() throws Exception {
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3",
                 "/wittgenstein_personalnames.xml");
 
         String json = "{\"query\": \"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}";
@@ -207,7 +207,7 @@ public class VIAFControllerTest {
     public void testSearchPersonalName() throws Exception {
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22wittgenstein%22&sortKeys=holdingscount&maximumRecords=3",
                 "/wittgenstein_personalnames.xml");
 
         String json = "{\"q0\":{\"query\": \"wittgenstein\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
@@ -249,7 +249,7 @@ public class VIAFControllerTest {
         // This is when you get when you choose "Reconcile against no particular type" in OpenRefine
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22steinbeck%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22steinbeck%22&sortKeys=holdingscount&maximumRecords=3",
                 "/steinbeck_no_type.xml");
 
         String json = "{\"q0\":{\"query\": \"steinbeck\",\"type_strict\":\"should\"}}";
@@ -291,7 +291,7 @@ public class VIAFControllerTest {
         // Also chose "Reconcile against no particular type" for this one
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22nabokov%22%20and%20local.sources%20%3D%20%22nsk%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22nabokov%22%20and%20local.sources%20%3D%20%22nsk%22&sortKeys=holdingscount&maximumRecords=3",
                 "/nabokov_nsk.xml");
 
         String json = "{\"q0\":{\"query\": \"nabokov\",\"type_strict\":\"should\"}}";
@@ -332,7 +332,7 @@ public class VIAFControllerTest {
     public void testSearchWithExactMatch() throws Exception {
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3",
                 "/shakespeare_exact.xml");
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
@@ -373,7 +373,7 @@ public class VIAFControllerTest {
     public void testSearchWithNoResults() throws Exception {
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22ncjecerence%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.mainHeadingEl%20all%20%22ncjecerence%22&sortKeys=holdingscount&maximumRecords=3",
                 "/nonsense.xml");
 
         String json = "{\"q0\":{\"query\": \"ncjecerence\",\"type_strict\":\"should\"}}";
@@ -393,7 +393,7 @@ public class VIAFControllerTest {
     public void testCache() throws Exception {
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3",
                 "/shakespeare_exact.xml");
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
@@ -421,7 +421,7 @@ public class VIAFControllerTest {
     @Test
     public void testExpireCache() throws Exception {
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22&sortKeys=holdingscount&maximumRecords=3",
                 "/shakespeare_exact.xml", 2);
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";

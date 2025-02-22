@@ -48,7 +48,7 @@ public class VIAFProxyControllerTest {
     public void testSearchProxyModeLC() throws Exception {
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22lc%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22lc%22&sortKeys=holdingscount&maximumRecords=3",
                 "/shakespeare_lc.xml");
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
@@ -90,7 +90,7 @@ public class VIAFProxyControllerTest {
     public void testSearchProxyModeBNF() throws Exception {
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Shakespeare,%20William,%201564-1616.%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3",
                 "/shakespeare_bnf.xml");
 
         String json = "{\"q0\":{\"query\": \"Shakespeare, William, 1564-1616.\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
@@ -132,7 +132,7 @@ public class VIAFProxyControllerTest {
     public void testSearchProxyModeBNFMissingID() throws Exception {
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Jean-Fran%C3%A7ois%20Alexandre%201804%201874%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22Jean-Fran%C3%A7ois%20Alexandre%201804%201874%22%20and%20local.sources%20%3D%20%22bnf%22&sortKeys=holdingscount&maximumRecords=3",
                 "/alexandre.xml");
 
         String json = "{\"q0\":{\"query\": \"Jean-François Alexandre 1804 1874\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
@@ -175,7 +175,7 @@ public class VIAFProxyControllerTest {
     public void testSearchProxyModeDNB() throws Exception {
 
         mockConnectionFactoryHelper.expect(connectionFactory,
-                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22hegel%22%20and%20local.sources%20%3D%20%22dnb%22&sortKeys=holdingscount&maximumRecords=3&httpAccept=application/xml",
+                "https://www.viaf.org/viaf/search?query=local.personalNames%20all%20%22hegel%22%20and%20local.sources%20%3D%20%22dnb%22&sortKeys=holdingscount&maximumRecords=3",
                 "/shakespeare_dnb.xml");
 
         String json = "{\"q0\":{\"query\": \"hegel\",\"type\":\"/people/person\",\"type_strict\":\"should\"}}";
