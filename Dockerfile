@@ -4,29 +4,19 @@ ARG TZ="America/Los_Angeles"
 ####
 ## build container
 
-FROM eclipse-temurin:11 AS build
-
-# maven needs git
-RUN apt-get update && apt-get install -y git
-
-ADD https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz /
-
-RUN cd /opt && tar xzf /apache-maven-3.8.8-bin.tar.gz && mv apache-maven* maven
-
-ENV PATH="$PATH:/opt/maven/bin"
+FROM maven:3.9-eclipse-temurin-11 AS build
 
 WORKDIR /opt/conciliator
 
 COPY pom.xml .
 
-RUN mvn dependency:go-offline -B
-
 COPY src src
 
 ARG skiptests=0
 
-RUN if [ "$skiptests" -eq "1" ]; then SKIPTESTS_ARG="-Dmaven.test.skip"; fi && \
-    mvn package $SKIPTESTS_ARG
+RUN --mount=type=cache,target=/root/.m2 \
+    if [ "$skiptests" -eq "1" ]; then SKIPTESTS_ARG="-Dmaven.test.skip"; fi && \
+    mvn clean package $SKIPTESTS_ARG
 
 ####
 ## application container
