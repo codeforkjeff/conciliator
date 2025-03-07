@@ -130,7 +130,7 @@ public class ThreadPool {
      */
     public synchronized void grow() {
         int size = getPoolSize();
-        if(size < INITIAL_POOL_SIZE) {
+        if(size < initialPoolSize) {
             long now = System.currentTimeMillis();
             // grow slowly
             if(now - lastTimePoolAdjusted > waitPeriodBeforeGrowingMs) {
