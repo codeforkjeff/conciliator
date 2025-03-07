@@ -19,6 +19,8 @@ public class Config {
     public static final String PROP_CACHE_TTL = "cache.ttl";
     public static final String PROP_CACHE_SIZE = "cache.size";
 
+    public static final String PROP_DATASOURCE_THREADPOOL_SIZE = "threadpool.size";
+
     private static final String CONFIG_FILENAME = "conciliator.properties";
 
     private Log log = LogFactory.getLog(Config.class);
@@ -29,6 +31,7 @@ public class Config {
         properties.put(PROP_CACHE_TTL, "3600");
         properties.put(PROP_CACHE_SIZE, "64MB");
 
+        properties.put("datasource.viaf." + PROP_DATASOURCE_THREADPOOL_SIZE, "3");
         properties.put("datasource.orcid.name", "ORCID");
         properties.put("datasource.orcidsmartnames.name", "ORCID - Smart Names Mode");
         properties.put("datasource.openlibrary.name", "OpenLibrary");

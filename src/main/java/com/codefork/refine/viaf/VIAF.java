@@ -42,6 +42,8 @@ import java.util.Map;
 @Component("viaf")
 public class VIAF extends WebServiceDataSource {
 
+    public static final String PROP_THREADPOOL_SIZE = "threadpool.size";
+
     private SAXParserFactory spf;
 
     private VIAFSource viafSource = null;
@@ -52,6 +54,8 @@ public class VIAF extends WebServiceDataSource {
         super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
 
         setCacheEnabled(true);
+
+        getThreadPool().setPoolSize(Integer.parseInt(getConfigProperties().getProperty(Config.PROP_DATASOURCE_THREADPOOL_SIZE)));
 
         spf = SAXParserFactory.newInstance();
     }

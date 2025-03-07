@@ -98,6 +98,7 @@ public class ThreadPool {
     }
 
     public void setPoolSize(int newSize) {
+        log.info("Setting thread pool size = " + newSize);
         if(newSize > executor.getCorePoolSize()) {
             executor.setMaximumPoolSize(newSize);
             executor.setCorePoolSize(newSize);

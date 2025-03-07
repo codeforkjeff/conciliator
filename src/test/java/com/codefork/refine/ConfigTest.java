@@ -17,7 +17,8 @@ public class ConfigTest {
         Config config = new Config();
         config.merge(properties);
         Properties dsProps = config.getDataSourceProperties("viaf");
-        assertEquals(1, dsProps.size());
+        assertEquals(2, dsProps.size());
+        assertEquals(dsProps.getProperty(Config.PROP_DATASOURCE_THREADPOOL_SIZE), "3");
         assertEquals(dsProps.getProperty("somekey"), "2000");
 
         Properties dsProps2 = config.getDataSourceProperties("nonexistent");
