@@ -6,6 +6,8 @@ import com.codefork.refine.SearchQueryFactory;
 import com.codefork.refine.ThreadPool;
 import com.codefork.refine.ThreadPoolFactory;
 import com.codefork.refine.datasource.ConnectionFactory;
+import com.codefork.refine.datasource.SearchTask;
+import com.codefork.refine.datasource.WebServiceSearchTask;
 import com.codefork.refine.datasource.stats.Stats;
 import com.codefork.refine.datasource.WebServiceDataSource;
 import com.codefork.refine.resources.NameType;
@@ -47,13 +49,37 @@ public class VIAF extends WebServiceDataSource {
     private VIAFSource viafSource = null;
     private Map<String, NonVIAFSource> nonViafSources = new HashMap<>();
 
+    private int delay = 0;
+
     @Autowired
     public VIAF(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory, Stats stats) {
         super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
 
         setCacheEnabled(true);
 
+        var dataSourceProperties = config.getDataSourceProperties("viaf");
+
+        var threadPoolSize = dataSourceProperties.getProperty(Config.PROP_DATASOURCE_THREADPOOL_SIZE);
+        if(threadPoolSize != null) {
+            getLog().info("Setting pool size for VIAF to " + threadPoolSize);
+            getThreadPool().setPoolSize(Integer.parseInt(threadPoolSize.strip()));
+        }
+
+        var delay = dataSourceProperties.getProperty(Config.PROP_DATASOURCE_DELAY);
+        if(delay != null) {
+            getLog().info("Setting delay to " + delay);
+            setDelay(Integer.parseInt(delay.strip()));
+        }
+
         spf = SAXParserFactory.newInstance();
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int delay) {
+        this.delay = delay;
     }
 
     /**
@@ -113,6 +139,14 @@ public class VIAF extends WebServiceDataSource {
         }
 
         return cql;
+    }
+
+    /**
+     * Override so we can add an optional delay to the task
+     **/
+    @Override
+    public SearchTask createSearchTask(String key, SearchQuery searchQuery) {
+        return new WebServiceSearchTask(this, key, searchQuery, getDelay());
     }
 
     /**

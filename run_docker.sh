@@ -8,4 +8,5 @@ docker run \
     -p 127.0.0.1:8082:8082 \
     -e TZ=`cat /etc/timezone` \
     -v "$(pwd)/conciliator.log:/opt/conciliator/conciliator.log" \
+    -v "$(pwd)/conciliator.properties:/opt/conciliator/conciliator.properties" \
     conciliator:latest

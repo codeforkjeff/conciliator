@@ -19,11 +19,17 @@ public class WebServiceSearchTask implements SearchTask {
     private WebServiceDataSource dataSource;
     private String key;
     private SearchQuery searchQuery;
+    private int delay;
 
-    public WebServiceSearchTask(WebServiceDataSource dataSource, String key, SearchQuery searchQuery) {
+    public WebServiceSearchTask(WebServiceDataSource dataSource, String key, SearchQuery searchQuery, int delay) {
         this.key = key;
         this.searchQuery = searchQuery;
         this.dataSource = dataSource;
+        this.delay = delay;
+    }
+
+    public WebServiceSearchTask(WebServiceDataSource dataSource, String key, SearchQuery searchQuery) {
+        this(dataSource, key, searchQuery, 0);
     }
 
     @Override
@@ -51,6 +57,17 @@ public class WebServiceSearchTask implements SearchTask {
             return new SearchResult(key, SearchResult.ErrorType.UNKNOWN);
         }
         results.sort(BY_SCORE_REVERSED);
+
+        if(delay > 0) {
+            // TODO: it would be nice to sleep only we if actually made a request (if the result wasn't cached)
+            // but we'd need to make some modifications in order to know that
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                dataSource.getLog().error("sleep interrupted in WebServiceSearchTask");
+            }
+        }
+
         return new SearchResult(key, results);
     }
 
