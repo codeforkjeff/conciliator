@@ -65,6 +65,11 @@ instructions.
   WKP. Links are BROKEN for BNC, BNF, DBC, and NUKAT. For all other
   sources, the links will take you to the VIAF page.)
 
+* Since early 2025, the VIAF API has more aggressively rate limited
+  its service. Be sure to set the viaf options in the `conciliator.properties`
+  file to use a thread pool size of 1, and add a 100ms delay after requests,
+  in order to try to prevent 429 response errors from VIAF.
+
 ### ORCID
 
 * Uses the ORCID v2.1 API. The detailed search results of the v1.2 API
