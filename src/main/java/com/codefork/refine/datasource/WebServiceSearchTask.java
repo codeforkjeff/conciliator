@@ -48,7 +48,7 @@ public class WebServiceSearchTask implements SearchTask {
         String key = getKey();
         SearchQuery searchQuery = getSearchQuery();
         try {
-            results = dataSource.searchCheckCache(searchQuery);
+            results = dataSource.searchCheckCache(searchQuery, delay);
         } catch (Exception e) {
             dataSource.getLog().error(String.format("error for query=%s", searchQuery.getQuery()), e);
             if (e.toString().contains("HTTP response code: 429")) {
@@ -57,16 +57,6 @@ public class WebServiceSearchTask implements SearchTask {
             return new SearchResult(key, SearchResult.ErrorType.UNKNOWN);
         }
         results.sort(BY_SCORE_REVERSED);
-
-        if(delay > 0) {
-            // TODO: it would be nice to sleep only we if actually made a request (if the result wasn't cached)
-            // but we'd need to make some modifications in order to know that
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                dataSource.getLog().error("sleep interrupted in WebServiceSearchTask");
-            }
-        }
 
         return new SearchResult(key, results);
     }
