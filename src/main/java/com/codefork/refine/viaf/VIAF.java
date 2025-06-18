@@ -67,7 +67,7 @@ public class VIAF extends WebServiceDataSource {
 
         var delay = dataSourceProperties.getProperty(Config.PROP_DATASOURCE_DELAY);
         if(delay != null) {
-            getLog().info("Setting delay to " + delay);
+            getLog().info("Setting delay to " + delay + "ms");
             setDelay(Integer.parseInt(delay.strip()));
         }
 
