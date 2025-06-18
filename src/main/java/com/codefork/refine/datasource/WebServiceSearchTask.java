@@ -19,11 +19,17 @@ public class WebServiceSearchTask implements SearchTask {
     private WebServiceDataSource dataSource;
     private String key;
     private SearchQuery searchQuery;
+    private int delay;
 
-    public WebServiceSearchTask(WebServiceDataSource dataSource, String key, SearchQuery searchQuery) {
+    public WebServiceSearchTask(WebServiceDataSource dataSource, String key, SearchQuery searchQuery, int delay) {
         this.key = key;
         this.searchQuery = searchQuery;
         this.dataSource = dataSource;
+        this.delay = delay;
+    }
+
+    public WebServiceSearchTask(WebServiceDataSource dataSource, String key, SearchQuery searchQuery) {
+        this(dataSource, key, searchQuery, 0);
     }
 
     @Override
@@ -42,7 +48,7 @@ public class WebServiceSearchTask implements SearchTask {
         String key = getKey();
         SearchQuery searchQuery = getSearchQuery();
         try {
-            results = dataSource.searchCheckCache(searchQuery);
+            results = dataSource.searchCheckCache(searchQuery, delay);
         } catch (Exception e) {
             dataSource.getLog().error(String.format("error for query=%s", searchQuery.getQuery()), e);
             if (e.toString().contains("HTTP response code: 429")) {
@@ -51,6 +57,7 @@ public class WebServiceSearchTask implements SearchTask {
             return new SearchResult(key, SearchResult.ErrorType.UNKNOWN);
         }
         results.sort(BY_SCORE_REVERSED);
+
         return new SearchResult(key, results);
     }
 

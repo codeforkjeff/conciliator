@@ -257,27 +257,39 @@ public abstract class WebServiceDataSource extends DataSource {
      * This is a "lower level" call than search(Map).
      *
      * @param query search to perform
+     * @param delay delay in milliseconds to sleep after a search query
      * @return list of search results (a 0-size list if none, or if errors occurred)
      */
-    public List<Result> searchCheckCache(SearchQuery query) throws Exception {
+    public List<Result> searchCheckCache(SearchQuery query, int delay) throws Exception {
+        List<Result> results;
+        boolean retrievedFromCache = false;
+
         if (isCacheEnabled()) {
             Cache cache = getCacheManager().getCache(Application.CACHE_DEFAULT);
 
             String key = getClass().getSimpleName() + "|" + query.getHashKey();
             Cache.ValueWrapper value = cache.get(key);
 
-            List<Result> results;
             if(value != null) {
                 log.info("Cache hit for: " + key);
                 results = (List<Result>) value.get();
+                retrievedFromCache = true;
             } else {
                 results = search(query);
                 cache.put(key, results);
             }
-            return results;
+        } else {
+            results = search(query);
         }
 
-        return search(query);
+        if(!retrievedFromCache && delay > 0) {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                getLog().error("sleep interrupted in WebServiceSearchTask");
+            }
+        }
+        return results;
     }
 
     /**

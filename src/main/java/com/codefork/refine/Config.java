@@ -19,6 +19,9 @@ public class Config {
     public static final String PROP_CACHE_TTL = "cache.ttl";
     public static final String PROP_CACHE_SIZE = "cache.size";
 
+    public static final String PROP_DATASOURCE_THREADPOOL_SIZE = "threadpool.size";
+    public static final String PROP_DATASOURCE_DELAY = "delay";
+
     private static final String CONFIG_FILENAME = "conciliator.properties";
 
     private Log log = LogFactory.getLog(Config.class);
