@@ -15,7 +15,6 @@ import com.codefork.refine.viaf.sources.NonVIAFSource;
 import com.codefork.refine.viaf.sources.Source;
 import com.codefork.refine.viaf.sources.VIAFSource;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
@@ -47,7 +46,6 @@ public class VIAF extends WebServiceDataSource {
     private VIAFSource viafSource = null;
     private Map<String, NonVIAFSource> nonViafSources = new HashMap<>();
 
-    @Autowired
     public VIAF(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory, Stats stats) {
         super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
 
@@ -102,14 +100,14 @@ public class VIAF extends WebServiceDataSource {
             }
             cqlTemplate = viafNameType.getCqlString();
         }
-        String cql = String.format(cqlTemplate, searchQuery.getQuery());
+        String cql = cqlTemplate.formatted(searchQuery.getQuery());
 
         // NOTE: this query means return all the name records that
         // have an entry for this source; it does NOT mean search the name
         // values for this source ONLY. I think.
         String source = searchQuery.getViafSource();
         if(source != null) {
-            cql += String.format(" and local.sources = \"%s\"", source.toLowerCase());
+            cql += " and local.sources = \"%s\"".formatted(source.toLowerCase());
         }
 
         return cql;
@@ -131,7 +129,7 @@ public class VIAF extends WebServiceDataSource {
             return Collections.emptyList();
         }
 
-        String url = String.format("https://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s",
+        String url = "https://www.viaf.org/viaf/search?query=%s&sortKeys=holdingscount&maximumRecords=%s".formatted(
                 UriUtils.encodeQueryParam(cql, "UTF-8"), query.getLimit());
 
         HttpURLConnection conn = getConnectionFactory().createConnection(url);
@@ -154,7 +152,7 @@ public class VIAF extends WebServiceDataSource {
         }
 
         List<Result> results = viafParser.getResults();
-        getLog().debug(String.format("Query: %s - parsing took %dms, got %d results",
+        getLog().debug("Query: %s - parsing took %dms, got %d results".formatted(
                 query.getQuery(), parseTime, results.size()));
 
         return results;

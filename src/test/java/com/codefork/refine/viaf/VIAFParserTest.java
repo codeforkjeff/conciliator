@@ -58,7 +58,7 @@ public class VIAFParserTest {
         for(int i = 0; i < n; i++) {
             SAXParserFactory spf = SAXParserFactory.newInstance();
             SAXParser parser = spf.newSAXParser();
-            DefaultHandler viafParser = (DefaultHandler) parserClass.newInstance();
+            DefaultHandler viafParser = (DefaultHandler) parserClass.getDeclaredConstructor().newInstance();
 
             InputStream is = getClass().getResourceAsStream("/shakespeare.xml");
             long start = System.currentTimeMillis();
@@ -67,7 +67,7 @@ public class VIAFParserTest {
 
             times[i] = end - start;
         }
-        System.out.println(String.format("parse using %s, mean time over %s runs=%s", parserClass.toString(), n, mean(times)));
+        System.out.println("parse using %s, mean time over %s runs=%s".formatted(parserClass.toString(), n, mean(times)));
     }
 
     /*

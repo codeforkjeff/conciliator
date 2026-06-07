@@ -16,20 +16,24 @@
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+    <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.3</version>
+        <version>3.3.13</version>
     </parent>
 
     <dependencies>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+    </dependency>
         <dependency>
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
-            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,7 +55,7 @@
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>3.9.9</version>
+      <classifier>jakarta</classifier>
         </dependency>
     </dependencies>
 
@@ -60,9 +64,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.15.0</version>
                 <configuration>
-                    <release>11</release>
+          <release>${java.version}</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -101,7 +105,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
+                <version>0.8.14</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>

@@ -69,7 +69,7 @@ public class NonVIAFSource extends Source {
             // which is NOT the case for several sources that don't have URL templates:
             // namely: BNC, BNF, DBC, NUKAT
             // Can't think of a way to fix this right now.
-            url = String.format("https://viaf.org/viaf/sourceID/%s|{{id}}", code);
+            url = "https://viaf.org/viaf/sourceID/%s|{{id}}".formatted(code);
         }
         return url;
     }

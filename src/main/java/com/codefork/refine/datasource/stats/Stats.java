@@ -54,8 +54,8 @@ public class Stats {
         buckets.add(new Bucket("Last day", 24 * 60 * 60));
         buckets.add(new Bucket("Last week", 7 * 24 * 60 * 60));
 
-        log.debug(String.format("Initialized Stats, max number of intervals stored should be %s",
-                buckets.get(buckets.size()-1).getSize() / intervalSize));
+        log.debug("Initialized Stats, max number of intervals stored should be %s".formatted(
+                buckets.get(buckets.size() - 1).getSize() / intervalSize));
     }
 
     public String getDataSourceName() {
@@ -130,7 +130,7 @@ public class Stats {
                 interval = getFirstInterval();
             }
         }
-        log.debug(String.format("Removed %s intervals from stats history, took %s ms",
+        log.debug("Removed %s intervals from stats history, took %s ms".formatted(
                 intervalsSizeStart - intervals.size(), System.currentTimeMillis() - start));
     }
 

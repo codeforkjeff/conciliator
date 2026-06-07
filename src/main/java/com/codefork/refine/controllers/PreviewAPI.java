@@ -18,7 +18,7 @@ public interface PreviewAPI {
     @RequestMapping(value = { PATH_PREVIEW }, params = "id")
     default Object preview() throws ServiceNotImplementedException {
         throw new ServiceNotImplementedException(
-                String.format("Preview API not implemented for %s data source",
+                "Preview API not implemented for %s data source".formatted(
                         getDataSource().getName()));
     }
 

@@ -190,7 +190,7 @@ public abstract class WebServiceDataSource extends DataSource {
             }
         }
 
-        log.debug(String.format("%s tasks finished in %s (thread pool size=%s)", queryEntries.size(), System.currentTimeMillis() - start, getThreadPool().getPoolSize()));
+        log.debug("%s tasks finished in %s (thread pool size=%s)".formatted(queryEntries.size(), System.currentTimeMillis() - start, getThreadPool().getPoolSize()));
 
         return allResults;
     }
@@ -225,7 +225,7 @@ public abstract class WebServiceDataSource extends DataSource {
         try {
             long start = System.currentTimeMillis();
             updateStats(results.values());
-            log.debug(String.format("updateStats took %s ms", System.currentTimeMillis() - start));
+            log.debug("updateStats took %s ms".formatted(System.currentTimeMillis() - start));
         } catch(Exception e) {
             log.error("error in updateStats(), ignoring and continuing: " + StringUtil.getStackTrace(e));
         }

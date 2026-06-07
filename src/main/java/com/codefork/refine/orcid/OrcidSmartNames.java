@@ -9,7 +9,6 @@ import com.codefork.refine.datasource.stats.Stats;
 import com.codefork.refine.resources.NameType;
 import com.codefork.refine.resources.Result;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
@@ -23,7 +22,6 @@ public class OrcidSmartNames extends OrcidBase {
     SmartNamesModeSearchQueryFactory smartNamesModeSearchQueryFactory =
             new SmartNamesModeSearchQueryFactory();
 
-    @Autowired
     public OrcidSmartNames(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory, Stats stats) {
         super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
     }
@@ -51,12 +49,12 @@ public class OrcidSmartNames extends OrcidBase {
     }
 
     private List<Result> searchSmartNames(SearchQuery query, String givenName, String familyName) throws Exception {
-        String q = String.format("given-names:%s AND family-name:%s", givenName, familyName);
+        String q = "given-names:%s AND family-name:%s".formatted(givenName, familyName);
         String fields = createSearchFieldsQueryString(query);
         if(fields.length() > 0) {
             q += " " + fields;
         }
-        String url = String.format("https://pub.orcid.org/v2.1/search/?rows=%d&q=", query.getLimit()) +
+        String url = "https://pub.orcid.org/v2.1/search/?rows=%d&q=".formatted(query.getLimit()) +
                 UriUtils.encodeQueryParam(q, "UTF-8");
         return doSearch(query, url);
     }

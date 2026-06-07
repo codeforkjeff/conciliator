@@ -4,7 +4,6 @@ import com.codefork.refine.datasource.DataSource;
 import com.codefork.refine.datasource.stats.Interval;
 import com.codefork.refine.resources.StatsDataSource;
 import com.codefork.refine.resources.StatsReport;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,7 +22,6 @@ public class StatsController {
 
     List<DataSource> dataSources;
 
-    @Autowired
     public StatsController(List<DataSource> dataSources) {
         this.dataSources = dataSources;
     }

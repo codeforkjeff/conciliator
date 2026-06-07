@@ -13,7 +13,6 @@ import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
@@ -29,7 +28,6 @@ public class OpenLibrary extends WebServiceDataSource {
     private final ObjectMapper mapper = new ObjectMapper();
     private static final NameType bookType = new NameType("/book/book", "Book");
 
-    @Autowired
     public OpenLibrary(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory, Stats stats) {
         super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
 

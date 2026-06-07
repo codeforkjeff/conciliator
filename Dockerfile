@@ -4,7 +4,7 @@ ARG TZ="America/Los_Angeles"
 ####
 ## build container
 
-FROM maven:3.9-eclipse-temurin-11 AS build
+FROM maven:3.9-eclipse-temurin-21 AS build
 
 WORKDIR /opt/conciliator
 
@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/root/.m2 \
 ####
 ## application container
 
-FROM eclipse-temurin:11
+FROM eclipse-temurin:21
 
 ARG TZ
 
