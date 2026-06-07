@@ -11,7 +11,6 @@ import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
@@ -42,7 +41,6 @@ public class Solr extends WebServiceDataSource {
 
     private SAXParserFactory spf = SAXParserFactory.newInstance();
 
-    @Autowired
     public Solr(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory, Stats stats) {
         super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
     }
@@ -93,7 +91,7 @@ public class Solr extends WebServiceDataSource {
             log.error("Ignoring error from trying to close input stream and connection: " + ioe);
         }
 
-        log.debug(String.format("Query: %s - parsing took %dms, got %d results",
+        log.debug("Query: %s - parsing took %dms, got %d results".formatted(
                 query.getQuery(), parseTime, solrParser.getResults().size()));
 
         return solrParser.getResults();

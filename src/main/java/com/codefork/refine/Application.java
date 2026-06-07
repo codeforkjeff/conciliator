@@ -15,6 +15,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,6 +25,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+@Configuration
 @SpringBootApplication
 @EnableCaching
 @EnableWebSecurity
@@ -43,7 +45,7 @@ public class Application {
         MemSize memSize = MemSize.valueOf(config.getProperties().getProperty(Config.PROP_CACHE_SIZE));
 
         LogFactory.getLog(getClass()).info(
-                String.format("Initializing cache TTL=%d secs, size=%d %s",
+                "Initializing cache TTL=%d secs, size=%d %s".formatted(
                         ttl, memSize.getSize(), memSize.getUnit().toString()));
 
         org.ehcache.config.CacheConfiguration<Object, Object> cacheConfiguration = CacheConfigurationBuilder
@@ -90,11 +92,10 @@ public class Application {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf().disable()
-                .authorizeRequests()
-                .anyRequest()
-                .permitAll()
-                .and().build();
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(requests -> requests
+                        .anyRequest()
+                        .permitAll()).build();
     }
 
 }

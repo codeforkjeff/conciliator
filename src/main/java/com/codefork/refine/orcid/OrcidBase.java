@@ -13,7 +13,6 @@ import com.codefork.refine.resources.Result;
 import com.codefork.refine.resources.ServiceMetaDataResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.web.util.UriUtils;
 
@@ -44,7 +43,6 @@ public abstract class OrcidBase extends WebServiceDataSource {
 
     private static final int POOL_SIZE_FOR_INDIVIDUAL_RECORDS = 20;
 
-    @Autowired
     public OrcidBase(Config config, CacheManager cacheManager, ThreadPoolFactory threadPoolFactory, ConnectionFactory connectionFactory, Stats stats) {
         super(config, cacheManager, threadPoolFactory, connectionFactory, stats);
         threadPoolForIndividualRecords = createThreadPoolForIndividualRecords();
@@ -115,7 +113,7 @@ public abstract class OrcidBase extends WebServiceDataSource {
 
     protected List<Result> searchKeyword(SearchQuery query) throws Exception {
         String q = createQueryString(query);
-        String url = String.format("https://pub.orcid.org/v2.1/search/?rows=%d&q=", query.getLimit()) +
+        String url = "https://pub.orcid.org/v2.1/search/?rows=%d&q=".formatted(query.getLimit()) +
                 UriUtils.encodeQueryParam(q, "UTF-8");
         return doSearch(query, url);
     }
@@ -140,7 +138,7 @@ public abstract class OrcidBase extends WebServiceDataSource {
             log.error("Ignoring error from trying to close input stream and connection: " + ioe);
         }
 
-        log.debug(String.format("Query: %s - parsing took %dms, got %d results",
+        log.debug("Query: %s - parsing took %dms, got %d results".formatted(
                 query.getQuery(), parseTime, orcidParser.getResults().size()));
 
         return fillInResults(query, orcidParser.getResults());
@@ -158,7 +156,7 @@ public abstract class OrcidBase extends WebServiceDataSource {
 
         @Override
         public Result call() throws Exception {
-            String url = String.format("https://pub.orcid.org/v2.1/%s/record", result.getId());
+            String url = "https://pub.orcid.org/v2.1/%s/record".formatted(result.getId());
 
             log.debug("Filling in ORCID result: making request to " + url);
 

@@ -17,7 +17,7 @@ public  interface SuggestAPI {
     @ResponseBody
     default Object suggestEntity() throws ServiceNotImplementedException {
         throw new ServiceNotImplementedException(
-                String.format("suggest entity service not implemented for %s data source",
+                "suggest entity service not implemented for %s data source".formatted(
                         getDataSource().getName()));
     }
 
@@ -25,7 +25,7 @@ public  interface SuggestAPI {
     @ResponseBody
     default Object suggestProperty() throws ServiceNotImplementedException {
         throw new ServiceNotImplementedException(
-                String.format("suggest property service not implemented for %s data source",
+                "suggest property service not implemented for %s data source".formatted(
                         getDataSource().getName()));
     }
 
@@ -33,7 +33,7 @@ public  interface SuggestAPI {
     @ResponseBody
     default Object suggestType() throws ServiceNotImplementedException {
         throw new ServiceNotImplementedException(
-                String.format("suggest type service not implemented for %s data source",
+                "suggest type service not implemented for %s data source".formatted(
                         getDataSource().getName()));
     }
 

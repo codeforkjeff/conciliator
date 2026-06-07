@@ -18,13 +18,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.annotation.PreDestroy;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PreDestroy;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +63,6 @@ public abstract class DataSource {
         }
     };
 
-    @Autowired
     public DataSource(Config config, Stats stats) {
         setConfig(config);
 
@@ -188,7 +186,7 @@ public abstract class DataSource {
 
             Map<String, SearchResponse> resultsMap = search(queriesMap);
 
-            log.debug(String.format("response=%s", new DeferredJSON(resultsMap)));
+            log.debug("response=%s".formatted(new DeferredJSON(resultsMap)));
 
             return resultsMap;
         } catch (JsonProcessingException jse) {
@@ -200,7 +198,7 @@ public abstract class DataSource {
     public ProposePropertiesResponse proposeProperties(String type, int limit)
             throws ServiceNotImplementedException {
         throw new ServiceNotImplementedException(
-                String.format("propose properties service not implemented for %s data source",
+                "propose properties service not implemented for %s data source".formatted(
                         getName()));
     }
 
@@ -224,7 +222,7 @@ public abstract class DataSource {
         response.setMeta(meta);
         response.setRows(rows);
 
-        log.debug(String.format("response=%s", new DeferredJSON(response)));
+        log.debug("response=%s".formatted(new DeferredJSON(response)));
 
         return response;
     }
@@ -238,7 +236,7 @@ public abstract class DataSource {
      */
     public CellList extend(String id, List<PropertyValueIdAndSettings> idsAndSettings) throws ServiceNotImplementedException {
         throw new ServiceNotImplementedException(
-                String.format("extend service not implemented for %s data source",
+                "extend service not implemented for %s data source".formatted(
                         getName()));
     }
 
